@@ -13,6 +13,7 @@
     "@tensorflow/tfjs": "^3.0.0",
     "axios": "^0.27.2",
     "bad-words": "^3.0.4",
+    "bad-words-es": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "cryptr": "^6.0.2",
     "ejs": "^3.1.3",
