@@ -1,0 +1,220 @@
+<%- include ("includes/header") %>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="timeline-info">
+						<ul class="nav nav-tabs">
+							<li>
+								<a class="active" data-toggle="tab" href="#people">Personas</a>
+								<a data-toggle="tab" href="#groups">Comunidades</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-12">
+							<div class="central-meta">
+								<div class="frnds">
+
+									<div class="tab-content">
+										<div class="tab-pane active fade show" id="people">
+											<ul class="nearby-contct" id="search-results"></ul>
+										</div>
+
+										<div class="tab-pane fade" id="groups">
+											<ul class="nearby-contct" id="search-result-groups"></ul>
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<input type="hidden" id="query" value="<%= query %>">
+
+<script>
+	var isSearchResults = true;
+
+	function showSearchResults() {
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/search", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+
+				if (response.status == "success") {
+
+					var html = "";
+					for (var a = 0; a < response.users.length; a++) {
+						var user = response.users[a];
+
+						if (user._id == window.user._id) {
+							continue;
+						}
+
+						var isFriend = false;
+						for (var b = 0; b < window.user.friends.length; b++) {
+							var tempData = window.user.friends[b];
+							if (tempData._id == user._id) {
+								isFriend = true;
+								break;
+							}
+						}
+
+						html += '<li>';
+							html += '<div class="nearly-pepls">';
+								html += '<figure>';
+									html += '<a href="/">';
+										html += '<img src="' + mainURL + '/' + user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+									html += '</a>';
+								html += '</figure>';
+
+								html += '<div class="pepl-info">';
+									html += '<h4>';
+										html += '<a href="/user/' + user.username + '">' + user.name + '</a>';
+									html += '</h4>';
+
+									if (isFriend) {
+										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="doUnfriend(this);" class="add-butn btn-unfriend">Unfriend</a>';
+									} else {
+										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="sendFriendRequest(this);" class="add-butn">Add friend</a>';
+									}
+
+								html += '</div>';
+							html += '</div>';
+						html += '</li>';
+					}
+
+					document.getElementById("search-results").innerHTML = html;
+//Comunidades
+					var html = "";
+					for (var a = 0; a < response.groups.length; a++) {
+						var data = response.groups[a];
+
+						var isMember = false;
+						for (var b = 0; b < window.user.groups.length; b++) {
+							var tempData = window.user.groups[b];
+							if (tempData._id.toString() == data._id.toString()) {
+								isMember = true;
+								break;
+							}
+						}
+
+						html += '<li>';
+							html += '<div class="nearly-pepls">';
+								html += '<figure>';
+									html += '<a href="/group/' + data._id + '">';
+										html += '<img src="' + mainURL + '/' + data.coverPhoto + '" onerror="this.src = \'/public/img/default_cover.jpg\';">';
+									html += '</a>';
+								html += '</figure>';
+
+								html += '<div class="pepl-info">';
+									html += '<h4>';
+										html += '<a href="/group/' + data._id + '">' + data.name + '</a>';
+									html += '</h4>';
+
+									html += '<span>public group</span>';
+									html += '<em>' + data.members.length + ' Members</em>';
+
+									if (localStorage.getItem("accessToken")) {
+										if (isMember) {
+											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn btn-unfriend">Leave</a>';
+										} else {
+											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn">Join</a>';
+										}
+									}
+
+								html += '</div>';
+							html += '</div>';
+						html += '</li>';
+					}
+
+					document.getElementById("search-result-groups").innerHTML = html
+
+				} else {
+					swal("Error", response.message, "error");
+				}
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("query", document.getElementById("query").value);
+		ajax.send(formData);
+	}
+
+	function toggleJoinGroup(self) {
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/toggleJoinGroup", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+
+				if (response.status == "success") {
+					self.className = "add-butn btn-unfriend";
+					self.innerHTML = "Leave";
+				}
+
+				if (response.status == "leaved") {
+					self.className = "add-butn";
+					self.innerHTML = "Join";
+				}
+
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				}
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", self.getAttribute("data-id"));
+		ajax.send(formData);
+	}
+
+	function sendFriendRequest(self) {
+		var _id = self.getAttribute("data-id");
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/sendFriendRequest", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var response = JSON.parse(this.responseText);
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				} else {
+					swal("Success", response.message, "success");
+				}
+				self.remove();
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", _id);
+		ajax.send(formData);
+	}
+</script>
+
+<%- include ("includes/footer") %>

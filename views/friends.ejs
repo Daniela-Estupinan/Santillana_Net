@@ -1,0 +1,122 @@
+<%- include ("includes/header") %>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-3">
+							<%- include ("includes/left-sidebar") %>
+						</div>
+
+						<div class="col-md-6">
+							<div class="central-meta">
+								<div class="frnds">
+
+									<div class="tab-content">
+										<div class="tab-pane active fade show" id="frends">
+
+											<ul class="nearby-contct" id="friends"></ul>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	var isFriends = true;
+
+	function showFriends() {
+		var html = "";
+		for (var a = 0; a < window.user.friends.length; a++) {
+			var data = window.user.friends[a];
+
+			html += '<li>';
+				html += '<div class="nearly-pepls">';
+					html += '<figure>';
+						html += '<a href="/user/' + data.username + '">';
+							html += '<img src="' + mainURL + '/' + data.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+						html += '</a>';
+					html += '</figure>';
+
+					html += '<div class="pepl-info">';
+						html += '<h4>';
+							html += '<a href="/user/' + data.username + '">' + data.name + '</a>';
+						html += '</h4>';
+
+						if (!data.sentByMe && data.status == "Pending") {
+							html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="doAccept(this);" class="add-butn more-action">Accept</a>';
+						}
+						html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="doUnfriend(this);" class="add-butn btn-unfriend">Unfriend</a>';
+
+					html += '</div>';
+				html += '</div>';
+			html += '</li>';
+		}
+		document.getElementById("friends").innerHTML = html;
+	}
+
+	function doAccept(self) {
+		var _id = self.getAttribute("data-id");
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/acceptFriendRequest", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				} else if (response.status == "success") {
+					swal("Success", response.message, "success");
+				}
+
+				self.remove();
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", _id);
+		ajax.send(formData);
+	}
+
+	function doUnfriend(self) {
+		var _id = self.getAttribute("data-id");
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/unfriend", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				} else if (response.status == "success") {
+					swal("Success", response.message, "success");
+				}
+
+				self.remove();
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", _id);
+		ajax.send(formData);
+	}
+</script>
+
+<%- include ("includes/footer") %>

@@ -1,0 +1,84 @@
+<%- include ("includes/header") %>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-3">
+							<%- include ("includes/left-sidebar") %>
+						</div>
+
+						<div class="col-md-6">
+
+							<div class="central-meta">
+								<div class="editing-interest">
+									<h5 class="f-title"><i class="ti-bell"></i>Join chat</h5>
+									
+
+									<div id="group-detail"></div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<input type="hidden" id="_id" value="<%= _id %>" />
+</section>
+
+<script>
+	const isJoinGroupChatPage = true
+	const _id = document.getElementById("_id").value
+
+	function fetchGroupChatDetail() {
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/fetchGroupChatDetail", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var response = JSON.parse(this.responseText);
+
+				if (response.status == "success") {
+					const group = response.group
+					const user = response.user
+
+					let html = `<h2>` + group.name + `</h2>
+					<p>` + group.members.length + ` members</p>
+					<p>Admin: <a href="` + mainURL + `/user/` + group.createdBy._id + `">` + group.createdBy.name + `</a></p>`
+
+					html += `<div id="qrcode" style="width:100px; height:100px; margin-top:15px; margin-bottom:15px;"></div>`
+
+					for (let a = 0; a < group.savedPaths.length; a++) {
+						html += `<img src="` + mainURL + `/` + group.savedPaths[a] + `" style="width: 100%;" />`
+					}
+
+					document.getElementById("group-detail").innerHTML = html
+
+					setTimeout(function () {
+						var qrcode = new QRCode(document.getElementById("qrcode"), {
+							width : 100,
+							height : 100
+						})
+
+						qrcode.makeCode(mainURL + "/joinGroupChatViaQRCode?_id=" + _id)
+					}, 500)
+				} else {
+					swal("Error", response.message, "error")
+				}
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", _id);
+		ajax.send(formData);
+	}
+</script>
+
+<%- include ("includes/footer") %>

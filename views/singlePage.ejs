@@ -1,0 +1,219 @@
+<%- include ("includes/header") %>
+
+<section>
+	<div class="feature-photo">
+		<figure>
+			<img id="page-cover-photo" onerror="this.src = '/public/img/default_cover.jpg';">
+		</figure>
+
+		<div class="add-btn">
+			<span id="page-likes"></span>
+			<a href="javascript:void(0);" onclick="toggleLikePage(this);" id="btn-toggle-like"></a>
+		</div>
+
+		<div class="container-fluid">
+			<div class="row merged">
+
+				<div class="col-lg-10 col-sm-9">
+					<div class="timeline-info">
+						<ul>
+							<li class="admin-name" style="padding: 25px;">
+								<h5 id="page-name"></h5>
+								<p>Created by: <span id="page-admin"></span></p>
+							</li>
+
+							<li class="pull-right" style="display: flex;">
+								<a href="/edit-page/" id="link-edit-page" class="btn" style="position: relative; top: 30px;">Edit</a>
+
+								<form method="POST" action="/deletePage" id="form-delete-page" style="position: relative; top: 28px;" onsubmit="return deletePage(this);">
+									<input type="hidden" name="_id" required />
+									<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+								</form>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-3">
+							<%- include ("includes/left-sidebar") %>
+						</div>
+
+						<div class="col-md-6">
+
+							<div id="add-post-box"></div>
+
+							<div class="loadMore" id="newsfeed"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<input type="hidden" id="_id" value="<%= _id %>" />
+
+<script>
+	var isPageDetail = true;
+
+	function deletePage(form) {
+
+		swal({
+			title: "Delete page",
+			text: "Are you sure you want to delete this page ?",
+			icon: "warning",
+			buttons: true,
+			dangerMode: true,
+		})
+		.then((willDelete) => {
+			if (willDelete) {
+				var ajax = new XMLHttpRequest();
+				ajax.open("POST", "/deletePage", true);
+
+				ajax.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						var response = JSON.parse(this.responseText);
+						
+						if (response.status == "error") {
+							swal("Error", response.message, "error");
+						} else if (response.status == "success") {
+							swal("Success", response.message, "success")
+								.then(function (value) {
+									window.location.href = "/pages";
+								});
+						}
+					}
+				};
+
+				var formData = new FormData();
+				formData.append("accessToken", localStorage.getItem("accessToken"));
+				formData.append("_id", form._id.value);
+				ajax.send(formData);
+			}
+		});
+
+		return false;
+	}
+
+	function getPageDetail() {
+		document.getElementById("newsfeed").innerHTML = ""
+		
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/getPageDetail", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+
+				var isLiked = false;
+				for (var a = 0; a < response.data.likers.length; a++) {
+					var liker = response.data.likers[a];
+
+					if (liker._id.toString() == window.user._id.toString()) {
+						isLiked = true;
+						break;
+					}
+				}
+
+				document.getElementById("btn-toggle-like").setAttribute("data-id", response.data._id);
+
+				/* show edit & delete button to only creator of this page */
+				if (response.data.user._id.toString() == window.user._id.toString()) {
+					document.getElementById("link-edit-page").setAttribute("href", "/edit-page/" + response.data._id);
+					document.getElementById("form-delete-page")._id.value = response.data._id;
+				} else {
+					document.getElementById("link-edit-page").style.display = "none";
+					document.getElementById("form-delete-page").style.display = "none";
+				}
+
+				if (isLiked) {
+					document.getElementById("btn-toggle-like").innerHTML = "Unlike";
+				} else {
+					document.getElementById("btn-toggle-like").innerHTML = "Like";
+				}
+
+				document.getElementById("page-cover-photo").setAttribute("src", mainURL + "/" + response.data.coverPhoto);
+				document.getElementById("page-likes").innerHTML = response.data.likers.length + " likes";
+				document.getElementById("page-name").innerHTML = response.data.name;
+
+				if (response.data.user._id.toString() == window.user._id.toString()) {
+					showAddPost();
+				}
+
+				let adminHtml = ""
+				adminHtml += `<a href="` + mainURL + `/search/` + response.data.user.name + `#people">` + response.data.user.name + `</a>`
+				document.getElementById("page-admin").innerHTML = adminHtml
+
+				response.posts = response.posts.reverse()
+				response.data = response.posts
+
+				renderFeed(response)
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", document.getElementById("_id").value);
+		ajax.send(formData);
+	}
+
+	function doPost(form) {
+		event.preventDefault()
+		
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/addPost", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				} else if (response.status == "success") {
+					swal("Success", response.message, "success");
+				}
+
+				if (response.status == "success") {
+					// document.getElementById("form-add-post").querySelector("input[name='image']").value = "";
+					// document.getElementById("form-add-post").querySelector("input[name='video']").value = "";
+					document.getElementById("form-add-post").querySelector("textarea[name='caption']").value = "";
+
+					// document.getElementById("post-img-preview").style.display = "none";
+					// document.getElementById("post-video-preview").style.display = "none";
+
+					// document.getElementById("post-img-preview").setAttribute("src", "")
+					// document.getElementById("post-video-preview").setAttribute("src", "")
+
+					form.reset()
+
+					document.getElementById("newsfeed").innerHTML = ""
+					getPageDetail()
+				}
+			}
+		};
+
+		form.type.value = "page_post";
+
+		var formData = new FormData(form);
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", document.getElementById("_id").value);
+		// formData.append("imgData", document.getElementById("post-img-preview").getAttribute("src"));
+		ajax.send(formData);
+
+		return false;
+	}
+</script>
+
+<%- include ("includes/footer") %>

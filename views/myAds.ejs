@@ -1,0 +1,92 @@
+<%- include ("includes/header") %>
+
+	<section>
+	    <div class="gap gray-bg">
+	        <div class="container-fluid">
+	            <div class="row">
+	                <div class="col-md-12">
+	                    <div class="row" id="page-contents">
+
+	                        <div class="col-md-3">
+	                            <%- include ("includes/left-sidebar") %>
+	                        </div>
+
+	                        <div class="col-md-8">
+	                            <div class="central-meta">
+	                                <div class="editing-info">
+
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</section>
+
+	<script>
+		const isOnMyAdsPage = true
+
+		function fetchMyAds() {
+			var ajax = new XMLHttpRequest()
+			ajax.open("POST", "/fetchMyAds", true)
+
+			ajax.onreadystatechange = function() {
+				if (this.readyState == 4) {
+
+					if (this.status == 200) {
+						var response = JSON.parse(this.responseText)
+						console.log(response)
+
+						if (response.status == "error") {
+							swal("Error", response.message, "error")
+						} else if (response.status == "success") {
+							let html = ""
+
+							for (let a = 0; a < response.ads.length; a++) {
+								const ad = response.ads[a]
+
+								let savedPathHtml = ""
+								if (ad.savedPaths != null) {
+									for (let a = 0; a < ad.savedPaths.length; a++) {
+										const parts = ad.savedPaths[a].split(".")
+										const extension = parts[parts.length - 1]
+										if (extension == "jpg" || extension == "jpeg" || extension == "png") {
+											savedPathHtml += '<img class="post-image" src="' + mainURL + "/" + ad.savedPaths[a] + '">'
+										} else if (extension == "mp4" || extension == "mov" || extension == "mkv") {
+											savedPathHtml += '<video class="post-video" style="height: 359px; width: 100%;" controls src="' + mainURL + "/" + ad.savedPaths[a] + '"></video>'
+										} else if (extension == "mp3" || extension == "m4a" || extension == "aac") {
+											savedPathHtml += '<audio class="post-audio" controls src="' + mainURL + "/" + ad.savedPaths[a] + '" id="audio-post-' + ad._id + '"></audio> <div id="waveform-post-' + ad._id + '"></div>'
+										}
+									}
+								}
+
+								html += `<tr>
+									<td><a href='` + mainURL + `/post/` + ad.post._id + `'>` + ad.post.caption + savedPathHtml + `</a></td>
+									<td>$` + ad.budget + `</td>
+									<td>` + ad.whereToShow + `</td>
+									<td>` + ad.status + `</td>
+									<td><a href='https://dashboard.stripe.com/test/payments/` + ad.paymentId + `' target='_blank'>` + ad.paymentId + `</a></td>
+									<td>` + new Date(ad.createdAt) + `</td>
+									<td>` + new Date(ad.endAt) + `</td>
+								</tr>`
+							}
+
+							document.getElementById("data").innerHTML = html
+						}
+					}
+
+					if (this.status == 500) {
+						console.log(this.responseText)
+					}
+				}
+			}
+
+			var formData = new FormData()
+			formData.append("accessToken", localStorage.getItem("accessToken"))
+			ajax.send(formData)
+		}
+	</script>
+
+<%- include ("includes/footer") %>

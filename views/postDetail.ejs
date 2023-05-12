@@ -1,0 +1,139 @@
+<%- include ("includes/header") %>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-3">
+							<%- include ("includes/left-sidebar") %>
+						</div>
+
+						<div class="col-md-6">
+
+							<div class="central-meta">
+                                <div class="central-meta item">
+                                    <div class="user-post">
+                                        <div class="friend-info">
+
+                                            <figure>
+                                                <img src="<%= mainURL + "/" + post.user.profileImage %>" style="width: 60px; height: 60px; object-fit: cover;" onerror="this.src = '/public/img/default_profile.jpg';">
+                                            </figure>
+
+                                            <div class="friend-name">
+                                                <ins>
+                                                    <% if (post.type == "post") { %>
+                                                        <a href="<%= mainURL + '/user/' + post.user.username %>">
+                                                            <%= post.user.name %>
+                                                        </a>
+                                                    <% } else if (post.type == "group_post") { %>
+                                                        <a href="<%= mainURL + '/group/' + post.user._id %>">
+                                                            <%= post.user.name %>
+                                                        </a>
+                                                    <% } else if (post.type == "page_post") { %>
+                                                        <a href="<%= mainURL + '/page/' + post.user._id %>">
+                                                            <%= post.user.name %>
+                                                        </a>
+                                                    <% } else {  %>
+                                                        <%= post.user.name %>
+                                                    <% } %>
+                                                </ins>
+
+                                                <%
+                                                    var createdAt = new Date(post.createdAt);
+                                                    var date = createdAt.getDate() + "";
+                                                    date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+                                                %>
+
+                                                <span>Published: <%= date %></span>
+
+                                                <%
+                                                    if (post.isBanned)
+                                                    {
+                                                %>
+                                                    <div class="pull-right text-danger">
+                                                        Banned because '<%= post.reasonToBan %>'
+                                                    </div>
+                                                <%
+                                                    }
+                                                %>
+                                            </div>
+
+                                            <div class="post-meta">
+
+                                                <div class="description">
+                                                    <p>
+                                                        <%= post.caption %>
+                                                    </p>
+                                                </div>
+
+                                                <% if (post.image != "") { %>
+                                                    <img src="<%= mainURL + '/' + post.image %>">
+                                                <% } %>
+
+                                                <% if (post.video != "") { %>
+                                                    <video style="height: 359px; width: 100%;" controls src="<%= mainURL + '/' + post.video %>"></video>
+                                                <% } %>
+
+                                                <% if (post.audio && post.audio != "") { %>
+                                                    <audio controls src="<%= mainURL + '/' + post.audio %>"></audio>
+                                                <% } %>
+
+                                                <% if (post.savedPaths != null) { %>
+                                                    <% for (let a = 0; a < post.savedPaths.length; a++) { %>
+                                                        <%
+                                                            const parts = post.savedPaths[a].split(".")
+                                                            const extension = parts[parts.length - 1]
+
+                                                            if (extension == "jpg" || extension == "jpeg" || extension == "png") {
+                                                        %>
+                                                                <img class="post-image" src="<%= mainURL + '/' + post.savedPaths[a] %>">
+                                                            <% } else if (extension == "mp4" || extension == "mov" || extension == "mkv") { %>
+                                                                <video class="post-video" style="height: 359px; width: 100%;" controls src="<%= mainURL + '/' + post.savedPaths[a] %>"></video>
+                                                            <% } else if (extension == "mp3" || extension == "m4a" || extension == "aac") { %>
+                                                                <audio class="post-audio" controls src="<%= mainURL + '/' + post.savedPaths[a] %>" id="audio-post-<%= post._id %>"></audio>
+                                                                <div id="waveform-post-<%= post._id %>"></div>
+                                                            <% } %>
+                                                    <% } %>
+                                                <% } %>
+
+                                                <div id="post-likes-section"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id='post-comments-<%= post._id %>'></div>
+
+                                    </div>
+                                </div>
+							</div>
+
+						</div>
+
+                        <div class="col-md-3">
+							<%- include ("includes/right-sidebar") %>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<input type="hidden" id="post-data" value="<%= JSON.stringify(post); %>">
+
+<script>
+    var isPostDetail = true;
+
+    function showPostDetails() {
+        var post = document.getElementById("post-data").value;
+        post = JSON.parse(post);
+        document.getElementById("post-likes-section").innerHTML = createLikesSection(post);
+
+        document.getElementById("post-comments-" + post._id).innerHTML = createCommentsSection(post);
+    }
+</script>
+
+<%- include ("includes/footer") %>

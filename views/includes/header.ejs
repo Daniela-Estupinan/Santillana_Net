@@ -1,0 +1,201 @@
+<html>
+
+<head>
+	<title>Santillana Net</title>
+	<link rel="icon" type="image/png" href="/public/img/Logo.png" sizes="256x256"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script>
+    	window.onerror = function (error, file, line) {
+    		alert(JSON.stringify([error, file, line]))
+    	}
+    </script>
+
+	<link rel="stylesheet" href="/public/css/main.min.css" />
+	<link rel="stylesheet" href="/public/css/style.css" />
+	<link rel="stylesheet" href="/public/css/color.css" />
+	<link rel="stylesheet" href="/public/css/responsive.css" />
+	<link rel="stylesheet" href="/public/css/bootstrap.min.css" />
+
+	<link href="/public/wysiwyg/css/froala_editor.css" rel="stylesheet" />
+    <link href="/public/wysiwyg/css/plugins/image.min.css" rel="stylesheet" />
+    <link href="/public/wysiwyg/css/plugins/video.min.css" rel="stylesheet" />
+    <link href="/public/css/owl.carousel.min.css" rel="stylesheet" />
+    <link href="/public/css/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="/public/video-js/video-js.min.css" rel="stylesheet" />
+    <link href="/public/wavesurfer/videojs.wavesurfer.min.css" rel="stylesheet" />
+
+    <script src="/public/js/vue.min.js"></script>
+</head>
+
+<body>
+
+	<%
+		months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	%>
+
+	<style>
+		@media only screen and (max-width: 600px) {
+			.mh-head.first {
+				padding-top: 10px;
+			}
+			.topbar .ti-menu.main-menu {
+				display: none;
+			}
+		}
+
+		#main-menu-mobile li {
+			list-style: none;
+			margin-bottom: 10px;
+		}
+		#main-menu-mobile li a {
+			display: block;
+		}
+		#main-menu-mobile li .fa {
+			float: right;
+		}
+		#main-menu li .fa {
+			display: none;
+		}
+
+		.gridAttachments {
+			width: 200px;
+			float: right;
+			position: relative;
+		}
+		.gridAttachments img {
+			width: 200px;
+		    height: 200px;
+		    object-fit: cover;
+		}
+		.gridAttachments .overlayAttachment {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 100%;
+			width: 100%;
+			opacity: 1;
+			transition: .5s ease;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+		.gridAttachments .text {
+			color: white;
+			font-size: 40px;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			-webkit-transform: translate(-50%, -50%);
+			-ms-transform: translate(-50%, -50%);
+			transform: translate(-50%, -50%);
+			text-align: center;
+		}
+	</style>
+
+	<div class="theme-layout">
+
+		<div class="responsive-header">
+			<div class="mh-head first Sticky">
+				<span class="mh-btns-left">
+					<a class="" href="#menu"><i class="fa fa-align-justify"></i></a>
+				</span>
+				<span class="mh-text">
+					<a href="/" title="">
+						<!-- <img src="/public/images/logo.png" alt=""> -->
+						Santillana Net
+					</a>
+				</span>
+			</div>
+			<div class="mh-head second">
+				<!-- <form class="mh-form">
+					<input placeholder="search" />
+					<a href="#" class="fa fa-search"></a>
+				</form> -->
+
+				<form class="mh-form" onsubmit="return false;">
+					<input type="search" placeholder="Buscar Personas o Comunidades" onkeypress="keypressInBox();" />
+					<a href="javascript:void(0);" onclick="onSearch(this);" class="fa fa-search"></a>
+				</form>
+			</div>
+			<nav id="menu" class="res-menu">
+				<ul id="main-menu-mobile">
+					
+				</ul>
+			</nav>
+		</div><!-- responsive header -->
+
+		<div class="topbar stick">
+			<div class="logo">
+				<a href="/" style="font-size: 28px; bottom: 3px; position: relative;">
+					<!--<img src="/public/img/Logo.png">-->
+                    Santillana Net
+				</a>		
+			</div>
+
+			<div class="top-area">
+				<ul class="main-menu" id="main-menu">
+
+				</ul>
+
+				<ul class="setting-area" style="margin-top: 20px;">
+
+					<li>
+						<a href="#">
+							<i class="ti-search"></i>
+						</a>
+						<div class="searched">
+							<form onsubmit="return false;" class="form-search">
+								<input type="search" placeholder="Buscar Personas o Comunidades" onkeypress="keypressInBox();" >
+								<button data-ripple type="button" onclick="onSearch(this);">
+									<i class="ti-search"></i>
+								</button>
+							</form>
+
+							<script>
+								function keypressInBox() {
+								    var code = (event.keyCode ? event.keyCode : event.which);
+								    if (code == 13) { //Enter keycode                        
+								        event.preventDefault();
+
+								        window.location.href = "/search/" + event.target.value;
+								    }
+								}
+							</script>
+						</div>
+					</li>
+
+				</ul>
+
+			</div>
+		</div>
+
+
+
+		<%
+			mainURL = "http://localhost:3000";
+		%>
+
+		<script>
+			var mainURL = "http://localhost:3000";
+			var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+			function urlify(text) {
+			  var urlRegex = /(https?:\/\/[^\s]+)/g;
+			  return text.replace(urlRegex, function(url) {
+			  	return '<a href="' + url + '">' + url + '</a>';
+			  })
+			  // or alternatively
+			  // return text.replace(urlRegex, '<a href="$1">$1</a>')
+			}
+		</script>
+
+		<style>
+			#post-img-preview,
+			#post-video-preview {
+				height: 300px;
+				width: 300px;
+				object-fit: cover;
+			}
+		</style>

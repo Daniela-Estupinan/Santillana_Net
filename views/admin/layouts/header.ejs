@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Admin Panel | Santillana Net</title>
+    <link href="/public/admin/assets/vendor/fontawesome/css/fontawesome.min.css" rel="stylesheet">
+    <link href="/public/admin/assets/vendor/fontawesome/css/solid.min.css" rel="stylesheet">
+    <link href="/public/admin/assets/vendor/fontawesome/css/brands.min.css" rel="stylesheet">
+    <link href="/public/admin/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/public/admin/assets/css/master.css" rel="stylesheet">
+    <link href="/public/admin/assets/vendor/chartsjs/Chart.min.css" rel="stylesheet">
+    <link href="/public/admin/assets/vendor/flagiconcss/css/flag-icon.min.css" rel="stylesheet">
+
+    <link href="/public/wysiwyg/css/froala_editor.css" rel="stylesheet" />
+    <link href="/public/wysiwyg/css/plugins/image.min.css" rel="stylesheet" />
+    <link href="/public/wysiwyg/css/plugins/video.min.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <script>
+        var mainURL = "http://192.168.8.101:3000";
+
+        var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    </script>
+
+    <%
+        mainURL = "http://192.168.8.101:3000";
+
+		months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    %>
+
+    <div class="wrapper">
+        <nav id="sidebar" class="active1">
+            <div class="sidebar-header text-center" style="color: black; font-size: 20px;">
+                <!-- <img src="assets/img/bootstraper-logo.png" alt="bootraper logo" class="app-logo"> -->
+                <a href="<%= mainURL %>">
+                    Santillana Net
+                </a>
+            </div>
+            <ul class="list-unstyled components text-secondary">
+                <li>
+                    <a href="<%= mainURL %>/admin" id="link-dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                </li>
+
+                <li>
+                    <a href="<%= mainURL %>/admin/users" id="link-users"><i class="fas fa-user-friends"></i>Users</a>
+                </li>
+
+                <li>
+                    <a href="<%= mainURL %>/admin/posts" id="link-posts"><i class="fas fa-table"></i>Posts</a>
+                </li>
+
+                <li>
+                    <a href="<%= mainURL %>/admin/tickets" id="link-tickets"><i class="fas fa-info"></i>Customer support</a>
+                </li>
+            </ul>
+        </nav>
+        <div id="body" class="active1">
+            <nav class="navbar navbar-expand-lg navbar-white bg-white">
+                <button type="button" id="sidebarCollapse" class="btn btn-light"><i class="fas fa-bars"></i><span></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item dropdown">
+                            <div class="nav-dropdown">
+                                <a href="" class="nav-item nav-link dropdown-toggle text-secondary" data-toggle="dropdown"><i class="fas fa-user"></i> <span id="admin-name">Administrador</span> <i style="font-size: .8em;" class="fas fa-caret-down"></i></a>
+                                <div class="dropdown-menu dropdown-menu-right nav-link-menu">
+                                    <ul class="nav-list">
+                                        
+                                        <!-- <li><a href="" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
+                                        <div class="dropdown-divider"></div> -->
+
+                                        <li><a href="javascript:void(0);" class="dropdown-item" onclick="return doLogout();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="content">

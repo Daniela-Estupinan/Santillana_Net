@@ -1,0 +1,195 @@
+<%- include ("includes/header") %>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+
+			<div class="row" id="storiesApp" style="margin-bottom: 20px; margin-left: 20px; margin-right: 20px; position: relative;">
+				<div class="col-md-2">
+					<div id="add-story">
+						<img onerror="this.src = '/public/img/default_profile.jpg'" v-bind:src="profileImage" style="width: 200px;" />
+					<!--	<a v-bind:href="addURL" class="btn btn-primary btn-sm" style="position: absolute; left: 118px; bottom: 5px; color: white;">+ Add Story</a>
+					--></div>
+				</div>
+
+				<div class="col-md-10">
+					<div class="row stories">
+						<div class="col-md-2" v-for="(story, index) in stories" style="display: contents;">
+							<a v-bind:href="mainURL + '/viewStory/' + story.user._id">
+								<div class="story" style="margin-right: 10px; position: relative;">
+									<img v-bind:src="getProfileImage(story.user)" style="width: 100px;" onerror="this.src = '/public/img/default_profile.jpg'" />
+									<span v-text="story.user.name" style="position: absolute;
+									    bottom: 0px;
+									    left: 50%;
+									    transform: translateX(-50%);
+									    color: black;"></span>
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<script>
+				function showStories() {
+					let storiesApp = new Vue({
+						el: "#storiesApp",
+						data: {
+							addURL: mainURL + "/addStory",
+							profileImage: getProfileImage(user),
+							stories: []
+						},
+						methods: {
+							getData: function () {
+								const self = this;
+
+								var ajax = new XMLHttpRequest();
+								ajax.open("POST", "/getStories", true);
+
+								ajax.onreadystatechange = function () {
+									if (this.readyState == 4) {
+										if (this.status == 200) {
+											// console.log(this.responseText);
+											const response = JSON.parse(this.responseText);
+											// console.log(response)
+
+											self.stories = response.data;
+										}
+
+										if (this.status == 500) {
+											console.log(this.responseText);
+										}
+									}
+								};
+
+								var formData = new FormData();
+								formData.append("accessToken", localStorage.getItem("accessToken"));
+								ajax.send(formData);
+							}
+						},
+						mounted: function () {
+							this.getData();
+						}
+					});
+				}
+			</script>
+
+			<div class="row" id="page-contents">
+				<div class="col-md-3">
+					<%- include ("includes/left-sidebar") %>
+				</div>
+
+				<div class="col-md-6">
+					<div id="add-post-box"></div>
+					<div id="marquee"></div>
+					<script>
+					    /*(function () {
+					        const script = document.createElement("script");
+					        const s0 = document.getElementsByTagName("script")[0];
+					        script.async = true;
+					        script.src = "http://localhost:8888/apis/custom-marquee/script.js";
+					        script.setAttribute("crossorigin", "*");
+					        s0.parentNode.insertBefore(script, s0);
+
+					        script.onload = function () {
+					            at.loadMarquee("#marquee", "your text goes here", {
+					                duration: 10,
+					                direction: "rtl"
+					            });
+					        }
+					    })()*/
+					</script>
+
+					<div class="loadMore" id="newsfeed"></div>
+
+					<button class="btn-view btn-load-more" onclick="loadMore.fetch();">Load More</button>
+				</div>
+
+				<div class="col-md-3">
+					<%- include ("includes/right-sidebar") %>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	var isHomePage = true;
+
+	function doPost(form) {
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/addPost", true);
+
+		form.submit.querySelector("i").style.display = "";
+		form.submit.setAttribute("disabled", "disabled");
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4) {
+				if (this.status == 200) {
+					var response = JSON.parse(this.responseText);
+					// console.log(response);
+
+					form.submit.querySelector("i").style.display = "none";
+					form.submit.removeAttribute("disabled");
+
+					if (response.status == "success") {
+						/*document.getElementById("form-add-post").querySelector("input[name='image']").value = "";
+						document.getElementById("form-add-post").querySelector("input[name='video']").value = "";
+						document.getElementById("form-add-post").querySelector("textarea[name='caption']").value = "";
+
+						document.getElementById("post-img-preview").style.display = "none"
+						document.getElementById("post-video-preview").style.display = "none"
+						document.getElementById("post-audio-preview").style.display = "none"*/
+
+						var html = renderSinglePost(response.postObj);
+						document.getElementById("newsfeed").innerHTML = html + document.getElementById("newsfeed").innerHTML;
+
+						form.reset()
+
+						// re-initialize wavesurfer
+						renderWaveSurfers()
+
+					} else {
+						swal("Error", response.message, "error");
+					}
+				}
+
+				if (this.status == 500) {
+					console.log(this.responseText);
+				}
+			}
+		};
+
+		var formData = new FormData(form);
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		// formData.append("imgData", document.getElementById("post-img-preview").getAttribute("src"));
+		ajax.send(formData);
+
+		return false;
+	}
+
+	function showNewsfeed() {
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/getNewsfeed", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4) {
+				if (this.status == 200) {
+					var response = JSON.parse(this.responseText);
+					// console.log(response);
+					renderFeed(response);
+				}
+
+				if (this.status == 500) {
+					console.log(this.responseText);
+				}
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+	}
+</script>
+
+<%- include ("includes/footer") %>

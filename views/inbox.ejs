@@ -1,0 +1,492 @@
+<%- include ("includes/header") %>
+
+<style>
+	#chatting-area {
+		overflow-y: scroll !important;
+    	max-height: 100%;
+	}
+	.fa-trash {
+		cursor: pointer;
+	}
+</style>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-3">
+							<%- include ("includes/left-sidebar") %>
+						</div>
+
+						<div class="col-md-6">
+							<div class="central-meta">
+								<div class="messages">
+									<h5 class="f-title">
+										<i class="ti-bell"></i>
+										All Messages
+										<span class="more-options">
+											<i class="fa fa-ellipsis-h"></i>
+										</span>
+									</h5>
+
+									<div id="sponsoredLayout"></div>
+
+									<div class="message-box">
+										<ul class="peoples" id="friends"></ul>
+										<div class="peoples-mesg-box">
+
+											<div class="conversation-head" id="conversation-head"></div>
+
+											<ul class="chatting-area" id="chatting-area"></ul>
+
+											<div class="message-text-container">
+												<form method="post" onsubmit="sendMessage()" enctype="multipart/form-data" id="form-send-message">
+													<textarea name="message"></textarea>
+
+													<div class="attachments" style="display: flex; padding-right: 0px; padding-left: 0px; border: none;">
+														<ul>
+
+															<li>
+																<div id="preview-attached-images" style="display: flex;"></div>
+															</li>
+
+															<li>
+																<div id="preview-attached-videos" style="display: flex;"></div>
+															</li>
+
+															<li>
+																<i class="fa fa-image"></i>
+																<label class="fileContainer">
+																	<input type="file" name="images" multiple accept="image/*" onchange="previewAttachedImages(this);" />
+																</label>
+															</li>
+
+															<li>
+																<i class="fa fa-video-camera"></i>
+																<label class="fileContainer">
+																	<input type="file" name="videos" multiple accept="video/*" onchange="previewAttachedVideos(this);" />
+																</label>
+															</li>
+														</ul>
+													</div>
+
+													<button title="send" name="submit" type="submit" style="top: 80%;">
+														<i class="fa fa-paper-plane"></i>
+													</button>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<div class="modal" id="viewImageModal" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="modal-dialog" style="max-width: 1000px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Attachment</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body"></div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.attached-image {
+		width: 100px;
+	    height: 100px;
+	    object-fit: cover;
+	    margin-right: 5px;
+	}
+</style>
+
+<script>
+	var isFriends = true;
+	var selectedFriend = null;
+	var friends = [];
+
+	var attachedImages = [];
+	var attachedVideos = [];
+
+	function fetchAds() {
+		var ajax = new XMLHttpRequest()
+		ajax.open("POST", "/getRandomAd", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4) {
+				if (this.status == 200) {
+					// console.log(this.responseText);
+					var response = JSON.parse(this.responseText)
+					// console.log(response)
+
+					if (response.status == "success") {
+
+						let html = ""
+						for (let a = 0; a < response.posts.length; a++) {
+							const post = response.posts[a]
+
+							html += `<p>` + post.caption + `
+								<span class="pull-right">Sponsored</span>
+							</p>`
+
+							if (post.savedPaths.length > 0) {
+								html += `<img src="` + post.savedPaths[a] + `" /> <br /><br />`
+							}
+							html += "<hr />"
+						}
+
+						document.getElementById("sponsoredLayout").innerHTML = html
+					} else {
+						swal("Error", response.message, "error");
+					}
+				}
+
+				if (this.status == 500) {
+					console.log(this.responseText);
+				}
+			}
+		};
+
+		var formData = new FormData()
+		ajax.send(formData)
+	}
+
+	fetchAds()
+
+	function previewAttachedImages(self) {
+		document.getElementById("preview-attached-images").innerHTML = "";
+
+		attachedImages = [];
+
+        for (var a = 0; a < self.files.length; a++) {
+        	var file = self.files[a];
+            var fileReader = new FileReader();
+ 
+            fileReader.onload = function (event) {
+                document.getElementById("preview-attached-images").innerHTML += `<img src='` + event.target.result + `' class='attached-image' />`;
+
+                attachedImages.push(event.target.result);
+            };
+ 
+            fileReader.readAsDataURL(file);
+        }
+	}
+
+	function previewAttachedVideos(self) {
+		document.getElementById("preview-attached-videos").innerHTML = "";
+
+		attachedVideos = [];
+
+        for (var a = 0; a < self.files.length; a++) {
+        	var file = self.files[a];
+            var fileReader = new FileReader();
+ 
+            fileReader.onload = function (event) {
+                document.getElementById("preview-attached-videos").innerHTML += `<video controls style="margin-bottom: 10px; width: 100%;" src='` + event.target.result + `'></video>`;
+
+                attachedVideos.push(event.target.result);
+            };
+ 
+            fileReader.readAsDataURL(file);
+        }
+	}
+
+	let publicKey = ""
+	let privateKey = ""
+
+	function sendMessage() {
+		event.preventDefault()
+
+		if (selectedFriend == null) {
+			return false;
+		}
+
+		if (publicKey == "" || privateKey == "") {
+			const formData = new FormData()
+			formData.append("user", selectedFriend._id)
+			formData.append("accessToken", localStorage.getItem("accessToken"))
+
+			const ajax = new XMLHttpRequest()
+			ajax.open("POST", "/getKeys", true)
+			ajax.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+				    // const response = JSON.parse(this.responseText)
+				    // privateKey = JSON.parse(response[0])
+				    // publicKey = JSON.parse(response[1])
+				    // doSendMessage()
+				}
+			}
+
+			ajax.send(formData)
+		} else {
+			doSendMessage()
+		}
+	}
+
+	function doSendMessage() {
+		const form = document.getElementById("form-send-message")
+		var message = form.message.value
+
+		var originalClass = form.submit.querySelector("i").className;
+		form.submit.querySelector("i").className = "fa fa-spinner fa-spin";
+		form.submit.setAttribute("disabled", "disabled");
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/sendMessage", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4) {
+				if (this.status == 200) {
+					// console.log(this.responseText);
+					var response = JSON.parse(this.responseText);
+					// console.log(response);
+
+					form.submit.querySelector("i").className = originalClass;
+					form.submit.removeAttribute("disabled");
+
+					if (response.status == "success") {
+						var html = renderMessage(response.data);
+
+						document.getElementById("chatting-area").innerHTML += html;
+						document.body.scrollTop = document.getElementById("chatting-area").scrollHeight;
+
+						document.getElementById("preview-attached-images").innerHTML = "";
+						document.getElementById("preview-attached-videos").innerHTML = "";
+
+						form.reset();
+					} else {
+						swal("Error", response.message, "error");
+					}
+				}
+
+				if (this.status == 500) {
+					console.log(this.responseText);
+				}
+			}
+		};
+
+		var formData = new FormData(form);
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", selectedFriend._id);
+		formData.append("attachedImages", JSON.stringify(attachedImages));
+		formData.append("attachedVideos", JSON.stringify(attachedVideos));
+		ajax.send(formData) 
+	}
+
+	function onclick_viewImage(self) {
+		var html = "<img src='" + self.getAttribute("src") + "' />";
+		document.querySelector("#viewImageModal .modal-body").innerHTML = html;
+		$("#viewImageModal").modal("show");
+	}
+
+	function renderMessage(message) {
+		var className = "";
+		if (message.from == window.user._id) {
+			className = "me";
+		} else {
+			className = "you";
+		}
+
+		var html = "";
+		html += '<li data-message-id="' + message._id + '" class="' + className + '">';
+			
+			if (message.is_deleted) {
+				html += '<p class="text-muted"><i>This message has been deleted.</i></p>';
+			} else {
+				html += '<p>';
+					html += message.message;
+					if (message.from == window.user._id) {
+						html += "<i class='fa fa-trash pull-right' data-id='" + message._id + "' onclick='deleteMessage(this);'></i>";
+					}
+				html += '</p>';
+			}
+			
+			for (var a = 0; a < message.images.length; a++) {
+				html += `<img src='` + mainURL + `/` + message.images[a] + `' class='attached-image' onclick='onclick_viewImage(this);' />`;
+			}
+
+			for (var a = 0; a < message.videos.length; a++) {
+				html += `<video src='` + mainURL + `/` + message.videos[a] + `' controls style='    width: 100%;'></video>`;
+			}
+
+		html += '</li>';
+		return html;
+	}
+
+	function deleteMessage(self) {
+		swal({
+			title: "Delete message",
+			text: "Are you sure you want to delete this message ?",
+			icon: "warning",
+			buttons: true,
+			dangerMode: true,
+		})
+		.then((willDelete) => {
+			if (willDelete) {
+				var _id = self.getAttribute("data-id");
+				self.className = "fa fa-spinner fa-spin pull-right";
+
+				var ajax = new XMLHttpRequest();
+				ajax.open("POST", "/deleteMessage", true);
+
+				ajax.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						var response = JSON.parse(this.responseText);
+						self.className = "fa fa-trash pull-right";
+						self.parentElement.className = "text-muted";
+						self.parentElement.innerHTML = "<i>This message has been deleted</i>";
+					}
+				};
+
+				var formData = new FormData();
+				formData.append("accessToken", localStorage.getItem("accessToken"));
+				formData.append("_id", _id);
+				ajax.send(formData);
+			}
+		});
+	}
+
+	function showFriends() {
+		var html = "";
+		// friends = window.user.friends;
+        friends = [];
+
+        // Adding friends who has unread messages
+        for (var a = 0; a < window.user.friends.length; a++) {
+            for (var b = 0; b < window.user.friends[a].inbox.length; b++) {
+                if (window.user.friends[a].inbox[b].is_read) {
+                    friends.push(window.user.friends[a]);
+                    break;
+                }
+            }
+        }
+
+        // Adding friends who has read messages
+        for (var a = 0; a < window.user.friends.length; a++) {
+            var flag = false;
+            for (var b = 0; b < friends.length; b++) {
+                if (friends[b]._id.toString() == window.user.friends[a]._id.toString()) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                friends.push(window.user.friends[a]);
+            }
+        }
+
+		for (var a = 0; a < friends.length; a++) {
+			var data = friends[a];
+
+			if (data.status == "Pending") {
+				continue;
+			}
+
+			html += '<li data-id="' + data._id + '" onclick="friendSelected(this);">';
+
+				html += '<figure>';
+					html += '<img src="' + mainURL + '/' + data.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+				html += '</figure>';
+
+				html += '<div class="people-name">';
+					html += '<span>' + data.name + '</span>';
+				html += '</div>';
+
+			html += '</li>';
+		}
+		document.getElementById("friends").innerHTML = html;
+
+		connectSocket();
+	}
+
+	function friendSelected(self) {
+		var _id = self.getAttribute("data-id");
+
+		var index = friends.findIndex(function(friend) {
+			return friend._id == _id
+		});
+		selectedFriend = friends[index];
+
+		var html = "";
+		html += '<figure>';
+			html += '<img src="' + mainURL + '/' + selectedFriend.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+		html += '</figure>';
+		html += '<span>' + selectedFriend.name + '</span>';
+		document.getElementById("conversation-head").innerHTML = html;
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/getFriendsChat", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+
+				var html = "";
+				for (var a = 0; a < response.data.length; a++) {
+					var inbox = response.data[a];
+
+					html += renderMessage(inbox);
+				}
+				document.getElementById("chatting-area").innerHTML = html;
+
+				document.body.scrollTop = document.getElementById("chatting-area").scrollHeight;
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", _id);
+		ajax.send(formData);
+	}
+
+	function connectSocket() {
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/connectSocket", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var response = JSON.parse(this.responseText);
+
+				socketIO.on("messageReceived", function (messageObj) {
+					if (selectedFriend != null && messageObj.from == selectedFriend._id) {
+						var html = "";
+
+						var html = renderMessage(messageObj);
+						document.getElementById("chatting-area").innerHTML += html;
+
+						var objDiv = document.getElementById("chatting-area");
+						objDiv.scrollTop = objDiv.scrollHeight;
+					}
+				});
+
+				socketIO.on("messageDeleted", function (data) {
+					if (document.querySelector("li[data-message-id='" + data._id + "']") != null) {
+						document.querySelector("li[data-message-id='" + data._id + "']").innerHTML = "<p class='text-muted'><i>This message has been deleted.</i></p>";
+					};
+				});
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+	}
+</script>
+
+<%- include ("includes/footer") %>

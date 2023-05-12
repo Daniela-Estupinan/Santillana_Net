@@ -1,0 +1,244 @@
+<%- include ("../includes/header") %>
+
+<style>
+    .ticket-info {
+        margin-left: 0px;
+        width: 95%;
+    }
+    .open {
+        background-color: lightseagreen !important;
+    }
+    .closed {
+        background-color: lightcoral !important;
+    }
+	.ticket-status {
+        width: auto !important;
+        color: white !important;
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 16px;
+        float: right;
+        font-family: Tahoma;
+        padding-bottom: 8px;
+        position: relative;
+        bottom: 4px;
+        margin-left: 10px;
+	}
+    #comments li {
+        border-radius: 5px;
+    }
+</style>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-3">
+							<%- include ("../includes/left-sidebar") %>
+						</div>
+
+						<div class="col-md-9">
+
+                            <aside class="sidebar ticket-info">
+                                <div class="widget">
+                                    <h4 class="widget-title">
+                                        Description
+
+                                        <span id="ticket-status"></span>
+                                    </h4>
+
+                                    <div style="padding: 25px;">
+
+                                        <p id="ticket-description"></p>
+
+                                        <img id="image" onerror="this.src = '/public/img/default_cover.jpg';" style="width: 100%; margin-top: 20px;" />
+
+                                        <video id="video" poster="/public/img/default_cover.jpg" style="width: 100%; margin-top: 20px;" controls></video>
+
+                                        <div class="row" id="add-comment-section">
+
+                                            <div class="col-md-12">
+
+                                                <hr />
+                                                <h3>Add Comment</h3>
+
+                                                <script>
+                                                    var editor = null;
+                                                    window.addEventListener("load", function () {
+                                                        editor = new FroalaEditor('#example');
+                                                    });
+
+                                                    function postComment(form) {
+                                                        if (editor == null) {
+                                                            swal("Error", "Please wait for the page to be fully loaded", "error");
+                                                            return false;
+                                                        }
+                                                        form.comment.value = editor.html.get(true);
+
+                                                        var ajax = new XMLHttpRequest();
+                                                        ajax.open("POST", form.getAttribute("action"), true);
+
+                                                        ajax.onreadystatechange = function() {
+                                                            if (this.readyState == 4 && this.status == 200) {
+                                                                var response = JSON.parse(this.responseText);
+                                                                
+                                                                // console.log(response);
+
+                                                                if (response.status == "error") {
+                                                                    swal("Error", response.message, "error");
+                                                                } else if (response.status == "success") {
+                                                                    var html = renderSingleComment(response.comment);
+                                                                    $(html).hide().prependTo("#comments").fadeIn(1000);
+                                                                }
+                                                            }
+                                                        };
+
+                                                        var formData = new FormData(form);
+                                                        formData.append("accessToken", localStorage.getItem("accessToken"));
+                                                        ajax.send(formData);
+                                                        
+                                                        return false;
+                                                    }
+                                                </script>
+
+                                                <form method="POST" action="<%= mainURL + '/tickets/add-comment' %>" id="form-ticket-comment" enctype="multipart/form-data" style="margin-top: 20px;" onsubmit="return postComment(this);">
+
+                                                    <div id="example"></div>
+
+                                                    <input type="hidden" name="_id" value="<%= _id %>" />
+                                                    <input type="hidden" name="comment" />
+
+                                                    <button type="submit" class="btn btn-success" name="submit" style="margin-top: 20px;">
+                                                        Save
+                                                    </button>
+                                                </form>
+
+                                                <hr />
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <ul class="list-group" id="comments">
+                                                    <!--<li class="list-group-item">
+                                                        <div class="row">
+                                                            <div class="col-xs-2 col-md-1">
+                                                                <img src="http://placehold.it/80" class="img-circle img-responsive" style="border-radius: 50%;" alt="" /></div>
+                                                            <div class="col-xs-10 col-md-11">
+                                                                <div>
+                                                                    <div class="mic-info">
+                                                                        By: <a href="#">Bhaumik Patel</a> on 2 Aug 2013
+                                                                    </div>
+                                                                </div>
+                                                                <div class="comment-text">
+                                                                    Awesome design
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>-->
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aside>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<input type="hidden" id="_id" value="<%= _id %>" />
+
+<script>
+	var isTicketDetail = true;
+
+	function getTicketDetail() {
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/getTicket", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+                console.log(response);
+
+                if (response.status == "error") {
+                    swal("Error", response.message, "error");
+                } else if (response.status == "success") {
+                    var data = response.data;
+                    document.getElementById("ticket-description").innerHTML = data.description;
+
+                    if (data.image == "") {
+                        document.getElementById("image").remove();
+                    } else {
+                        document.getElementById("image").setAttribute("src", mainURL + "/" + data.image);
+                    }
+
+                    if (data.video == "") {
+                        document.getElementById("video").remove();
+                    } else {
+                        document.getElementById("video").setAttribute("src", mainURL + "/" + data.video);
+                    }
+
+                    // show all comments
+                    var html = "";
+                    data.comments = data.comments.reverse();
+                    for (var a = 0; a < data.comments.length; a++) {
+                        html += renderSingleComment(data.comments[a]);
+                    }
+                    document.getElementById("comments").innerHTML = html;
+
+                    // remove add comment section is the ticket is closed
+                    if (data.status == "closed") {
+                        document.getElementById("add-comment-section").remove();
+                    }
+
+                    // show status of ticket
+                    document.getElementById("ticket-status").className = "ticket-status " + data.status;
+                    document.getElementById("ticket-status").innerHTML = data.status;
+                }
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", document.getElementById("_id").value);
+		ajax.send(formData);
+	}
+
+    function renderSingleComment(comment) {
+        var html = ``;
+
+        var createdAt = new Date(comment.createdAt);
+        var date = createdAt.getDate() + "";
+        date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+
+        html += `<li class="list-group-item">
+            <div class="row">
+                <div class="col-md-2">
+                    <img src="` + mainURL + `/` + comment.user.profileImage + `" class="img-circle img-responsive" style="border-radius: 50%; width: 80px; height: 80px; object-fit: cover;" onerror="this.src = '/public/img/default_cover.jpg';" /></div>
+                <div class="col-md-10">
+                    <div>
+                        <div class="mic-info">
+                            By: <a href="#">` + comment.user.name + `</a> on ` + date + `
+                        </div>
+                    </div>
+                    <div class="comment-text">
+                        ` + comment.comment + `
+                    </div>
+                </div>
+            </div>
+        </li>`;
+
+        return html;
+    }
+
+</script>
+
+<%- include ("../includes/footer") %>

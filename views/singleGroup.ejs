@@ -1,0 +1,208 @@
+<%- include ("includes/header") %>
+
+<section>
+	<div class="feature-photo">
+		<figure>
+			<img id="group-cover-photo" style="height: 300px; " onerror="this.src = '/public/img/default_cover.jpg';">
+		</figure>
+
+		<div class="add-btn">
+			<span id="group-members"></span>
+		</div>
+
+		<div class="container-fluid">
+			<div class="row merged">
+
+				<div class="col-md-9">
+					<div class="timeline-info">
+						<ul>
+							<li class="admin-name" style="padding: 25px;">
+								<h5 id="group-name"></h5>
+								<p>Created by: <span id="group-admin"></span></p>
+							</li>
+
+							<li class="pull-right" style="display: flex;">
+								<a href="/edit-group/" id="link-edit-group" class="btn" style="position: relative; top: 30px;">Edit</a>
+
+								<form method="POST" action="/deleteGroup" id="form-delete-group" style="position: relative; top: 28px;" onsubmit="return deleteGroup(this);">
+									<input type="hidden" name="_id" required />
+									<button type="submit" class="btn btn-danger btn-sm">Delete</button>
+								</form>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-3">
+							<%- include ("includes/left-sidebar") %>
+						</div>
+
+						<div class="col-md-6">
+
+							<div id="add-post-box"></div>
+
+							<div class="loadMore" id="newsfeed">
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<input type="hidden" id="_id" value="<%= _id %>">
+
+<script>
+	var isGroupDetail = true;
+
+	function deleteGroup(form) {
+
+		swal({
+			title: "Delete group",
+			text: "Are you sure you want to delete this group ?",
+			icon: "warning",
+			buttons: true,
+			dangerMode: true,
+		})
+		.then((willDelete) => {
+			if (willDelete) {
+				var ajax = new XMLHttpRequest();
+				ajax.open("POST", "/deleteGroup", true);
+
+				ajax.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						var response = JSON.parse(this.responseText);
+						
+						if (response.status == "error") {
+							swal("Error", response.message, "error");
+						} else if (response.status == "success") {
+							swal("Success", response.message, "success")
+								.then(function (value) {
+									window.location.href = "/groups";
+								});
+						}
+					}
+				};
+
+				var formData = new FormData();
+				formData.append("accessToken", localStorage.getItem("accessToken"));
+				formData.append("_id", form._id.value);
+				ajax.send(formData);
+			}
+		});
+
+		return false;
+	}
+
+	function getGroupDetail() {
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/getGroupDetail", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+
+				document.getElementById("group-cover-photo").setAttribute("src", mainURL + "/" + response.group.coverPhoto);
+				document.getElementById("group-members").innerHTML = response.group.members.length + " members";
+				document.getElementById("group-name").innerHTML = response.group.name;
+
+				var isMember = false;
+				for (var a = 0; a < response.group.members.length; a++) {
+					var member = response.group.members[a];
+
+					if (member._id.toString() == user._id.toString()) {
+						isMember = true;
+						break;
+					}
+				}
+
+				let isAdmin = false
+				// show edit & delete button to only creator of this group
+				if (response.group.user._id.toString() == window.user._id.toString()) {
+					document.getElementById("link-edit-group").setAttribute("href", "/edit-group/" + response.group._id);
+					document.getElementById("form-delete-group")._id.value = response.group._id;
+
+					isAdmin = true
+				} else {
+					document.getElementById("link-edit-group").style.display = "none";
+					document.getElementById("form-delete-group").style.display = "none";
+				}
+
+				if (isMember || isAdmin) {
+					showAddPost()
+				}
+
+				renderFeed(response);
+
+				let adminHtml = ""
+				adminHtml += `<a href="` + mainURL + `/search/` + response.group.user.name + `#people">` + response.group.user.name + `</a>`
+				document.getElementById("group-admin").innerHTML = adminHtml
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", document.getElementById("_id").value);
+		ajax.send(formData);
+	}
+
+	function doPost(form) {
+		event.preventDefault()
+		
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/addPost", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				} else {
+					swal("Success", response.message, "success");
+				}
+
+				if (response.status == "success") {
+					// document.getElementById("form-add-post").querySelector("input[name='image']").value = "";
+					// document.getElementById("form-add-post").querySelector("input[name='video']").value = "";
+					document.getElementById("form-add-post").querySelector("textarea[name='caption']").value = "";
+
+					// document.getElementById("post-img-preview").style.display = "none";
+					// document.getElementById("post-video-preview").style.display = "none";
+
+					form.reset()
+
+					document.getElementById("newsfeed").innerHTML = ""
+					getGroupDetail();
+				}
+			}
+		};
+
+		form.type.value = "group_post";
+
+		var formData = new FormData(form);
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", document.getElementById("_id").value);
+		// formData.append("imgData", document.getElementById("post-img-preview").getAttribute("src"));
+		ajax.send(formData);
+
+		return false;
+	}
+
+</script>
+
+<%- include ("includes/footer") %>

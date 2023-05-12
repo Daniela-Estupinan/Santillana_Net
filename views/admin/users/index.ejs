@@ -1,0 +1,299 @@
+<%- include ("../layouts/header") %>
+
+<div class="content">
+    <div class="container">
+        <div class="page-title">
+            <h3>Users
+                <!-- <a href="<%= mainURL %>/admin/users/add" class="btn btn-sm btn-outline-primary float-right"><i class="fas fa-user-shield"></i> Add</a> -->
+            </h3>
+        </div>
+        <div class="box box-primary">
+            <div class="box-body">
+                <table width="100%" class="table table-bordered" id="dataTables-users">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- <tr>
+                            <td>Philip Chaney</td>
+                            <td>philip.chaney@gmail.com</td>
+                            <td>Manager</td>
+                            <td>Admin</td>
+                            <td>Active</td>
+                            <td class="text-right">
+                                <a href="" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
+                                <a href="" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></a>
+                            </td>
+                        </tr> -->
+                    </tbody>
+                </table>
+
+                <nav>
+                    <ul id="pagination" class="pagination"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var isUsersPage = true;
+    const limit = 10;
+
+    function getUsers(startFrom = 0) {
+        var skip = 0;
+
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST", mainURL + "/admin/users/fetch", true);
+
+        ajax.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    // console.log(this.responseText);
+                    var response = JSON.parse(this.responseText);
+                    // console.log(response);
+
+                    if (response.status == "success") {
+                        var html = "";
+                        for (var a = 0; a < response.data.length; a++) {
+                            var user = response.data[a];
+
+                            var banVisible = user.isBanned ? "style='display: none';" : "";
+                            var unbanVisible = user.isBanned ? "" : "style='display: none';";
+
+                            var banNode = "";
+                            banNode += `<form method="POST" onsubmit="return unbanUser(this);" ` + unbanVisible + ` id="form-unban-user-` + user._id + `">
+                                <input type="hidden" name="_id" value="` + user._id + `" />
+                                <button type="submit" name="submit" class="btn btn-success" style="margin-right: 10px;">Unban</button>
+                            </form>
+
+                            <form method="POST" onsubmit="return banUser(this);" ` + banVisible + `
+                                id="form-ban-user-` + user._id + `">
+                                <input type="hidden" name="_id" value="` + user._id + `" />
+                                <button type="submit" name="submit" class="btn btn-info" style="margin-right: 10px;">Ban</button>
+                            </form>`;
+
+                            html += `<tr>
+                                <td>` + user._id + `</td>
+                                <td><img src='` + mainURL + `/` + user.profileImage + `' class='img-fluid' onerror="this.src = '/public/img/default_cover.jpg';" /></td>
+                                <td>` + user.name + `</td>
+                                <td>` + user.email + `</td>
+                                <td>` + user.country + ` ` + user.city + `</td>
+                                <td>` + (user.isVerified ? `Verified` : `Not verified`) + `</td>
+                                <td>
+                                    <div style="display: flex;">
+                                        ` + banNode + `
+
+                                        <form method="POST" onsubmit="return deleteUser(this);">
+                                            <input type="hidden" name="_id" value="` + user._id + `" />
+                                            <button type="submit" name="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        }
+                        document.querySelector("#dataTables-users tbody").innerHTML = html;
+
+                        var html = "";
+                        for (var a = 0; a < response.totalPages; a++) {
+                            if (a > 0) {
+                                skip += limit;
+                            }
+
+                            html += `<li class="page-item ` + (skip == startFrom ? "active" : "") + `">
+                                <a class="page-link" href="javascript:void(0);" onclick="getUsers(` + skip + `);">
+                                    ` + (a + 1) + `
+                                </a>
+                            </li>`;
+                        }
+                        document.getElementById("pagination").innerHTML = html;
+                    } else {
+                        swal("Error", response.message, "error");
+                    }
+                }
+
+                if (this.status == 500) {
+                    console.log(this.responseText);
+                }
+            }
+        };
+
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("adminAccessToken"));
+        formData.append("skip", startFrom)
+        formData.append("limit", limit);
+        ajax.send(formData);
+    }
+
+    function unbanUser(form) {
+
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure you want to unban this user ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                var _id = form._id.value;
+                var originalHtml = form.submit.innerHTML;
+
+                form.submit.innerHTML = "Loading...";
+                form.submit.setAttribute("disabled", "disabled");
+
+                var ajax = new XMLHttpRequest();
+                ajax.open("POST", mainURL + "/admin/users/unban", true);
+
+                ajax.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+                            // console.log(this.responseText);
+                            var response = JSON.parse(this.responseText);
+                            // console.log(response);
+
+                            form.submit.innerHTML = originalHtml;
+                            form.submit.removeAttribute("disabled");
+
+                            if (response.status == "success") {
+                                form.style.display = "none";
+                                document.getElementById("form-ban-user-" + form._id.value).style.display = "";
+                                swal("Success", response.message, "success");
+                            } else {
+                                swal("Error", response.message, "error");
+                            }
+                        }
+
+                        if (this.status == 500) {
+                            console.log(this.responseText);
+                        }
+                    }
+                };
+
+                var formData = new FormData(form);
+                formData.append("accessToken", localStorage.getItem("adminAccessToken"));
+                ajax.send(formData);
+            }
+        });
+
+        return false;
+    }
+
+    function banUser(form) {
+
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure you want to ban this user ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                var _id = form._id.value;
+                var originalHtml = form.submit.innerHTML;
+
+                form.submit.innerHTML = "Loading...";
+                form.submit.setAttribute("disabled", "disabled");
+
+                var ajax = new XMLHttpRequest();
+                ajax.open("POST", mainURL + "/admin/users/ban", true);
+
+                ajax.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+                            // console.log(this.responseText);
+                            var response = JSON.parse(this.responseText);
+                            // console.log(response);
+
+                            form.submit.innerHTML = originalHtml;
+                            form.submit.removeAttribute("disabled");
+
+                            if (response.status == "success") {
+                                form.style.display = "none";
+                                document.getElementById("form-unban-user-" + form._id.value).style.display = "";
+                                swal("Success", response.message, "success");
+                            } else {
+                                swal("Error", response.message, "error");
+                            }
+                        }
+
+                        if (this.status == 500) {
+                            console.log(this.responseText);
+                            swal("Error", this.responseText, "error");
+                        }
+                    }
+                };
+
+                var formData = new FormData(form);
+                formData.append("accessToken", localStorage.getItem("adminAccessToken"));
+                ajax.send(formData);
+            }
+        });
+
+        return false;
+    }
+
+    function deleteUser(form) {
+
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure you want to delete this user ?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                var _id = form._id.value;
+                var originalHtml = form.submit.innerHTML;
+
+                form.submit.innerHTML = "Loading...";
+                form.submit.setAttribute("disabled", "disabled");
+
+                var ajax = new XMLHttpRequest();
+                ajax.open("POST", mainURL + "/admin/users/delete", true);
+
+                ajax.onreadystatechange = function () {
+                    if (this.readyState == 4) {
+                        if (this.status == 200) {
+                            // console.log(this.responseText);
+                            var response = JSON.parse(this.responseText);
+                            // console.log(response);
+
+                            form.submit.innerHTML = originalHtml;
+                            form.submit.removeAttribute("disabled");
+
+                            if (response.status == "success") {
+                                form.parentElement.parentElement.parentElement.remove();
+                            } else {
+                                swal("Error", response.message, "error");
+                            }
+                        }
+
+                        if (this.status == 500) {
+                            console.log(this.responseText);
+                            swal("Error", this.responseText, "error");
+                        }
+                    }
+                };
+
+                var formData = new FormData(form);
+                formData.append("accessToken", localStorage.getItem("adminAccessToken"));
+                ajax.send(formData);
+            }
+        });
+
+        return false;
+    }
+</script>
+
+<%- include ("../layouts/footer") %>

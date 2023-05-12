@@ -1,0 +1,17 @@
+<% if (typeof status !== "undefined") { %>
+    <div class="row">
+        <div class="col-md-12">
+            <% if (status == "success") { %>
+                <div class="alert alert-success">
+                    <%= message %>
+                </div>
+            <% } %>
+
+            <% if (status == "error") { %>
+                <div class="alert alert-danger">
+                    <%= message %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+<% } %>

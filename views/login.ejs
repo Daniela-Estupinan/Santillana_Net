@@ -1,0 +1,141 @@
+<html>
+<head>
+	<title>Santillana Net</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="/public/css/main.min.css">
+	<link rel="stylesheet" href="/public/css/style.css">
+	<link rel="stylesheet" href="/public/css/color.css">
+	<link rel="stylesheet" href="/public/css/responsive.css">
+
+</head>
+<body>
+	<div class="theme-layout">
+		<div class="container-fluid pdng0">
+			<div class="row merged">
+				<div class="offset-md-3 col-md-6">
+					<div class="login-reg-bg">
+						<div class="log-reg-area sign">
+							<h2 class="log-title">Login</h2>
+
+							<form onsubmit="return doLogin(this);">
+
+								<div class="form-group">
+									<input type="email" required name="email" id="email" />
+									<label class="control-label">Email</label><i class="mtrl-select"></i>
+								</div>
+
+								<div class="form-group">
+									<input type="password" required name="password" />
+									<label class="control-label">Password</label><i class="mtrl-select"></i>
+								</div>
+
+								<p>
+									<a href="/signup">Don't have an account ?</a>
+								</p>
+
+								<p>
+									<a href="/forgot-password">Forgot password ?</a>
+								</p>
+
+								<div class="submit-btns">
+									<button class="mtr-btn login" name="submit" type="submit"><span>Login</span></button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/public/swal/sweetalert.min.js"></script>
+
+	<script>
+		function doLogin(form) {
+			form.submit.setAttribute("disabled", "disabled");
+			form.submit.innerHTML = "<span>Loading...</span>";
+
+			var ajax = new XMLHttpRequest();
+			ajax.open("POST", "/login", true);
+
+			ajax.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					form.submit.removeAttribute("disabled");
+					form.submit.innerHTML = "<span>Login</span>";
+
+					var response = JSON.parse(this.responseText);
+
+					if (response.status == "success") {
+						var accessToken = response.accessToken;
+						localStorage.setItem("accessToken", accessToken);
+
+						if (response.hasKey) {
+							if (response.profileImage == "") {
+								window.location.href = "/updateProfile";
+							} else {
+								window.location.href = "/";
+							}
+						} else {
+							updateKeys()
+						}
+					} else {
+						swal("Error", response.message, "error");
+					}
+				}
+			};
+
+			ajax.send(new FormData(form));
+			return false;
+		}
+
+		async function updateKeys() {
+			const keyPair = await window.crypto.subtle.generateKey(
+				{
+					name: "ECDH",
+					namedCurve: "P-256",
+				},
+				true,
+				["deriveKey", "deriveBits"]
+			)
+
+			const publicKeyJwk = await window.crypto.subtle.exportKey(
+				"jwk",
+				keyPair.publicKey
+			)
+
+			const privateKeyJwk = await window.crypto.subtle.exportKey(
+				"jwk",
+				keyPair.privateKey
+			)
+
+			const formData = new FormData()
+			formData.append("email", document.getElementById("email").value)
+			formData.append("publicKey", JSON.stringify(publicKeyJwk))
+			formData.append("privateKey", JSON.stringify(privateKeyJwk))
+
+			const ajax = new XMLHttpRequest()
+			ajax.open("POST", "/updateKeys", true)
+			ajax.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					var response = JSON.parse(this.responseText)
+
+					if (response.status == "success") {
+						if (response.profileImage == "") {
+							window.location.href = "/updateProfile"
+						} else {
+							window.location.href = "/"
+						}
+					} else {
+						swal("Error", response.message, "error")
+					}
+				}
+			}
+
+			ajax.send(formData)
+		}
+	</script>
+
+</body>
+
+</html>

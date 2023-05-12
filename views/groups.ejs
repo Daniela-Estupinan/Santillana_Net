@@ -1,0 +1,116 @@
+<%- include ("includes/header") %>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-3">
+							<%- include ("includes/left-sidebar") %>
+						</div>
+
+						<div class="col-md-6">
+
+							<div class="central-meta">
+								<div class="editing-interest">
+									<h5 class="f-title"><i class="ti-bell"></i>Todas las Comunidades</h5>
+									<div class="notification-box">
+										<ul id="all-groups"></ul>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	var isGroups = true;
+
+	function getGroups() {
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/getGroups", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText)
+
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+					return;
+				}
+
+				const ads = response.ads
+				let hasDisplayedAd = false
+				var html = "";
+
+				console.log(response.data)
+
+				for (var a = 0; a < response.data.length; a++) {
+					var data = response.data[a]
+
+					if (ads.length > 0 && !hasDisplayedAd) {
+						const ad = ads[0]
+
+						let imagesHtml = ``
+						for (b = 0; b < ad.savedPaths.length; b++) {
+							imagesHtml += `<img src="` + mainURL + `/` + ad.savedPaths[b] + `" onerror="this.src = \'/public/img/default_cover.jpg\';">`
+						}
+
+						html += `<li>
+							<div class="nearly-pepls">
+								<div class="pepl-info">
+									<p>Sponsored</p>
+
+									<h4>
+										<a href="/post/` + ad._id + `">` + ad.caption + `</a>
+									</h4>
+
+									` + imagesHtml + `
+								</div>
+							</div>
+						</li>`
+
+						hasDisplayedAd = true
+					}
+
+					html += `<li>
+						<div class="nearly-pepls">
+							<figure>
+								<a href="/group/` + data._id + `">
+									<img src="` + mainURL + `/` + data.coverPhoto + `" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_cover.jpg\';">
+								</a>
+							</figure>
+
+							<div class="pepl-info">
+								<h4>
+									<a href="/group/` + data._id + `">` + data.name + `</a>
+								</h4>
+
+								<span>public group</span>
+								<em>` + data.members.length + ` Members</em>
+
+								<a href="javascript:void(0)" data-id="` + data._id + `" onclick="toggleJoinGroup(this);" class="add-butn btn-unfriend">Leave</a>
+							</div>
+						</div>
+					</li>`
+				}
+				document.getElementById("all-groups").innerHTML = html;
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+	}
+</script>
+
+<%- include ("includes/footer") %>

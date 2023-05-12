@@ -1,0 +1,95 @@
+<%- include ("includes/header") %>
+
+<section>
+    <div class="gap gray-bg">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row" id="page-contents">
+
+                        <div class="col-md-3">
+                            <%- include ("includes/left-sidebar") %>
+                        </div>
+
+                        <div class="col-md-8">
+                            <div class="central-meta">
+                                <div class="editing-info">
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h5 class="f-title">
+                                                <i class="ti-info-alt"></i>
+                                                Personas Cerca
+                                            </h5>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <ul class="nearby-contct" id="people"></ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const isNearby = true;
+
+    function fetchNearby() {
+
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST", "/fetchNearby", true);
+
+        ajax.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    let response = this.responseText
+                    response = JSON.parse(this.responseText)
+                    // console.log(response)
+
+                    let html = ""
+                    for (let a = 0; a < response.data.length; a++) {
+                        const user = response.data[a]
+
+                        html += `<li>
+                            <div class="nearly-pepls">
+                                <figure>
+                                    <a href="` + mainURL + `/user/'` + user._id + `">
+                                        <img src="` + mainURL + `/` + user.profileImage + `" onerror="this.src = '/public/img/default_profile.jpg'" />
+                                    </a>
+                                </figure>
+
+                                <div class="pepl-info">
+                                    <h4>
+                                        <a href="` + mainURL + `/user/` + user._id + `">` + user.name + `</a>
+                                    </h4>
+
+                                    <span>` + user.country + `</span>
+                                </div>
+                            </div>
+                        </li>`
+                    }
+
+                    document.getElementById("people").innerHTML = html
+                }
+
+                if (this.status == 500) {
+                    console.log(this.responseText)
+                }
+            }
+        }
+
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("accessToken"))
+        ajax.send(formData);
+    }
+</script>
+
+<%- include ("includes/footer") %>

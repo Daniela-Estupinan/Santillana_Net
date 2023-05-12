@@ -1,0 +1,180 @@
+<%- include ("layouts/header") %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 page-header">
+            <div class="page-pretitle">Overview</div>
+            <h2 class="page-title">Dashboard</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-6 col-lg-3 mt-3">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="icon-big text-center">
+                                <i class="teal fas fa-user"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="detail">
+                                <p class="detail-subtitle">Total users</p>
+                                <span class="number" id="users-count"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="fas fa-sync"></i> Refresh
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-3 mt-3">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="icon-big text-center">
+                                <i class="olive fas fa-plus-circle"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="detail">
+                                <p class="detail-subtitle">Total posts</p>
+                                <span class="number" id="posts-count"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="fas fa-sync"></i> Refresh
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-3 mt-3">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="icon-big text-center">
+                                <i class="violet fas fa-file"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="detail">
+                                <p class="detail-subtitle">Total Pages</p>
+                                <span class="number" id="pages-count"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="fas fa-sync"></i> Refresh
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-3 mt-3">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="icon-big text-center">
+                                <i class="fas fa-users" style="color: black;"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="detail">
+                                <p class="detail-subtitle">Total Groups</p>
+                                <span class="number" id="groups-count"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="fas fa-sync"></i> Refresh
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-3 mt-3">
+            <div class="card">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="icon-big text-center">
+                                <i class="orange fas fa-envelope"></i>
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="detail">
+                                <p class="detail-subtitle">Support Requests</p>
+                                <span class="number" id="support-requests-count"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+                        <div class="stats">
+                            <i class="fas fa-sync"></i> Refresh
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var isDashboard = true;
+
+    function getDashboardData() {
+        var ajax = new XMLHttpRequest();
+        ajax.open("POST", mainURL + "/admin/getDashboardData", true);
+
+        ajax.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    // console.log(this.responseText);
+                    var response = JSON.parse(this.responseText);
+                    // console.log(response);
+
+                    if (response.status == "success") {
+                        document.getElementById("users-count").innerHTML = response.users;
+                        document.getElementById("posts-count").innerHTML = response.posts;
+                        document.getElementById("pages-count").innerHTML = response.pages;
+                        document.getElementById("groups-count").innerHTML = response.groups;
+                        document.getElementById("support-requests-count").innerHTML = response.supportRequests;
+                    } else {
+                        swal("Error", response.message, "error");
+                    }
+                }
+
+                if (this.status == 500) {
+                    console.log(this.responseText);
+                    swal("Error", this.responseText, "error");
+                }
+            }
+        };
+
+        var formData = new FormData();
+        formData.append("accessToken", localStorage.getItem("adminAccessToken"));
+        ajax.send(formData);
+    }
+</script>
+
+<%- include ("layouts/footer") %>

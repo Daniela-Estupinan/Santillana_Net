@@ -1,0 +1,279 @@
+<%- include ("includes/header") %>
+
+<style>
+	.ticket-status {
+		width: auto !important;
+		float: right !important;
+		color: white !important;
+		padding: 5px 10px;
+		border-radius: 3px;
+	}
+	.open {
+		background-color: lightseagreen !important;
+	}
+	.closed {
+        background-color: lightcoral !important;
+    }
+	.actions {
+		float: right;
+    	color: black;
+	}
+	.actions a:hover,
+	.actions .fa-trash:hover {
+		color: gray;
+	}
+	.actions a,
+	.actions .fa-trash {
+		margin-left: 5px;
+		cursor: pointer;
+	}
+</style>
+
+<section>
+	<div class="gap gray-bg">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row" id="page-contents">
+
+						<div class="col-md-3">
+                            <%- include ("includes/left-sidebar") %>
+						</div>
+
+						<div class="col-md-8">
+							<div class="central-meta">
+								<div class="editing-info">
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <h5 class="f-title">
+                                                <i class="ti-info-alt"></i>
+                                                Customer Support
+                                            </h5>
+                                        </div>
+
+                                        <div class="col-md-8 text-right">
+                                            <button class="btn btn-success" data-toggle="modal" data-target="#newTicketModal">
+                                                Create new ticket
+                                            </button>
+                                        </div>
+                                    </div>
+
+									<div id="my-tickets"></div>
+
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<div class="modal" id="newTicketModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create new ticket</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <form method="POST" id="form-create-ticket" onsubmit="return createTicket(this);" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <textarea name="description" placeholder="Enter your query here..." rows="5" required></textarea>
+                        <i class="mtrl-select"></i>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 30px; margin-bottom: 30px;">
+                        <input type="file" accept="image/*" name="image" onchange="previewPostImage(this, 'img-preview');" />
+                        <label class="control-label">Select image (if any)</label>
+                        <i class="mtrl-select"></i>
+
+                        <img id="img-preview" style="display: none; margin-top: 10px; margin-bottom: 10px;" />
+                    </div>
+
+                    <div class="form-group">
+                        <input type="file" accept="video/*" name="video" onchange="previewPostVideo(this, 'video-preview');" />
+                        <label class="control-label">Select video (if any)</label>
+                        <i class="mtrl-select"></i>
+
+                        <video id="video-preview" controls style="display: none; margin-top: 10px; margin-bottom: 10px;"></video>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" form="form-create-ticket" name="submit" class="btn btn-success">
+                    Create ticket
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+	var isCustomerSupport = true;
+
+    function createTicket(form) {
+        form.submit.innerHTML = "Loading...";
+        form.submit.setAttribute("disabled", "disabled");
+
+        var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/createTicket", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+                form.submit.removeAttribute("disabled");
+                form.submit.innerHTML = "Create ticket";
+
+				var response = JSON.parse(this.responseText);
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				} else {
+
+                    swal("Success", response.message, "success")
+                    .then(function (value) {
+                        $("#newTicketModal").modal("hide");
+
+						var html = renderSingleTicket(response.ticket);
+						$(html).hide().prependTo("#my-tickets").fadeIn(1000);
+                    });
+				}
+			}
+		};
+
+		var formData = new FormData(form);
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+
+        return false;
+    }
+
+	function getMyAllTickets() {
+        var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/getMyAllTickets", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var response = JSON.parse(this.responseText);
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				} else {
+					var html = "";
+
+					for (var a = 0; a < response.data.length; a++) {
+						const data = response.data[a];
+						html += renderSingleTicket(data);
+					}
+
+					document.getElementById("my-tickets").innerHTML = html;
+				}
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+	}
+
+	function renderSingleTicket(data) {
+		var html = "";
+		var createdAt = new Date(data.createdAt);
+		var date = createdAt.getDate() + "";
+		date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
+
+		html += `<div class="central-meta item" id="ticket-` + data._id + `">
+			<div class="user-post">
+				<div class="friend-info">
+
+					<figure>
+						<img src="` + mainURL + `/` + data.user.profileImage + `" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = '/public/img/default_profile.jpg';" />
+					</figure>
+
+					<div class="friend-name">
+						<ins>
+							` + data.user.name + `
+
+							<div class='actions'>
+								<a href="` + mainURL + `/tickets/detail/` + data._id + `">
+									<i class="fa fa-eye"></i>
+								</a>
+
+								<a href="` + mainURL + `/editTicket/` + data._id + `">
+									<i class="fa fa-pencil"></i>
+								</a>
+
+								<i class="fa fa-trash" onclick="deleteTicket(this);" data-id="` + data._id + `"></i>
+							</div>
+						</ins>
+
+						<span>` + date + `</span>
+
+						<span class='ticket-status ` + data.status + `'>` + data.status + `</span>
+					</div>
+
+					<div class="post-meta">
+
+						<div class="description">
+							<p>
+								` + data.description + `
+							</p>
+						</div>
+
+						<img class="post-image ` + (data.image == "" ? `hide` : ``) + `" src="` + mainURL + `/` + data.image + `" />
+
+						<video class="post-video ` + (data.video == "" ? `hide` : ``) + `" style="height: 359px; width: 100%;" controls src="` + mainURL + `/` + data.video + `"></video>
+					</div>
+				</div>
+			</div>
+		</div>`;
+
+		return html;
+	}
+
+    function deleteTicket(self) {
+		swal({
+			title: "Delete ticket",
+			text: "Are you sure you want to remove this ticket ?",
+			icon: "warning",
+			buttons: true,
+			dangerMode: true,
+		})
+		.then((willDelete) => {
+			if (willDelete) {
+				var _id = self.getAttribute("data-id");
+
+				var ajax = new XMLHttpRequest();
+				ajax.open("POST", "/deleteTicket", true);
+
+				ajax.onreadystatechange = function() {
+					if (this.readyState == 4 && this.status == 200) {
+						var response = JSON.parse(this.responseText);
+						if (response.status == "error") {
+							swal("Error", response.message, "error");
+						} else {
+							swal("Success", response.message, "success")
+							.then(function (value) {
+								$("#ticket-" + _id).fadeOut(500, function() {
+									$(this).remove();
+								});
+							});
+						}
+					}
+				};
+
+				var formData = new FormData();
+				formData.append("accessToken", localStorage.getItem("accessToken"));
+				formData.append("_id", _id);
+				ajax.send(formData);
+			}
+		});
+	}
+</script>
+
+<%- include ("includes/footer") %>

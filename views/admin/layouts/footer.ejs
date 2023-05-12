@@ -1,0 +1,105 @@
+            </div> <!-- content -->
+        </div> <!-- body -->
+    </div> <!-- wrapper -->
+
+    <script src="/public/admin/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="/public/admin/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/public/admin/assets/vendor/chartsjs/Chart.min.js"></script>
+    <script src="/public/admin/assets/js/dashboard-charts.js"></script>
+    <script src="/public/swal/sweetalert.min.js"></script>
+    
+    <script src="/public/wysiwyg/js/froala_editor.min.js"></script>
+    <script src="/public/wysiwyg/js/plugins/image.min.js"></script>
+    <script src="/public/wysiwyg/js/plugins/video.min.js"></script>
+
+    <script src="/public/admin/assets/js/script.js"></script>
+
+    <script>
+        window.admin = null;
+
+        function getAdmin() {
+
+            if (localStorage.getItem("adminAccessToken")) {
+
+                var pathname = window.location.pathname;
+                if (pathname == "/admin/posts") {
+                    document.getElementById("link-posts").className = "active";
+                }
+                if (pathname == "/admin/users") {
+                    document.getElementById("link-users").className = "active";
+                }
+                if (pathname == "/admin") {
+                    document.getElementById("link-dashboard").className = "active";
+                }
+                if (pathname == "/admin/tickets") {
+                    document.getElementById("link-tickets").className = "active";
+                }
+
+
+                var ajax = new XMLHttpRequest();
+                ajax.open("POST", "/admin/getAdmin", true);
+
+                ajax.onreadystatechange = function() {
+                    if (this.readyState == 4) {
+
+                        if (this.status == 200) {
+                            var response = JSON.parse(this.responseText);
+
+                            if (response.status == "success") {
+                                window.admin = response.data;
+
+                                document.getElementById("admin-name").innerHTML = window.admin.email;
+
+                               
+
+                                if (typeof isDashboard !== "undefined" && isDashboard) {
+                                    getDashboardData();
+                                }
+
+                                if (typeof isUsersPage !== "undefined" && isUsersPage) {
+                                    getUsers();
+                                }
+
+                                if (typeof isPostsPage !== "undefined" && isPostsPage) {
+                                    getPosts();
+                                }
+
+                                if (typeof isTicketsPage !== "undefined" && isTicketsPage) {
+                                    getTickets();
+                                }
+
+                                if (typeof isEditTicketPage !== "undefined" && isEditTicketPage) {
+                                    getTicketData();
+                                }
+
+ 
+
+                            } 
+                        }
+
+                        if (this.status == 500) {
+                            console.log(this.responseText);
+                        }
+                    }
+                };
+
+                var formData = new FormData();
+                formData.append("accessToken", localStorage.getItem("adminAccessToken"));
+                ajax.send(formData);
+            } else {
+                window.location.href = "/admin/login";
+            }
+        }
+
+        function doLogout() {
+            localStorage.removeItem("adminAccessToken");
+            window.location.href = "/admin/login";
+            return true;
+        }
+
+        window.onload = function () {
+            getAdmin();
+        };
+    </script>
+</body>
+</html>

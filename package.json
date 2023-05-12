@@ -1,0 +1,35 @@
+{
+  "name": "my_social_network",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tensorflow/tfjs": "^3.0.0",
+    "axios": "^0.27.2",
+    "bad-words": "^3.0.4",
+    "bcryptjs": "^2.4.3",
+    "cryptr": "^6.0.2",
+    "ejs": "^3.1.3",
+    "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
+    "form-data": "^4.0.0",
+    "fs": "0.0.1-security",
+    "get-video-duration": "^4.0.0",
+    "http": "0.0.1-security",
+    "jsonwebtoken": "^8.5.1",
+    "moment-timezone": "^0.5.34",
+    "mongodb": "^3.5.7",
+    "node-cron": "^3.0.0",
+    "nodemailer": "^6.4.11",
+    "request": "^2.88.2",
+    "socket.io": "^2.3.0",
+    "stripe": "^10.14.0",
+    "videojs-wavesurfer": "^3.8.0"
+  }
+}

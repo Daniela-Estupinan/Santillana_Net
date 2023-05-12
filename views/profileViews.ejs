@@ -1,0 +1,71 @@
+<%- include ("includes/header") %>
+
+<section>
+    <div class="gap gray-bg">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row" id="page-contents">
+
+                        <div class="col-md-3">
+                            <%- include ("includes/left-sidebar") %>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="central-meta">
+                                <div class="tab-content">
+                                    <div class="tab-pane active fade show">
+                                        <h3>People who viewed your profile</h3>
+                                        <ul class="nearby-contct" id="profile-views"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    var isProfileViews = true;
+
+    function getProfileViews() {
+
+        var html = "";
+        for (var a = 0; a < window.user.profileViewers.length; a++) {
+            var data = window.user.profileViewers[a];
+
+            html += '<li>';
+                html += '<div class="nearly-pepls">';
+                    html += '<figure>';
+                        html += '<a href="/user/' + data.user.username + '">';
+                            html += '<img src="' + mainURL + '/' + data.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+                        html += '</a>';
+                    html += '</figure>';
+
+                    html += '<div class="pepl-info">';
+                        html += '<h4>';
+                            html += '<a href="/user/' + data.user.username + '">' + data.user.name + '</a>';
+                        html += '</h4>';
+
+                        var viewedAt = new Date(data.viewed_at);
+                        var ampm = viewedAt.getHours() >= 12 ? 'pm' : 'am';
+
+                        html += `<p>`
+                            + data.views + ` times.
+
+                            <span style='float: right;'>Last viewed at: <br />` + months[viewedAt.getMonth()] + `-` + viewedAt.getDate() + `-` + viewedAt.getFullYear() + ` <br /> ` + viewedAt.getHours() + `:` + viewedAt.getMinutes() + `:` + viewedAt.getSeconds() + ` ` + ampm + `</span>
+                        </p>`;
+
+                    html += '</div>';
+                html += '</div>';
+            html += '</li>';
+        }
+        document.getElementById("profile-views").innerHTML = html;
+    }
+</script>
+
+<%- include ("includes/footer") %>
