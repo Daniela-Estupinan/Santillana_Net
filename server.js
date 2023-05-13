@@ -3930,7 +3930,7 @@ http.listen(3000, function () {
 	        if (filter.isProfane(message)) {
 	            result.json({
 	                status: "error",
-	                message: "Your message contains abusive or offensive language."
+	                message: "Su mensaje contiene lenguaje abusivo u ofensivo."
 	            })
 
 	            return

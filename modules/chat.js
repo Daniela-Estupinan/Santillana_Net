@@ -130,7 +130,7 @@ module.exports = {
         if (this.filter.isProfane(request.fields.message)) {
             result.json({
                 "status": "error",
-                "message": "Your message contains abusive or offensive language."
+                "message": "Su mensaje contiene lenguaje abusivo u ofensivo."
             });
 
             return false;
