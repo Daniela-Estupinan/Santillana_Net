@@ -4457,11 +4457,11 @@ http.listen(3000, function () {
 			});
 		});
 
-		app.post("/getMyPages", function (request, result) {
+		app.post("/getMyGroups", function (request, result) {
 			var accessToken = request.fields.accessToken;
-
 			database.collection("users").findOne({
 				"accessToken": accessToken
+
 			}, function (error, user) {
 				if (user == null) {
 					result.json({
@@ -4478,7 +4478,7 @@ http.listen(3000, function () {
 						return false;
 					}
 
-					database.collection("pages").find({
+					database.collection("groups").find({
 						"user._id": user._id
 					}).toArray(function (error, data) {
 						result.json({
@@ -4491,7 +4491,7 @@ http.listen(3000, function () {
 				}
 			});
 		});
-
+//Get My Communitys
 		app.get("/createGroup", function (request, result) {
 			result.render("createGroup");
 		});
