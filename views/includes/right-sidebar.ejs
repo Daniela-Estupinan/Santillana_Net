@@ -2,7 +2,7 @@
 	<div class="widget">
 		<h4 class="widget-title">Tus Comunidades</h4>
 
-		<div id="my-pages"></div>
+		<div id="my-groups"></div>
 
 	</div>
 </aside>
@@ -10,9 +10,9 @@
 <script>
 	var isRightSidebar = true;
 
-	function getMyPages() {
+	function getMyGroups() {
 		var ajax = new XMLHttpRequest();
-		ajax.open("POST", "/getMyPages", true);
+		ajax.open("POST", "/getMyGroups", true);
 
 		ajax.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
@@ -24,37 +24,37 @@
 
 					var data = response.data[a];
 
-					html += '<div class="your-page">';
+					html += '<div class="your-groups">';
 
 						html += '<figure>';
-							html += '<a href="/page/' + data._id + '">';
+							html += '<a href="/groups/' + data._id + '">';
 								html += '<img src="' +  mainURL + '/' + data.coverPhoto + '" onerror="this.src = \'/public/img/default_cover.jpg\';">';
 							html += '</a>';
 						html += '</figure>';
 
 						html += '<div class="page-meta">';
-							html += '<a href="/page/' + data._id + '" class="underline">' + data.name + '</a>';
+							html += '<a href="/groups/' + data._id + '" class="underline">' + data.name + '</a>';
 						html += '</div>';
 
-						html += '<div class="page-likes">';
+					/*	html += '<div class="page-likes">';
 							html += '<ul class="nav nav-tabs likes-btn">';
 								html += '<li class="nav-item" style="width: 100%;">';
 									html += '<a class="active" href="#page-likes" data-toggle="tab">likes</a>';
 								html += '</li>';
-							html += '</ul>';
+							html += '</ul>';*/
 
-							html += '<div class="tab-content">';
+							/*html += '<div class="tab-content">';
 								html += '<div class="tab-pane active fade show " id="page-likes" >';
 									html += '<span><i class="ti-heart"></i>' + data.likers.length + '</span>';
-
-									html += '<div class="users-thumb-list">';
+*/
+						/*			html += '<div class="users-thumb-list">';
 									for (var b = 0; b < data.likers.length; b++) {
 										var liker = data.likers[b];
 										html += '<a data-toggle="tooltip">';
 											html += '<img src="' + mainURL + '/' + liker.profileImage + '" style="width: 32px; height: 32px; object-fit: cover;" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 										html += '</a>';
 									}
-									html += '</div>';
+									html += '</div>';*/
 
 								html += '</div>';
 							html += '</div>';
@@ -62,7 +62,7 @@
 					html += '</div>';
 				}
 
-				document.getElementById("my-pages").innerHTML = html;
+				document.getElementById("my-groups").innerHTML = html;
 			}
 		};
 

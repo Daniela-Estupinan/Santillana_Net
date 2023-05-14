@@ -635,7 +635,6 @@ module.exports = {
 
             var users = await self.database.collection("users").count();
             var posts = await self.database.collection("posts").count();
-            var pages = await self.database.collection("pages").count();
             var groups = await self.database.collection("groups").count();
             var supportRequests = 0;
 

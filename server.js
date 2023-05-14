@@ -30,8 +30,10 @@ var accessTokenSecret = "myAccessTokenSecret1234567890";
 const Cryptr = require("cryptr");
 global.cryptr = new Cryptr("mySecretKey");
 
-const Filter = require("bad-words");
+const Filter = require("bad-words-es");
 const filter = new Filter();
+//filtro palabras adicionales
+filter.addWords('idiota','estupido');
 
 const cron = require("node-cron");
 const moment = require('moment-timezone')
@@ -3928,7 +3930,7 @@ http.listen(3000, function () {
 	        if (filter.isProfane(message)) {
 	            result.json({
 	                status: "error",
-	                message: "Your message contains abusive or offensive language."
+	                message: "Su mensaje contiene lenguaje abusivo u ofensivo."
 	            })
 
 	            return
@@ -4455,11 +4457,11 @@ http.listen(3000, function () {
 			});
 		});
 
-		app.post("/getMyPages", function (request, result) {
+		app.post("/getMyGroups", function (request, result) {
 			var accessToken = request.fields.accessToken;
-
 			database.collection("users").findOne({
 				"accessToken": accessToken
+
 			}, function (error, user) {
 				if (user == null) {
 					result.json({
@@ -4476,7 +4478,7 @@ http.listen(3000, function () {
 						return false;
 					}
 
-					database.collection("pages").find({
+					database.collection("groups").find({
 						"user._id": user._id
 					}).toArray(function (error, data) {
 						result.json({
@@ -4489,7 +4491,7 @@ http.listen(3000, function () {
 				}
 			});
 		});
-
+//Get My Communitys
 		app.get("/createGroup", function (request, result) {
 			result.render("createGroup");
 		});
