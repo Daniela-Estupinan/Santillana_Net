@@ -18,8 +18,10 @@
 						<ul>
 							<li class="admin-name" style="padding: 25px;">
 								<h5 id="group-name"></h5>
-								<p>Created by: <span id="group-admin"></span></p>
+								<p>Administrador: <span id="group-admin"></span></p>
+								<p>Descripción: <span id="group-info"></span></p>
 							</li>
+					
 
 							<li class="pull-right" style="display: flex;">
 								<a href="/edit-group/" id="link-edit-group" class="btn" style="position: relative; top: 30px;">Edit</a>
@@ -119,7 +121,8 @@
 				document.getElementById("group-cover-photo").setAttribute("src", mainURL + "/" + response.group.coverPhoto);
 				document.getElementById("group-members").innerHTML = response.group.members.length + " members";
 				document.getElementById("group-name").innerHTML = response.group.name;
-
+				document.getElementById("group-info").innerHTML = response.group.additionalInfo;
+				
 				var isMember = false;
 				for (var a = 0; a < response.group.members.length; a++) {
 					var member = response.group.members[a];
@@ -151,6 +154,7 @@
 				let adminHtml = ""
 				adminHtml += `<a href="` + mainURL + `/search/` + response.group.user.name + `#people">` + response.group.user.name + `</a>`
 				document.getElementById("group-admin").innerHTML = adminHtml
+
 			}
 		};
 
