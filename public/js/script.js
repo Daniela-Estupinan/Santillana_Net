@@ -875,17 +875,9 @@ function createLikesSection(data, isMyStory = false) {
 
 			html += '<li>';
 
-				var className = isDisliked ? "dislike" : "none";
 
-				html += '<span class="' + className + '" onclick="toggleDislikePost(this);" data-id="' + data._id + '">';
-				//descomentar	//html += '<i class="ti-thumb-down"></i>';
-				html += '</span>';
 //descomentar
-				//html += '<ins class="dislikers-count" data-id="' + data._id + '" onclick="showPostDislikers(this);">' + dislikers.length + '</ins>';
-
-			html += '</li>';
-//descomentar
-			/*html += `<li>
+			html += `<li>
 				<button type="button" onclick="showCommentsModal('` + data._id + `')" style='background: none; border: none;'>
 					<span class="comment" title="Comments">
 						<i class="fa fa-comments-o"></i>
@@ -893,7 +885,7 @@ function createLikesSection(data, isMyStory = false) {
 						<ins id="count-post-comments-` + data._id + `">` + comments.length + `</ins>
 					</span>
 				</button>
-			</li>`*/
+			</li>`
 			
 			if (typeof onViewStoryPage !== "undefined" && onViewStoryPage) {
 				//
