@@ -552,7 +552,7 @@ function renderSinglePost(data) {
 					var date = createdAt.getDate() + "";
 					date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
 
-					html += '<span>Published: ' + date + '</span>'
+					html += '<span>Publicado: ' + date + '</span>'
 
 					if (data.originalPost != null) {
 						html += `<span>Original <a href='` + mainURL + `/post/` + data.originalPost._id + `'>post</a> by ` + data.originalPost.user.name + `</span>`
@@ -1346,7 +1346,7 @@ function showAddPost() {
 					html += '<form method="post" id="form-add-post" onsubmit="return doPost(this);" novalidate enctype="multipart/form-data">';
 
 						html += '<input name="type" type="hidden" value="post" />';
-						html += '<textarea rows="2" name="caption" placeholder="write something"></textarea>';
+						html += '<textarea rows="2" name="caption" placeholder="comparte tus ideas"></textarea>';
 						html += '<div class="attachments">';
 							html += '<ul>';
 

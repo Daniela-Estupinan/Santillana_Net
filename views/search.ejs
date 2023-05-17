@@ -209,12 +209,38 @@
 				self.remove();
 			}
 		};
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", _id);
+		ajax.send(formData);
+	}
+	//unfriend
+	function doUnfriend(self) {
+		var _id = self.getAttribute("data-id");
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/unfriend", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				} else if (response.status == "success") {
+					swal("Success", response.message, "success");
+				}
+
+				self.remove();
+			}
+		};
 
 		var formData = new FormData();
 		formData.append("accessToken", localStorage.getItem("accessToken"));
 		formData.append("_id", _id);
 		ajax.send(formData);
 	}
+//
 </script>
 
 <%- include ("includes/footer") %>

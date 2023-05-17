@@ -33,7 +33,7 @@ global.cryptr = new Cryptr("mySecretKey");
 const Filter = require("bad-words-es");
 const filter = new Filter();
 //filtro palabras adicionales
-filter.addWords('idiota','estupido');
+filter.addWords('idiota','estupido','estupiada','perra');
 
 const cron = require("node-cron");
 const moment = require('moment-timezone')
@@ -2380,7 +2380,7 @@ http.listen(3000, function () {
 
 						result.json({
 							"status": "status",
-							"message": "Profile has been updated."
+							"message": "Perfil ha sido actualizado."
 						});
 					});
 				}
@@ -3026,7 +3026,7 @@ http.listen(3000, function () {
 								notifications: {
 									_id: ObjectId(),
 									type: "post_liked",
-									content: user.name + " has liked your post.",
+									content: user.name + " le ha gustado tu publicación.",
 									profileImage: user.profileImage,
 									isRead: false,
 									post: {
@@ -3045,7 +3045,7 @@ http.listen(3000, function () {
 							"notifications": {
 								"_id": ObjectId(),
 								"type": "post_liked",
-								"content": user.name + " has liked your post.",
+								"content": user.name + " le ha gustado tu publicación.",
 								"profileImage": user.profileImage,
 								"isRead": false,
 								"post": {
@@ -3063,7 +3063,7 @@ http.listen(3000, function () {
 							"notifications": {
 								"_id": ObjectId(),
 								"type": "post_liked",
-								"content": user.name + " has liked your post.",
+								"content": user.name + " le ha gustado tu publicación.",
 								"profileImage": user.profileImage,
 								"isRead": false,
 								"post": {
