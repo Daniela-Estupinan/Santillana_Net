@@ -124,7 +124,7 @@
 				if (response.status == "error") {
 					swal("Error", response.message, "error");
 				} else {
-					swal("Success", response.message, "success");
+					swal("Listo", response.message, "success");
 				}
 			}
 		};
@@ -159,7 +159,7 @@
 
 									<form onsubmit="return doUpdateProfile(this);">
 										<div class="form-group">
-											<input type="text" required class="name" name="name" />
+											<input type="text" required class="name" name="name" placeholder="Nombre Completo" />
 											<label class="control-label">Nombre Completo</label>
 											<i class="mtrl-select"></i>
 										</div>
@@ -199,7 +199,7 @@
 										<br><br>
 
 										<div class="form-group">	
-											<textarea rows="4" class="aboutMe" name="aboutMe"></textarea>
+											<textarea rows="4" class="aboutMe" name="aboutMe" placeholder="Escribe más sobre ti"></textarea>
 											<label class="control-label">Sobre Mí</label>
 											<i class="mtrl-select"></i>
 										</div>
