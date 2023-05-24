@@ -42,6 +42,18 @@
 
 										<div id="friends"></div>
 
+										<!-- <div class="chat_list">
+											<div class="chat_people">
+												<div class="chat_img">
+													<img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" />
+												</div>
+
+												<div class="chat_ib">
+													<h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+													<p>Test, which is a new approach to have all solutions astrology under one roof.</p>
+												</div>
+											</div>
+										</div> -->
 
 									</div>
 								</div>
@@ -49,12 +61,41 @@
 								<div class="mesgs">
 
 									<div style="display: none; margin-bottom: 10px;" id="section-invite-member-modal" class="pull-right">
+										<a href="#" id="qr-code-link" target="_blank" class="btn btn-link">QR code</a>
 
+										<button type="button" class="mtr-btn" style="display: none;" onclick="deleteGroup()" id="btn-delete-group">
+											<span>Delete group</span>
+										</button>
+
+										<button type="button" class="mtr-btn" data-toggle="modal" data-target="#viewMembersModal" onclick="fetchGroupMembers()">
+											<span>View members</span>
+										</button>
+
+										<button type="button" class="mtr-btn" data-toggle="modal" data-target="#inviteMemberModal">
+											<span>Invite member</span>
+										</button>
 									</div>
 
 									<div class="msg_history" id="msg_history" style="clear: both;">
 
+										<!-- <div class="incoming_msg">
+											<div class="incoming_msg_img">
+												<img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" />
+											</div>
 
+											<div class="received_msg">
+												<div class="received_withd_msg">
+													<p>Test which is a new approach to have all solutions</p>
+													<span class="time_date"> 11:01 AM    |    June 9</span></div>
+											</div>
+										</div>
+
+										<div class="outgoing_msg">
+											<div class="sent_msg">
+												<p>Test which is a new approach to have all solutions</p>
+												<span class="time_date"> 11:01 AM    |    June 9</span>
+											</div>
+										</div> -->
 									</div>
 
 									<div class="type_msg">
@@ -79,14 +120,14 @@
 																<input type="file" name="videos" multiple accept="video/*" onchange="previewAttachedVideos(this)" />
 															</label>
 														</li> -->
-<!--DESCOMENTAR MENSAJES 
+
 														<li>
 															<input type="file" name="files" multiple />
 														</li>
 
 														<li>
 															<i class="fa fa-microphone" id="icon-record-audio" onclick="recordAudio()" style="cursor: pointer;"></i>
-														</li>-->
+														</li>
 													</ul>
 												</div>
 												

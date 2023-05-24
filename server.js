@@ -32,8 +32,9 @@ global.cryptr = new Cryptr("mySecretKey");
 
 const Filter = require("bad-words-es");
 const filter = new Filter();
+ 
 //filtro palabras adicionales
-filter.addWords('idiota','estupido','estupiada','perra');
+filter.addWords('idiota','estupido','estupida','perra','huevada','chucha','chuta');
 
 const cron = require("node-cron");
 const moment = require('moment-timezone')
