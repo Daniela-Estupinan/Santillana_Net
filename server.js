@@ -1835,7 +1835,7 @@ http.listen(3000, function () {
 									
 									result.json({
 										"status": "success",
-										"message": "Signed up successfully. You will be able to login and start using Al día Ecuador."
+										"message": "Se ha registrado correctamente. Podrás iniciar sesión y empezar a usar Al día Ecuador."
 									});
 
 								// });
