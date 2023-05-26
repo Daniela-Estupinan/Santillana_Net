@@ -9,11 +9,11 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="central-meta">
-
+<!--
 						<button type="button" class="mtr-btn" data-toggle="modal" data-target="#createGroupModal">
 							<span>Create group</span>
 						</button>
-
+-->
 						<br /><br />
 
 						<div class="messaging">
@@ -21,7 +21,7 @@
 								<div class="inbox_people">
 									<div class="headind_srch">
 										<div class="recent_heading">
-											<h4>Groups</h4>
+											<h4>Grupos</h4>
 										</div>
 									</div>
 
@@ -57,7 +57,7 @@
 									<div class="type_msg">
 										<div class="input_msg_write">
 											<form method="post" onsubmit="return doSendMessage(this)" enctype="multipart/form-data" style="display: contents;">
-												<input type="text" name="message" class="write_msg" id="message" placeholder="Type a message" />
+												<input type="text" name="message" class="write_msg" id="message" placeholder="Escribe un mensaje" />
 
 												<div class="attachments" style="display: flex; padding-right: 0px; padding-left: 0px; border: none;">
 													<ul>
@@ -898,8 +898,8 @@
 
 	function deleteMessage(self) {
 		swal({
-			title: "Delete message",
-			text: "Are you sure you want to delete this message ?",
+			title: "Eliminar mensaje",
+			text: "¿Está seguro que quiere eliminar este mensaje?",
 			icon: "warning",
 			buttons: true,
 			dangerMode: true,

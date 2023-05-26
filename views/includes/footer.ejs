@@ -94,7 +94,7 @@
 			<input type="hidden" name="_id" />
 			<input type="hidden" name="type" />
 
-			<textarea rows="2" name="caption" placeholder="write something"></textarea>
+			<textarea rows="2" name="caption" placeholder="comparte tus ideas"></textarea>
 			<div class="attachments">
 				<ul>
 					<li>
@@ -534,19 +534,19 @@
 
 
 			html += '<li>';
-				html += '<a href="/updateProfile">Profile (' + (window.user == null ? '' : window.user.name) + ') <i class="fa fa-angle-right"></i></a>';
+				html += '<a href="/updateProfile">Perfil (' + (window.user == null ? '' : window.user.name) + ') <i class="fa fa-angle-right"></i></a>';
 			html += '</li>';
 
 			html += '<li>';
-				html += '<a href="/logout" onclick="return doLogout();">Logout</a>';
+				html += '<a href="/logout" onclick="return doLogout();">Cerrar Sesión</a>';
 			html += '</li>';
 		} else {
 			html += '<li>';
-				html += '<a href="/login">Login <i class="fa fa-angle-right"></i></a>';
+				html += '<a href="/login">Iniciar Sesión <i class="fa fa-angle-right"></i></a>';
 			html += '</li>';
 
 			html += '<li>';
-				html += '<a href="/signup">Signup <i class="fa fa-angle-right"></i></a>';
+				html += '<a href="/signup">Registrarse <i class="fa fa-angle-right"></i></a>';
 			html += '</li>';
 		}
 

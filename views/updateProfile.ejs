@@ -10,7 +10,7 @@
 		<form class="edit-phto" id="form-cover-photo" onsubmit="return false;">
 			<i class="fa fa-camera-retro"></i>
 			<label class="fileContainer">
-				Edit Cover Photo
+				Editar Foto de Portada
 				<input type="file" accept="image/*" name="coverPhoto" onchange="uploadCoverPhoto();" required />
 			</label>
 		</form>
@@ -26,7 +26,7 @@
 							<form class="edit-phto" id="form-upload-image" onsubmit="return false;">
 								<i class="fa fa-camera-retro"></i>
 								<label class="fileContainer">
-									Edit Display Photo
+									Editar Foto de Perfil
 									<input type="file" accept="image/*" name="profileImage" onchange="uploadImage();" required />
 								</label>
 							</form>
@@ -39,8 +39,6 @@
 							<li class="admin-name">
 								<h5 class="user-name" style="padding-top: 20px; padding-bottom: 20px;"></h5>
 							</li>
-
-                            <li><a href="<%= mainURL %>/profileViews">Profile views</a></li>
 						</ul>
 					</div>
 				</div>
@@ -126,7 +124,7 @@
 				if (response.status == "error") {
 					swal("Error", response.message, "error");
 				} else {
-					swal("Success", response.message, "success");
+					swal("Listo", response.message, "success");
 				}
 			}
 		};
@@ -156,20 +154,20 @@
 
 									<h5 class="f-title">
 										<i class="ti-info-alt"></i>
-										Update Profile
+										Actualizar Perfil
 									</h5>
 
 									<form onsubmit="return doUpdateProfile(this);">
 										<div class="form-group">
-											<input type="text" required class="name" name="name" />
-											<label class="control-label">Full Name</label>
+											<input type="text" required class="name" name="name" placeholder="Nombre Completo" />
+											<label class="control-label">Nombre Completo</label>
 											<i class="mtrl-select"></i>
 										</div>
 
 										<br><br>
 
 										<div class="form-group">
-											<input class="email" readonly />
+											<input required class="email" name="email" readonly />
 											<label class="control-label">Email</label>
 											<i class="mtrl-select"></i>
 										</div>
@@ -178,7 +176,7 @@
 
 										<div class="form-group">
 											<input type="text" class="dob" name="dob" placeholder="DD/MM/YYYY" />
-											<label class="control-label">Date of birth</label>
+											<label class="control-label">Fecha de nacimiento</label>
 											<i class="mtrl-select"></i>
 										</div>
 
@@ -186,7 +184,7 @@
 
 										<div class="form-group">	
 											<input type="text" class="city" name="city" />
-											<label class="control-label">City</label>
+											<label class="control-label">Ciudad</label>
 											<i class="mtrl-select"></i>
 										</div>
 
@@ -201,18 +199,18 @@
 										<br><br>
 
 										<div class="form-group">	
-											<textarea rows="4" class="aboutMe" name="aboutMe"></textarea>
-											<label class="control-label">About Me</label>
+											<textarea rows="4" class="aboutMe" name="aboutMe" placeholder="Escribe más sobre ti"></textarea>
+											<label class="control-label">Sobre Mí</label>
 											<i class="mtrl-select"></i>
 										</div>
 
 										<button type="submit" class="mtr-btn" name="submit">
-											<span>Save</span>
+											<span>Guardar</span>
 										</button>
 									</form>
 
 									<p>
-										<a href="/change-password">Change Password</a>
+							<!--		<a href="/change-password">Change Password</a> -->	
 									</p>
 
 								</div>
