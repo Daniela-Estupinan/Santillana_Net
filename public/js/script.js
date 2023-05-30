@@ -1333,7 +1333,7 @@ function showAddPost() {
 								html += '</li>'
 
 								html += '<li>';
-									html += '<button type="submit" name="submit">Post <i class="fa fa-spinner fa-spin" style="display: none;"></i></button>';
+									html += '<button type="submit" name="submit">Publicar <i class="fa fa-spinner fa-spin" style="display: none;"></i></button>';
 								html += '</li>';
 							html += '</ul>';
 						html += '</div>';
