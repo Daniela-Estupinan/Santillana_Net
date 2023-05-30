@@ -1255,6 +1255,62 @@ http.listen(3000, function () {
 		})
 
 //** */
+app.post("/fetchNearbyCom", async function (request, result) {
+	const accessToken = request.fields.accessToken
+
+	const user = await database.collection("users").findOne({
+		accessToken: accessToken
+	})
+	
+	if (user == null) {
+		result.json({
+			status: "error",
+			message: "User has been logged out. Please login again."
+		})
+		return
+	}
+	
+	if (user.isBanned) {
+		result.json({
+			status: "error",
+			message: "You have been banned."
+		})
+		return
+	}
+
+	const data = []
+	if (typeof user.country !== "undefined") {
+		let users = await database.collection("users").find({
+			$and: [{
+				_id: {
+					$ne: user._id
+				}
+			}, {
+				"country": user.country
+			}]
+		}).toArray()
+
+		users = users.sort(function (a, b) {
+			return 0.5 - Math.random()
+		})
+
+		for (let a = 0; a < users.length; a++) {
+			data.push({
+				_id: users[a]._id,
+				name: users[a].name,
+				profileImage: users[a].profileImage,
+				//city:users[a].location.city,
+				country: users[a].country
+			})
+		}
+	}
+
+	result.json({
+		status: "success",
+		message: "Data has been fetched.",
+		data: data
+	})
+})
 //Personas Cerca
 		app.get("/people-nearby", async function (request, result) {
 			result.render("people-nearby")
@@ -1835,7 +1891,7 @@ http.listen(3000, function () {
 									
 									result.json({
 										"status": "success",
-										"message": "Signed up successfully. You will be able to login and start using Santillana Net."
+										"message": "Se ha registrado correctamente. Podrás iniciar sesión y empezar a usar Al día Ecuador."
 									});
 
 								// });
@@ -3870,8 +3926,8 @@ http.listen(3000, function () {
 								}, function (error, data) {
 
 									result.json({
-										"status": "success",
-										"message": "Friend has been removed."
+										"status": "Ok",
+										"message": "Contacto ha sido eliminado"
 									});
 
 								});

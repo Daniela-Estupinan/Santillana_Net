@@ -1,7 +1,7 @@
 	<footer>
 		<div class="container">
 			<div class="row">
-				Santillana Net &copy; <%= new Date().getFullYear() %>
+				Al día Ecuador &copy; <%= new Date().getFullYear() %>
 			</div>
 			<!--<img src="/public/img/Logo.png">-->
 		</div>
@@ -12,7 +12,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Enter Youtube URL</h5>
+				<h5 class="modal-title">Entre el link de Youtube</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -20,12 +20,12 @@
 
 			<div class="modal-body">
 				<p>
-					<input type="url" name="youtube_url" placeholder="Enter youtube URL" required class="form-control" form="form-add-post" />
+					<input type="url" name="youtube_url" placeholder="Entre el link de Youtube" required class="form-control" form="form-add-post" />
 				</p>
 			</div>
 			
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">Add Youtube URL</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Agregue el link de Youtube</button>
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
@@ -121,10 +121,10 @@
 <div id="delete-post-modal" class="modal">
 	<!-- Modal content -->
 	<div class="modal-content" style="width: 500px;">
-		<h3>Delete <span class="close" onclick="closeModal('delete-post-modal')">&times;</span></h3>
+		<h3>Eliminar <span class="close" onclick="closeModal('delete-post-modal')">&times;</span></h3>
 		
-		<p>Are you sure you want to delete this post from Santillana Net ?</p>
-		<button type="button" class="btn btn-danger" onclick="deletePost(this);">Delete</button>
+		<p>¿Esta seguro que quiere eliminar esta publicación de  Al día Ecuador ?</p>
+		<button type="button" class="btn btn-danger" onclick="deletePost(this);">Eliminar</button>
 	</div>
 </div>
 
@@ -157,7 +157,7 @@
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Comments</h5>
+				<h5 class="modal-title">Comentarios</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -179,11 +179,11 @@
 
 			<div class="modal-footer">
 				<button type="button" class="mtr-btn" data-dismiss="modal">
-					<span>Close</span>
+					<span>Cerrar</span>
 				</button>
 
 				<button type="submit" name="submit" form="form-post-comment" class="mtr-btn">
-					<span>Post comment</span>
+					<span>Publicar Comentario</span>
 				</button>
 			</div>
 		</div>

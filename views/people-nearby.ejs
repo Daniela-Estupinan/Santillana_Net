@@ -19,7 +19,7 @@
                                         <div class="col-md-4">
                                             <h5 class="f-title">
                                                 <i class="ti-info-alt"></i>
-                                                Personas Cerca
+                                                Personas de mi Área
                                             </h5>
                                         </div>
                                     </div>
@@ -45,7 +45,7 @@
     function fetchNearby() {
 
         var ajax = new XMLHttpRequest();
-        ajax.open("POST", "/fetchNearby", true);
+        ajax.open("POST", "/fetchNearbyCom", true);
 
         ajax.onreadystatechange = function() {
             if (this.readyState == 4) {

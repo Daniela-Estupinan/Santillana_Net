@@ -334,7 +334,7 @@ module.exports = {
 
         this.result.json({
             "status": "success",
-            "message": "Post has been uploaded.",
+            "message": "Se ha subido la publicación.",
             "postObj": postObj
         });
 

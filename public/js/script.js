@@ -695,37 +695,10 @@ function showCommentsModal(postId) {
 								` + comment.comment + `
 								<br />
 								` + date + `
-								<br />
-								<button type="button" class="mtr-btn pull-right" onclick="doReply('` + postId + `', '` + comment._id + `')" style="margin-bottom: 20px;">
-									<span>Reply</span>
-								</button>
-
-								<div data-id-replies="` + comment._id + `">`
-
-								comment.replies.reverse()
-
-								for (let b = 0; b < comment.replies.length; b++) {
-									const reply = comment.replies[b]
-									html += renderSingleReply(reply)
-								}
-
-						html += `<div>
 							</div>
 						</div>`
-
-						/*html += `<tr>
-							<td><a href="` + mainURL + `/user/` + comment.user._id + `">` + comment.user.name + `</a></td>
-							<td>` + comment.comment + `</td>
-							<td>` + date + `</td>
-							<td>
-								<button type="button" class="mtr-btn" onclick="doReply('` + postId + `', '` + comment._id + `')">
-									<span>Reply</span>
-								</button>
-							</td>
-						</tr>`*/
 					}
 
-					// $("#postCommentsModal tbody").html(html)
 					$("#post-comments").html(html)
 				}
 			}
@@ -1360,7 +1333,7 @@ function showAddPost() {
 								html += '</li>'
 
 								html += '<li>';
-									html += '<button type="submit" name="submit">Post <i class="fa fa-spinner fa-spin" style="display: none;"></i></button>';
+									html += '<button type="submit" name="submit">Publicar <i class="fa fa-spinner fa-spin" style="display: none;"></i></button>';
 								html += '</li>';
 							html += '</ul>';
 						html += '</div>';
