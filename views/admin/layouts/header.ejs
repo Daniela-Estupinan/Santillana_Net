@@ -28,7 +28,7 @@
     </script>
 
     <%
-        mainURL = "http://192.168.8.101:3000";
+        mainURL = "http://localhost:3000";
 
 		months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     %>
@@ -47,15 +47,15 @@
                 </li>
 
                 <li>
-                    <a href="<%= mainURL %>/admin/users" id="link-users"><i class="fas fa-user-friends"></i>Users</a>
+                    <a href="<%= mainURL %>/admin/users" id="link-users"><i class="fas fa-user-friends"></i>Usuarios</a>
                 </li>
-
+<!--
                 <li>
                     <a href="<%= mainURL %>/admin/posts" id="link-posts"><i class="fas fa-table"></i>Posts</a>
                 </li>
-
+-->
                 <li>
-                    <a href="<%= mainURL %>/admin/tickets" id="link-tickets"><i class="fas fa-info"></i>Customer support</a>
+                    <a href="<%= mainURL %>/admin/tickets" id="link-tickets"><i class="fas fa-info"></i>Soporte</a>
                 </li>
             </ul>
         </nav>
