@@ -78,7 +78,7 @@
 	<script>
 		function doRegister(form) {
 			form.submit.setAttribute("disabled", "disabled");
-			form.submit.innerHTML = "<span>Loading...</span>";
+			form.submit.innerHTML = "<span>Cargando...</span>";
 
 			var ajax = new XMLHttpRequest();
 			ajax.open("POST", "/signup", true);

@@ -636,7 +636,7 @@
 			return
 		}
 
-		form.submit.querySelector("span").innerHTML = "Loading..."
+		form.submit.querySelector("span").innerHTML = "Cargando..."
 		form.submit.setAttribute("disabled", "disabled")
 
 		const ajax = new XMLHttpRequest()
@@ -1273,7 +1273,7 @@
 
 		let badgeUnread = ""
 		if (data.unread && data.unread > 0) {
-			badgeUnread = `<span class="badge unread" style="background-color: #05728f; color: white;">` + data.unread + `</span>`
+			badgeUnread = `<span class="badge unread" style="background-color: #7EC352; color: white;">` + data.unread + `</span>`
 		}
 
 		const image = data.savedPaths.length > 0 ? data.savedPaths[0] : ""
@@ -1537,7 +1537,7 @@
 
 		let badgeUnread = ""
 		if (data.unread && data.unread > 0) {
-			badgeUnread = `<span class="badge unread" style="background-color: #05728f; color: white;">` + data.unread + `</span>`
+			badgeUnread = `<span class="badge unread" style="background-color: #7EC352; color: white;">` + data.unread + `</span>`
 		}
 
 		const html = `<div class="chat_list" data-id="` + data._id + `" onclick="friendSelected(this);" style="cursor: pointer;">
