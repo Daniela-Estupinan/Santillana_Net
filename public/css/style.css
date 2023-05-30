@@ -4669,7 +4669,7 @@ canvas {
 }
 
 .mh-head {
-    background: #7EC352;
+    background: #00A1E4;
     color: #fff;
     height: auto;
 }
@@ -4821,11 +4821,12 @@ canvas {
 }
 
 .top-area > ul.main-menu > li a {
-    color: #00A1E4;
+    color: #7EC352;
     font-size: 14px;
     font-weight: 700;
     text-transform: capitalize;
     letter-spacing: 0.3px;
+    align-items: center;
 }
 
 .top-area > ul.main-menu > li::after {
