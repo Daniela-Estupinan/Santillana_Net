@@ -118,7 +118,7 @@
 			if (this.readyState == 4 && this.status == 200) {
 
 				form.submit.removeAttribute("disabled");
-				form.submit.innerHTML = "<span>Save</span>";
+				form.submit.innerHTML = "<span>Guardar</span>";
 
 				var response = JSON.parse(this.responseText);
 				if (response.status == "error") {
@@ -181,21 +181,50 @@
 										</div>
 
 										<br><br>
-
+<!--
 										<div class="form-group">	
 											<input type="text" class="city" name="city" />
 											<label class="control-label">Ciudad</label>
 											<i class="mtrl-select"></i>
 										</div>
-
+									-->
+									<div class="form-group">
+																						
+										<div class="select-wrapper">
+										<select class="city" name="city" required>
+											<option value="default">--Ciudad--</option>
+											<option value="Quito">Quito</option>
+											<option value="Guayaquil">Guayaquil</option>
+											<option value="Cuenca">Cuenca</option>
+											<option value="Otro">Otro</option>
+										
+										</select>
+										<i class="mtrl-select"></i>
+										</div>
+									</div>
 										<br><br>
-
+<!--
 										<div class="form-group">
 											<input type="text" class="country" name="country" />
 											<label class="control-label">Área</label>
 											<i class="mtrl-select"></i>
 										</div>
-
+-->		
+											<div class="form-group">
+																						
+												<div class="select-wrapper">
+												<select class="country" name="country" required>
+													<option value="default">--Área--</option>
+													<option value="Ventas">Ventas</option>
+													<option value="Comunicaciones">Comunicaciones</option>
+													<option value="Contabilidad">Contabilidad</option>
+													<option value="Marketing">Marketing</option>
+													<option value="RRHH">RRHH</option>
+													
+												</select>
+												<i class="mtrl-select"></i>
+												</div>
+											</div>								
 										<br><br>
 
 										<div class="form-group">	
@@ -216,17 +245,7 @@
 								</div>
 							</div>
 						</div>
-<!--
-						<div class="col-md-3">
-							<aside class="sidebar static">
-								<div class="widget">
-									
-								</div>
-							</aside>
-                            <%- include ("includes/right-sidebar") %>
-						</div>
--->
-					</div>
+			</div>
 				</div>
 			</div>
 		</div>
