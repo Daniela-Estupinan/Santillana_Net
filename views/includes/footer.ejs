@@ -1,7 +1,7 @@
 	<footer>
 		<div class="container">
 			<div class="row">
-				Santillana Net &copy; <%= new Date().getFullYear() %>
+				Al día Ecuador &copy; <%= new Date().getFullYear() %>
 			</div>
 			<!--<img src="/public/img/Logo.png">-->
 		</div>
@@ -12,7 +12,7 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Enter Youtube URL</h5>
+				<h5 class="modal-title">Entre el link de Youtube</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -20,12 +20,12 @@
 
 			<div class="modal-body">
 				<p>
-					<input type="url" name="youtube_url" placeholder="Enter youtube URL" required class="form-control" form="form-add-post" />
+					<input type="url" name="youtube_url" placeholder="Entre el link de Youtube" required class="form-control" form="form-add-post" />
 				</p>
 			</div>
 			
 			<div class="modal-footer">
-				<button type="button" class="btn btn-primary" data-dismiss="modal">Add Youtube URL</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Agregue el link de Youtube</button>
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
@@ -88,7 +88,7 @@
 <div id="edit-post-modal" class="modal">
 	<!-- Modal content -->
 	<div class="modal-content">
-		<h3>Edit post <span class="close" onclick="closeModal('edit-post-modal')">&times;</span></h3>
+		<h3>Editar publicación <span class="close" onclick="closeModal('edit-post-modal')">&times;</span></h3>
 
 		<form method="POST" action="/editPost" enctype="multipart/form-data" id="form-edit-post" onsubmit="return doEditPost(this)">			
 			<input type="hidden" name="_id" />
@@ -107,7 +107,7 @@
 
 					<li>
 						<button type="submit" name="submit">
-							Post
+							Publicar
 							<i class="fa fa-spinner fa-spin" style="display: none;"></i>
 						</button>
 					</li>
@@ -121,10 +121,10 @@
 <div id="delete-post-modal" class="modal">
 	<!-- Modal content -->
 	<div class="modal-content" style="width: 500px;">
-		<h3>Delete <span class="close" onclick="closeModal('delete-post-modal')">&times;</span></h3>
+		<h3>Eliminar <span class="close" onclick="closeModal('delete-post-modal')">&times;</span></h3>
 		
-		<p>Are you sure you want to delete this post from Santillana Net ?</p>
-		<button type="button" class="btn btn-danger" onclick="deletePost(this);">Delete</button>
+		<p>¿Esta seguro que quiere eliminar esta publicación de  Al día Ecuador ?</p>
+		<button type="button" class="btn btn-danger" onclick="deletePost(this);">Eliminar</button>
 	</div>
 </div>
 
@@ -157,7 +157,7 @@
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Comments</h5>
+				<h5 class="modal-title">Comentarios</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -179,11 +179,11 @@
 
 			<div class="modal-footer">
 				<button type="button" class="mtr-btn" data-dismiss="modal">
-					<span>Close</span>
+					<span>Cerrar</span>
 				</button>
 
 				<button type="submit" name="submit" form="form-post-comment" class="mtr-btn">
-					<span>Post comment</span>
+					<span>Publicar Comentario</span>
 				</button>
 			</div>
 		</div>
@@ -444,38 +444,6 @@
 							}
 						}
 
-					/*	var html = `<li>
-							<i class="ti-help"></i>
-							 <a href="/customer-support">Customer support</a>
-						</li>`
-						if (document.getElementById("left-sidebar") != null) {
-							document.getElementById("left-sidebar").innerHTML += html
-						}*/
-
-						/*$.getJSON("http://www.geoplugin.net/json.gp", function(data) {
-							// console.log(JSON.stringify(data, null, 2))
-							const city = data.geoplugin_city
-							const continent = data.geoplugin_continentName
-							const country = data.geoplugin_countryName
-							const currencyConverter = data.geoplugin_currencyConverter
-							const latitude = data.geoplugin_latitude
-							const longitude = data.geoplugin_longitude
-							const region = data.geoplugin_region
-							const ipAddress = data.geoplugin_request
-							const timezone = data.geoplugin_timezone
-
-							const locationObj = {
-								city: city,
-								continent: continent,
-								country: country,
-								currencyConverter: currencyConverter,
-								latitude: latitude,
-								longitude: longitude,
-								region: region,
-								ipAddress: ipAddress,
-								timezone: timezone
-							}
-						})*/
 
 						socketIO.on("commentPosted", function (data) {
 							// console.log(data)
@@ -521,12 +489,9 @@
 
 			
 			html += '<li>';
-				//html += '<a href="/friends">Friends <i class="fa fa-angle-right"></i></a>';
+				html += '<a href="/friends">Contactos <i class="fa fa-angle-right"></i></a>';
 			html += '</li>';
 
-			html += '<li>';
-				//html += '<a href="/pages">Pages <i class="fa fa-angle-right"></i></a>';
-			html += '</li>';
 
 			html += '<li>';
 				html += '<a href="/groups">Comunidad <i class="fa fa-angle-right"></i></a>';

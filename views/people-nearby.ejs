@@ -19,7 +19,7 @@
                                         <div class="col-md-4">
                                             <h5 class="f-title">
                                                 <i class="ti-info-alt"></i>
-                                                Personas Cerca
+                                                Personas de mi Área
                                             </h5>
                                         </div>
                                     </div>
@@ -45,7 +45,7 @@
     function fetchNearby() {
 
         var ajax = new XMLHttpRequest();
-        ajax.open("POST", "/fetchNearby", true);
+        ajax.open("POST", "/fetchNearbyCom", true);
 
         ajax.onreadystatechange = function() {
             if (this.readyState == 4) {
@@ -61,10 +61,10 @@
                         html += `<li>
                             <div class="nearly-pepls">
                                 <figure>
-                                    <a href="` + mainURL + `/user/'` + user._id + `">
-                                        <img src="` + mainURL + `/` + user.profileImage + `" onerror="this.src = '/public/img/default_profile.jpg'" />
-                                    </a>
-                                </figure>
+								<a href="/user/` + user._id + `">
+									<img src="` + mainURL + `/` + user.profileImage + `" style="width: 100px; height: 80px; object-fit: cover;" onerror="this.src = \'/public/img/default_cover.jpg\';">
+								</a>
+							</figure>
 
                                 <div class="pepl-info">
                                     <h4>

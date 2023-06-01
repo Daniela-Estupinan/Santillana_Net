@@ -131,14 +131,14 @@
 										html += '<a href="/group/' + data._id + '">' + data.name + '</a>';
 									html += '</h4>';
 
-									html += '<span>public group</span>';
+									html += '<span>Grupo Público</span>';
 									html += '<em>' + data.members.length + ' Members</em>';
 
 									if (localStorage.getItem("accessToken")) {
 										if (isMember) {
-											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn btn-unfriend">Leave</a>';
+											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn btn-unfriend">Salir</a>';
 										} else {
-											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn">Join</a>';
+											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn">Unirse</a>';
 										}
 									}
 

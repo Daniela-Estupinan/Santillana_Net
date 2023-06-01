@@ -21,7 +21,7 @@
 								<div class="inbox_people">
 									<div class="headind_srch">
 										<div class="recent_heading">
-											<h4>Groups</h4>
+											<h4>Grupos</h4>
 										</div>
 									</div>
 
@@ -38,7 +38,7 @@
 
 									<div style="display: none; margin-bottom: 10px;" id="section-invite-member-modal" class="pull-right">
 										<button type="button" class="mtr-btn" style="display: none;" onclick="deleteGroup()" id="btn-delete-group">
-											<span>Delete group</span>
+											<span>Eliminar Grupo</span>
 										</button>
 
 										<button type="button" class="mtr-btn" data-toggle="modal" data-target="#viewMembersModal">
@@ -515,7 +515,7 @@
 			return
 		}
 
-		form.submit.querySelector("span").innerHTML = "Loading..."
+		form.submit.querySelector("span").innerHTML = "Cargando..."
 		form.submit.setAttribute("disabled", "disabled")
 
 		const ajax = new XMLHttpRequest()
@@ -898,8 +898,8 @@
 
 	function deleteMessage(self) {
 		swal({
-			title: "Delete message",
-			text: "Are you sure you want to delete this message ?",
+			title: "Eliminar mensaje",
+			text: "¿Está seguro que quiere eliminar este mensaje?",
 			icon: "warning",
 			buttons: true,
 			dangerMode: true,
@@ -934,7 +934,7 @@
 
 		let badgeUnread = ""
 		if (data.unread && data.unread > 0) {
-			badgeUnread = `<span class="badge unread" style="background-color: #05728f; color: white;">` + data.unread + `</span>`
+			badgeUnread = `<span class="badge unread" style="background-color: #7EC352; color: white;">` + data.unread + `</span>`
 		}
 
 		const image = data.savedPaths.length > 0 ? data.savedPaths[0] : ""

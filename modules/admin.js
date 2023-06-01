@@ -634,7 +634,6 @@ module.exports = {
             }
 
             var users = await self.database.collection("users").count();
-            var posts = await self.database.collection("posts").count();
             var groups = await self.database.collection("groups").count();
             var supportRequests = 0;
 
@@ -642,8 +641,6 @@ module.exports = {
                 "status": "success",
                 "message": "Data has been fetched.",
                 "users": users,
-                "posts": posts,
-                "pages": pages,
                 "groups": groups,
                 "supportRequests": supportRequests
             });
@@ -651,7 +648,7 @@ module.exports = {
 
         app.get("/admin", function (request, result) {
             self.database.collection("admins").findOne({}, function (error, admin) {
-                if (!admin) {
+             /*   if (!admin) {
 
                     self.bcrypt.genSalt(10, function(err, salt) {
                         self.bcrypt.hash("admin", salt, async function(err, hash) {
@@ -661,7 +658,7 @@ module.exports = {
                             })
                         })
                     })
-                }
+                }*/
             });
 
             result.render("admin/index");
