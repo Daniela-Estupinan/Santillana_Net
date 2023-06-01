@@ -88,7 +88,7 @@
 <div id="edit-post-modal" class="modal">
 	<!-- Modal content -->
 	<div class="modal-content">
-		<h3>Edit post <span class="close" onclick="closeModal('edit-post-modal')">&times;</span></h3>
+		<h3>Editar publicación <span class="close" onclick="closeModal('edit-post-modal')">&times;</span></h3>
 
 		<form method="POST" action="/editPost" enctype="multipart/form-data" id="form-edit-post" onsubmit="return doEditPost(this)">			
 			<input type="hidden" name="_id" />
@@ -107,7 +107,7 @@
 
 					<li>
 						<button type="submit" name="submit">
-							Post
+							Publicar
 							<i class="fa fa-spinner fa-spin" style="display: none;"></i>
 						</button>
 					</li>
@@ -489,7 +489,7 @@
 
 			
 			html += '<li>';
-				//html += '<a href="/friends">Friends <i class="fa fa-angle-right"></i></a>';
+				html += '<a href="/friends">Contactos <i class="fa fa-angle-right"></i></a>';
 			html += '</li>';
 
 

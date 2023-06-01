@@ -603,7 +603,7 @@ http.listen(3000, function () {
 
 	        	result.json({
 					status: "success",
-					message: "Group has been created.",
+					message: "Comunidad ha sido creada",
 					group: obj
 				})
 	        })
@@ -677,6 +677,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 	const user = await database.collection("users").findOne({
 		accessToken: accessToken
 	})
+
 	
 	if (user == null) {
 		result.json({
@@ -693,6 +694,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 		})
 		return
 	}
+
 
 	const data = []
 	if (typeof user.country !== "undefined") {
@@ -3584,6 +3586,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			var name = request.fields.name;
 			var additionalInfo = request.fields.additionalInfo;
 			var coverPhoto = "";
+			var area = request.fields.area;//new area
             var type = request.fields.type;
             var imageData = request.fields.imageData;
 
@@ -3620,6 +3623,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
                             "name": name,
                             "additionalInfo": additionalInfo,
                             "coverPhoto": coverPhoto,
+							"area":area,
                             "members": [{
                                 "_id": user._id,
                                 "name": user.name,
@@ -3648,7 +3652,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
                                 result.json({
                                     "status": "success",
-                                    "message": "Group has been created."
+                                    "message": "Comunidad ha sido creada"
                                 });
                             });
                         });
@@ -3672,6 +3676,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 		    							"name": name,
 		    							"additionalInfo": additionalInfo,
 		    							"coverPhoto": coverPhoto,
+										"area":area,
 		    							"members": [{
 		    								"_id": user._id,
 		    								"name": user.name,
@@ -3700,7 +3705,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 		    								result.json({
 		    									"status": "success",
-		    									"message": "Group has been created."
+		    									"message": "Comunidad ha sido creada"
 		    								});
 		    							});
 		    						});

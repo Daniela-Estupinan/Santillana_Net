@@ -1,3 +1,5 @@
+const { buffer } = require("@tensorflow/tfjs");
+
 const ObjectId = require("mongodb").ObjectId
 
 module.exports = {
@@ -34,8 +36,12 @@ callbackFileUpload: function (files, index, savedPaths = [], success = null) {
   
         if (files[index].size > 0) {
           const filePath = "uploads/" + new Date().getTime() + "-" + files[index].name;
-          const base64 = Buffer.from(data).toString('base64');
-  
+          //const base64 = buffer.toString("base64")
+          const base64 = buffer=>{
+            let _buffer = new Buffer.from(buffer,'base64');
+            return _buffer.toString('base64')
+          };
+          /*
           if (files[index].type.includes("image")) {
             self.requestModule.post("../class.ImageFilter.php", {
               formData: {
@@ -79,7 +85,7 @@ callbackFileUpload: function (files, index, savedPaths = [], success = null) {
                 }
               }
             });
-          } else {
+          } else */{
             self.fileSystem.writeFile(filePath, data, async function (error) {
               if (error) {
                 console.error(error);
