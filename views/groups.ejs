@@ -98,7 +98,7 @@
 								<span>Grupo Público</span>
 								<em>` + data.members.length + ` Members</em>
 
-								<a href="javascript:void(0)" data-id="` + data._id + `" onclick="toggleJoinGroup(this);" class="add-butn btn-unfriend">Leave</a>
+								<a href="javascript:void(0)" data-id="` + data._id + `" onclick="toggleJoinGroup(this);" class="add-butn btn-unfriend">Salir</a>
 							</div>
 						</div>
 					</li>`
@@ -111,6 +111,38 @@
 		formData.append("accessToken", localStorage.getItem("accessToken"));
 		ajax.send(formData);
 	}
+	function toggleJoinGroup(self) {
+
+var ajax = new XMLHttpRequest();
+ajax.open("POST", "/toggleJoinGroup", true);
+
+ajax.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+
+		var response = JSON.parse(this.responseText);
+
+		if (response.status == "success") {
+			self.className = "add-butn btn-unfriend";
+			self.innerHTML = "Salir";
+		}
+
+		if (response.status == "leaved") {
+			self.className = "add-butn";
+			self.innerHTML = "Unirse";
+		}
+
+		if (response.status == "error") {
+			swal("Error", response.message, "error");
+		}
+	}
+};
+
+var formData = new FormData();
+formData.append("accessToken", localStorage.getItem("accessToken"));
+formData.append("_id", self.getAttribute("data-id"));
+ajax.send(formData);
+}
+
 </script>
 
 <%- include ("includes/footer") %>

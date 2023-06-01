@@ -73,10 +73,11 @@
 							html += '<a href="javascript:void(0);" data-id="' + data._id + '" data-groupId="' + data.groupId + '" data-userId="' + data.userId + '" onclick="acceptRequestJoinGroup(this);" class="add-butn" style="position: relative;">Accept</a>';
 						}
 
-						// if (data.type == "new_post_in_group") {
-						// 	html += '<a href="' + mainURL + '/group/' + data.groupId + '" class="add-butn" style="position: relative; left: 5px;">View group</a>'
-						// }
+						 if (data.type == "new_post_in_group") {
+							html += '<a href="' + mainURL + '/group/' + data.groupId + '" class="add-butn" style="position: relative; left: 5px;">View group</a>'
+						 }
 					html += '</div>';
+					
 
 				if (data.type == "new_comment" || data.type == "photo_liked")
 				{
@@ -161,7 +162,7 @@
 
 		ajax.send(formData);
 	}
-	/*
+	
 		function deleteNotification() {
 		var ajax = new XMLHttpRequest();
 		ajax.open("POST", "/deleteNotification", true);
@@ -183,7 +184,7 @@
 		formData.append("accessToken", localStorage.getItem("accessToken"));
 		ajax.send(formData);
 	}
-	 */
+	 
 </script>
 
 <%- include ("includes/footer") %>

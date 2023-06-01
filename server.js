@@ -546,129 +546,8 @@ http.listen(3000, function () {
 		    })
 		})
 
-		app.post("/createGroupForChat", async function (request, result) {
-			const accessToken = request.fields.accessToken
-			const name = request.fields.name ?? ""
 
-			const user = await database.collection("users").findOne({
-				accessToken: accessToken
-			})
-			
-			if (user == null) {
-				result.json({
-					status: "error",
-					message: "User has been logged out. Please login again."
-				})
-				return
-			}
-			
-			if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-				return
-			}
-
-			const files = []
-	        if (Array.isArray(request.files.coverPhoto)) {
-	            for (let a = 0; a < request.files.coverPhoto.length; a++) {
-	                files.push(request.files.coverPhoto[a])
-	            }
-	        } else {
-	            files.push(request.files.coverPhoto)
-	        }
-
-	        functions.callbackFileUpload(files, 0, [], async function (savedPaths) {
-	        	const obj = {
-	        		name: name,
-	        		savedPaths: savedPaths,
-	        		members: [{
-	        			_id: ObjectId(),
-	        			status: "Accepted",
-	        			user: {
-	        				_id: user._id,
-	        				name: user.name
-	        			},
-	        			createdAt: new Date().getTime()
-	        		}],
-	        		createdBy: {
-	        			_id: user._id,
-	        			name: user.name
-	        		},
-	        		createdAt: new Date().getTime()
-	        	}
-	        	const response = await database.collection("groupChats").insertOne(obj)
-	        	obj._id = response.insertedId
-
-	        	result.json({
-					status: "success",
-					message: "Comunidad ha sido creada",
-					group: obj
-				})
-	        })
-		})
-
-		app.get("/groupChat", function (request, result) {
-			result.render("groupChat")
-		})
 //Personas Cerca
-		app.post("/fetchNearby", async function (request, result) {
-			const accessToken = request.fields.accessToken
-
-			const user = await database.collection("users").findOne({
-				accessToken: accessToken
-			})
-			
-			if (user == null) {
-				result.json({
-					status: "error",
-					message: "User has been logged out. Please login again."
-				})
-				return
-			}
-			
-			if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-				return
-			}
-
-			const data = []
-			if (typeof user.location !== "undefined") {
-				let users = await database.collection("users").find({
-					$and: [{
-						_id: {
-							$ne: user._id
-						}
-					}, {
-						"location.city": user.location.city
-					}]
-				}).toArray()
-
-				users = users.sort(function (a, b) {
-					return 0.5 - Math.random()
-				})
-
-				for (let a = 0; a < users.length; a++) {
-					data.push({
-						_id: users[a]._id,
-						name: users[a].name,
-						profileImage: users[a].profileImage,
-						city:users[a].location.city,
-						country: users[a].country
-					})
-				}
-			}
-
-			result.json({
-				status: "success",
-				message: "Data has been fetched.",
-				data: data
-			})
-		})
 
 //** */
 app.post("/fetchNearbyCom", async function (request, result) {
@@ -695,8 +574,8 @@ app.post("/fetchNearbyCom", async function (request, result) {
 		return
 	}
 
-
 	const data = []
+	var _id = request.params._id;
 	if (typeof user.country !== "undefined") {
 		let users = await database.collection("users").find({
 			$and: [{
@@ -705,22 +584,26 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				}
 			}, {
 				"country": user.country
+				
 			}]
 		}).toArray()
-
+		
+	//
 		users = users.sort(function (a, b) {
 			return 0.5 - Math.random()
 		})
-
 		for (let a = 0; a < users.length; a++) {
 			data.push({
 				_id: users[a]._id,
 				name: users[a].name,
 				profileImage: users[a].profileImage,
 				country: users[a].country
+				
 			})
 		}
 	}
+
+
 
 	result.json({
 		status: "success",
@@ -2678,6 +2561,10 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				"name": {
 					$regex: ".*" + query + ".*",
 					$options: "i"
+				},
+				"area":{
+					$regex: ".*" + query + ".*",
+					$options: "i"
 				}
 			}).toArray()
 
@@ -4046,7 +3933,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 												"notifications": {
 													"_id": ObjectId(),
 													"type": "group_join_request",
-													"content": user.name + " sent a request to join your group.",
+													"content": user.name + " envio una invitación para unirse a la comunidad.",
 													"profileImage": user.profileImage,
 													"groupId": group._id,
 													"userId": user._id,
