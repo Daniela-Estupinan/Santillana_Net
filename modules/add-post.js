@@ -22,98 +22,97 @@ module.exports = {
     _id: null,
     mainURL: "",
 
-    callbackFileUpload: function(files, index, savedPaths = [], success = null) {
-        const self = this
-
-        if (files.length > index) {
-
-            this.fileSystem.readFile(files[index].path, function (error, data) {
-                if (error) {
-                    console.error(error)
-                    return
-                }
-
-                if (files[index].size > 0) {
-                    const filePath = "uploads/" + new Date().getTime() + "-" + files[index].name
-                    const base64 = new Buffer(data).toString('base64')
-
-                    if (files[index].type.includes("image")) {
-                        self.requestModule.post("../class.ImageFilter.php", {
-                            formData: {
-                                "validate_image": 1,
-                                "base_64": base64
-                            }
-                        }, function(err, res, body) {
-                            if (!err && res.statusCode === 200) {
-                                // console.log(body);
-
-                                if (body > 60) {
-                                    self.result.json({
-                                        "status": "error",
-                                        "message": "Image contains nudity."
-                                    });
-
-                                    return false;
-                                } else {
-                                    self.fileSystem.writeFile(filePath, data, async function (error) {
-                                        if (error) {
-                                            console.error(error)
-                                            return
-                                        }
-
-                                        savedPaths.push(filePath)
-
-                                        if (index == (files.length - 1)) {
-                                            success(savedPaths)
-                                        } else {
-                                            index++
-                                            self.callbackFileUpload(files, index, savedPaths, success)
-                                        }
-                                    })
-
-                                    self.fileSystem.unlink(files[index].path, function (error) {
-                                        if (error) {
-                                            console.error(error)
-                                            return
-                                        }
-                                    })
-                                }
-                            }
-                        })
-                    } else {
-                        self.fileSystem.writeFile(filePath, data, async function (error) {
-                            if (error) {
-                                console.error(error)
-                                return
-                            }
-
-                            savedPaths.push(filePath)
-
-                            if (index == (files.length - 1)) {
-                                success(savedPaths)
-                            } else {
-                                index++
-                                self.callbackFileUpload(files, index, savedPaths, success)
-                            }
-                        })
-
-                        self.fileSystem.unlink(files[index].path, function (error) {
-                            if (error) {
-                                console.error(error)
-                                return
-                            }
-                        })
-                    }
-                } else {
-                    index++
-                    self.callbackFileUpload(files, index, savedPaths, success)
-                }
-            })
-        } else {
-            success(savedPaths)
+callbackFileUpload: function (files, index, savedPaths = [], success = null) {
+    const self = this;
+  
+    if (files.length > index) {
+      this.fileSystem.readFile(files[index].path, function (error, data) {
+        if (error) {
+          console.error(error);
+          return;
         }
-    },
-
+  
+        if (files[index].size > 0) {
+          const filePath = "uploads/" + new Date().getTime() + "-" + files[index].name;
+          const base64 = Buffer.from(data).toString('base64');
+  
+          if (files[index].type.includes("image")) {
+            self.requestModule.post("../class.ImageFilter.php", {
+              formData: {
+                "validate_image": 1,
+                "base_64": base64
+              }
+            }, function (err, res, body) {
+              if (!err && res.statusCode === 200) {
+                // console.log(body);
+  
+                if (body > 60) {
+                  self.result.json({
+                    "status": "error",
+                    "message": "Image contains nudity."
+                  });
+  
+                  return false;
+                } else {
+                  self.fileSystem.writeFile(filePath, data, async function (error) {
+                    if (error) {
+                      console.error(error);
+                      return;
+                    }
+  
+                    savedPaths.push(filePath);
+  
+                    if (index === files.length - 1) {
+                      success(savedPaths);
+                    } else {
+                      index++;
+                      self.callbackFileUpload(files, index, savedPaths, success);
+                    }
+                  });
+  
+                  self.fileSystem.unlink(files[index].path, function (error) {
+                    if (error) {
+                      console.error(error);
+                      return;
+                    }
+                  });
+                }
+              }
+            });
+          } else {
+            self.fileSystem.writeFile(filePath, data, async function (error) {
+              if (error) {
+                console.error(error);
+                return;
+              }
+  
+              savedPaths.push(filePath);
+  
+              if (index === files.length - 1) {
+                success(savedPaths);
+              } else {
+                index++;
+                self.callbackFileUpload(files, index, savedPaths, success);
+              }
+            });
+  
+            self.fileSystem.unlink(files[index].path, function (error) {
+              if (error) {
+                console.error(error);
+                return;
+              }
+            });
+          }
+        } else {
+          index++;
+          self.callbackFileUpload(files, index, savedPaths, success);
+        }
+      });
+    } else {
+      success(savedPaths);
+    }
+  },
+  
     execute: async function (request, result) {
         var accessToken = request.fields.accessToken;
         var caption = request.fields.caption;
@@ -315,7 +314,7 @@ module.exports = {
                         "notifications": {
                             _id: ObjectId(),
                             type: "new_post_in_group",
-                            content: this.user.name + " has posted a new post in your group.",
+                            content: this.user.name + " ha publicado algo nuevo en la comunidad",
                             profileImage: this.user.profileImage,
                             groupId: group._id,
                             userId: this.user._id,

@@ -123,6 +123,7 @@ http.listen(3000, function () {
 		editPost.filter = filter;
 		editPost.ObjectId = ObjectId;
 
+		
 		admin.database = database;
 		admin.bcrypt = bcrypt;
 		admin.jwt = jwt;
@@ -1158,39 +1159,20 @@ app.post("/fetchNearbyCom", async function (request, result) {
 								"country": "",
 								"aboutMe": "",
 								"friends": [],
-								"pages": [],
 								"notifications": [],
 								"groups": [],
 								"isVerified": isVerified,
 								"verification_token": verification_token,
 								"isBanned": isBanned
 							}, function (error, data) {
-
-								/*var transporter = nodemailer.createTransport(nodemailerObject);
-
-								var text = "Please verify your account by click the following link: " + mainURL + "/verifyEmail/" + email + "/" + verification_token;
-								var html = "Please verify your account by click the following link: <br><br> <a href='" + mainURL + "/verifyEmail/" + email + "/" + verification_token + "'>Confirm Email</a> <br><br> Thank you.";
-
-								transporter.sendMail({
-									from: nodemailerFrom,
-									to: email,
-									subject: "Email Verification",
-									text: text,
-									html: html
-								}, function (error, info) {
-									if (error) {
-										console.error(error);
-									} else {
-										console.log("Email sent: " + info.response);
-									}*/
-									
+						
 									result.json({
 										"status": "success",
 										"message": "Se ha registrado correctamente. Podrás iniciar sesión y empezar a usar Al día Ecuador."
 									});
 
 								// });
-
+/*
 								mongoClient.connect("mongodb+srv://prueba:OMQwl0A1VopVj7ZA@mern.68vlpne.mongodb.net/mern?retryWrites=true&w=majority", {
 									useUnifiedTopology: true
 								}, async function (error, client) {
@@ -1216,7 +1198,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 										"message": "Signed up successfully."
 									})
 								})
-								
+								*/
 							})
 					    })
 					})
@@ -2448,63 +2430,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			})
 		})
 
-		app.post("/fetchCommentsByStory", async function (request, result) {
-			const accessToken = request.fields.accessToken
-			const _id = request.fields._id
 
-			const user = await database.collection("users").findOne({
-				"accessToken": accessToken
-			})
-
-			if (user == null) {
-				result.json({
-					"status": "error",
-					"message": "User has been logged out. Please login again."
-				})
-
-				return
-			}
-
-			if (user.isBanned) {
-				result.json({
-					"status": "error",
-					"message": "You have been banned."
-				})
-
-				return
-			}
-
-			const post = await database.collection("stories").findOne({
-				"_id": ObjectId(_id)
-			})
-
-			if (post == null) {
-				result.json({
-					"status": "error",
-					"message": "Story does not exist."
-				})
-
-				return
-			}
-
-			if (post.user._id.toString() != user._id.toString()) {
-				result.json({
-					"status": "error",
-					"message": "Unauthorized."
-				})
-
-				return
-			}
-
-			let comments = post.comments
-			comments = comments.reverse()
-
-			result.json({
-				status: "success",
-				message: "Data has been fetched.",
-				comments: comments
-			})
-		})
 
 		app.post("/fetchCommentsByPost", async function (request, result) {
 			const accessToken = request.fields.accessToken
@@ -2555,117 +2481,19 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			})
 		})
 
-		app.post("/postCommentOnStory", async function (request, result) {
-			var accessToken = request.fields.accessToken
-			var _id = request.fields._id
-			var comment = request.fields.comment
-			var createdAt = new Date().getTime()
-
-			const user = await database.collection("users").findOne({
-				"accessToken": accessToken
-			})
-
-			if (user == null) {
-				result.json({
-					"status": "error",
-					"message": "User has been logged out. Please login again."
-				})
-
-				return
-			}
-
-			if (user.isBanned) {
-				result.json({
-					"status": "error",
-					"message": "You have been banned."
-				})
-
-				return
-			}
-
-			const post = await database.collection("stories").findOne({
-				"_id": ObjectId(_id)
-			})
-
-			if (post == null) {
-				result.json({
-					"status": "error",
-					"message": "Story does not exist."
-				})
-
-				return
-			}
-
-			var commentId = ObjectId()
-			const commentObj = {
-				"_id": commentId,
-				"user": {
-					"_id": user._id,
-					"name": user.name,
-					"profileImage": user.profileImage,
-				},
-				"comment": comment,
-				"createdAt": createdAt,
-				"replies": []
-			}
-
-			await database.collection("stories").updateOne({
-				"_id": ObjectId(_id)
-			}, {
-				$push: {
-					"comments": commentObj
-				}
-			})
-
-			if (user._id.toString() != post.user._id.toString()) {
-				await database.collection("users").updateOne({
-					"_id": post.user._id
-				}, {
-					$push: {
-						"notifications": {
-							"_id": ObjectId(),
-							"type": "new_comment_on_story",
-							"content": user.name + " commented on your story.",
-							"profileImage": user.profileImage,
-							"story": {
-								"_id": post._id
-							},
-							"isRead": false,
-							"createdAt": new Date().getTime()
-						}
-					}
-				})
-			}
-
-			const updatePost = await database.collection("stories").findOne({
-				"_id": ObjectId(_id)
-			})
-
-			if (updatePost == null) {
-				result.json({
-					"status": "success",
-					"message": "Story does not exists."
-				})
-
-				return
-			}
-
-			socketIO.emit("commentPostedOnStory", {
-				story: updatePost,
-				comment: commentObj
-			})
-
-			result.json({
-				"status": "success",
-				"message": "Comment has been posted.",
-				"updatePost": updatePost
-			})
-		})
 
 		app.post("/postComment", async function (request, result) {
 			var accessToken = request.fields.accessToken
 			var _id = request.fields._id
 			var comment = request.fields.comment
+			if(comment = filter.isProfane(comment)){
+				result.json({
+					"status": "error",
+					"message": "Contiene lenguaje ofensivo o abusivo."
+				})
+			}else{
+				var comment = request.fields.comment
+			
 			var createdAt = new Date().getTime()
 
 			const user = await database.collection("users").findOne({
@@ -2738,7 +2566,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 								notifications: {
 									_id: ObjectId(),
 									type: "new_comment",
-									content: user.name + " commented on your post.",
+									content: user.name + " comento en tu publicacion.",
 									profileImage: user.profileImage,
 									isRead: false,
 									post: {
@@ -2757,7 +2585,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 							"notifications": {
 								"_id": ObjectId(),
 								"type": "new_comment",
-								"content": user.name + " commented on your post.",
+								"content": user.name + " comento en tu publicacion.",
 								"profileImage": user.profileImage,
 								"post": {
 									"_id": post._id
@@ -2808,110 +2636,12 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 			result.json({
 				"status": "success",
-				"message": "Comment has been posted.",
+				"message": "Comentario hecho",
 				"updatePost": updatePost
 			})
+		}
 		})
-
-		app.post("/postReply", function (request, result) {
-
-			var accessToken = request.fields.accessToken;
-			var postId = request.fields.postId;
-			var commentId = request.fields.commentId;
-			var reply = request.fields.reply;
-			var createdAt = new Date().getTime();
-
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-
-					if (user.isBanned) {
-						result.json({
-							"status": "error",
-							"message": "You have been banned."
-						});
-						return false;
-					}
-
-					database.collection("posts").findOne({
-						"_id": ObjectId(postId)
-					}, function (error, post) {
-						if (post == null) {
-							result.json({
-								"status": "error",
-								"message": "Post does not exist."
-							});
-						} else {
-
-							var replyId = ObjectId()
-							const replyObj = {
-								"_id": replyId,
-								"user": {
-									"_id": user._id,
-									"name": user.name,
-									"profileImage": user.profileImage,
-								},
-								"reply": reply,
-								"createdAt": createdAt
-							}
-
-							database.collection("posts").updateOne({
-								$and: [{
-									"_id": ObjectId(postId)
-								}, {
-									"comments._id": ObjectId(commentId)
-								}]
-							}, {
-								$push: {
-									"comments.$.replies": replyObj
-								}
-							}, function (error, data) {
-
-								database.collection("users").updateOne({
-									$and: [{
-										"_id": post.user._id
-									}, {
-										"posts._id": post._id
-									}, {
-										"posts.comments._id": ObjectId(commentId)
-									}]
-								}, {
-									$push: {
-										"posts.$[].comments.$[].replies": replyObj
-									}
-								});
-
-								database.collection("posts").findOne({
-									"_id": ObjectId(postId)
-								}, function (error, updatePost) {
-
-									socketIO.emit("postReply", {
-										post: updatePost,
-										reply: replyObj,
-										commentId: commentId
-									})
-
-									result.json({
-										"status": "success",
-										"message": "Reply has been posted.",
-										"updatePost": updatePost,
-										replyObj: replyObj
-									});
-								});
-							});
-
-						}
-					});
-				}
-			});
-		});
-
+	
 		app.get("/search/:query", function (request, result) {
 			var query = request.params.query
 			result.render("search", {
