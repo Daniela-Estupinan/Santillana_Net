@@ -680,7 +680,7 @@ module.exports = {
             if (admin == null) {
                 result.json({
                     "status": "error",
-                    "message": "Email does not exist"
+                    "message": "Correo no existe"
                 });
 
                 //return false;
