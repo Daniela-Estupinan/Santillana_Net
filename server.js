@@ -1070,7 +1070,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				}else{
 					result.json({
 						"status": "error",
-						"message": "El dominio del correo electronico no es el correcto"
+						"message": "El dominio del correo electrónico no es el correcto"
 					});
 				}
 				} else {
@@ -1741,10 +1741,6 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 			var ids = []
 			ids.push(user._id)
-
-			for (var a = 0; a < user.pages.length; a++) {
-				ids.push(user.pages[a]._id);
-			}
 
 			for (var a = 0; a < user.groups.length; a++) {
 				if (user.groups[a].status == "Accepted") {
@@ -2659,7 +2655,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
                                             result.json({
                                                 "status": "success",
-                                                "message": "Friend request has been sent."
+                                                "message": "Se ha enviado la solicitud de amistad"
                                             });
 
                                         });
@@ -2763,7 +2759,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 									result.json({
 										"status": "success",
-										"message": "Friend request has been accepted."
+										"message": "Solicitud ha sido aceptada"
 									});
 
 								});

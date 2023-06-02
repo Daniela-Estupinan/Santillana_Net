@@ -20,7 +20,7 @@ var loadMore = {
                 var response = JSON.parse(this.responseText);
                 if (response.data == null) {
                     var p = document.createElement("p");
-                    p.innerHTML = "Kindly login or register to start posting.";
+                    p.innerHTML = "Necesita iniciar sesión o registrarse";
                     p.style.textAlign = "center";
                     p.style.color = "black";
                     p.style.fontSize = "16px";
