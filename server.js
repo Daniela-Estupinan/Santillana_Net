@@ -795,7 +795,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				if (user == null) {
 					result.json({
 						'status': "error",
-						'message': "Email does not exists."
+						'message': "Correo no existes."
 					});
 				} else {
 					var reset_token = new Date().getTime();
@@ -863,7 +863,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				if (user == null) {
 					result.json({
 						'status': "error",
-						'message': 'Email does not exists. Or verification link is expired.'
+						'message': 'Correo no existes. Or verification link is expired.'
 					});
 				} else {
 
@@ -912,7 +912,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				if (user == null) {
 					result.json({
 						'status': "error",
-						'message': 'Email does not exists. Or recovery link is expired.'
+						'message': 'Correo no existes. Or recovery link is expired.'
 					});
 				} else {
 
@@ -1018,7 +1018,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			var isBanned = false;
 			var verification_token = new Date().getTime();
 			// verification_token = ""
-
+			
 			database.collection("users").findOne({
 				$or: [{
 					"email": email
@@ -1027,7 +1027,9 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				}]
 			}, function (error, user) {
 				if (user == null) {
-
+				const dominio = email.split("@");
+				console.log(dominio)
+				if(dominio[1]=="santillana.com"||dominio[1]=="clb.santillana.com"){
 					bcrypt.genSalt(10, function(err, salt) {
 					    bcrypt.hash(password, salt, async function(err, hash) {
 					    	database.collection("users").insertOne({
@@ -1050,11 +1052,17 @@ app.post("/fetchNearbyCom", async function (request, result) {
 								"verification_token": verification_token,
 								"isBanned": isBanned
 							}, function (error, data) {
-						
+								if (password.length >= 8 && password.length<=12) {
 									result.json({
 										"status": "success",
 										"message": "Se ha registrado correctamente. Podrás iniciar sesión y empezar a usar Al día Ecuador."
 									});
+								} else {
+									result.json({
+										"status": "error",
+										"message": "La contraseña debe contener al menos 8 dígitos y no más de 12"
+									});
+								}
 
 								// });
 /*
@@ -1087,10 +1095,16 @@ app.post("/fetchNearbyCom", async function (request, result) {
 							})
 					    })
 					})
+				}else{
+					result.json({
+						"status": "error",
+						"message": "El dominio del correo electronico no es el correcto"
+					});
+				}
 				} else {
 					result.json({
 						"status": "error",
-						"message": "Email or username already exist."
+						"message": "Correo ya existe."
 					});
 				}
 			});
@@ -1207,7 +1221,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				if (user == null) {
 					result.json({
 						"status": "error",
-						"message": "Email does not exist"
+						"message": "Correo no existe"
 					});
 					
 				} else {
@@ -1222,7 +1236,10 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 					bcrypt.compare(password, user.password, function (error, res) {
 						if (res === true) {
-
+							const dominio = user.email.split("@");
+							console.log(dominio)
+							if(dominio[1]=="santillana.com"||dominio[1]=="clb.santillana.com"){
+							
 							if (user.isVerified) {
 								var accessToken = jwt.sign({ email: email }, accessTokenSecret);
 								database.collection("users").findOneAndUpdate({
@@ -1248,7 +1265,13 @@ app.post("/fetchNearbyCom", async function (request, result) {
 								});
 								return
 							}
-							
+							}else{
+								result.json({
+									"status": "error",
+									"message": "Escriba el dominio correcto."
+								});
+								return
+							}	
 						} else {
 							result.json({
 								"status": "error",
@@ -2559,10 +2582,6 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 			const groups = await database.collection("groups").find({
 				"name": {
-					$regex: ".*" + query + ".*",
-					$options: "i"
-				},
-				"area":{
 					$regex: ".*" + query + ".*",
 					$options: "i"
 				}
