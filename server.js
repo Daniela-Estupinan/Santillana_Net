@@ -2561,10 +2561,6 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				"name": {
 					$regex: ".*" + query + ".*",
 					$options: "i"
-				},
-				"area":{
-					$regex: ".*" + query + ".*",
-					$options: "i"
 				}
 			}).toArray()
 
