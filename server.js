@@ -57,11 +57,11 @@ global.mainURL = "http://localhost:3000";
 
 var nodemailerFrom = "danielitabelen2009@hotmail.com";
 var nodemailerObject = {
-	host: 'hotmail.com',
+	host: 'santillana.com',
     port: 465,
     secure: true,
 	auth: {
-		user: "danielitabelen2009@hotmail.com",
+		user: "danielitabelen2009@santillana.com",
 		pass: "mitom2014"
 	}
 };
@@ -123,506 +123,13 @@ http.listen(3000, function () {
 		editPost.filter = filter;
 		editPost.ObjectId = ObjectId;
 
+		
 		admin.database = database;
 		admin.bcrypt = bcrypt;
 		admin.jwt = jwt;
 		admin.ObjectId = ObjectId;
 		admin.fileSystem = fileSystem;
 		admin.mainURL = mainURL;
-
-		cron.schedule("* * * * *", async function () {
-			let stories = await database.collection("stories").aggregate([{
-				$project: {
-					duration: {
-						$divide: [{
-							$subtract: [new Date().getTime(), "$createdAt"]
-						}, 3600000]
-					}
-				}
-			}]).toArray()
-			let filterArr = []
-			for (let a = 0; a < stories.length; a++) {
-				if (stories[a].duration >= 24) {
-					filterArr.push(stories[a]._id)
-				}
-			}
-
-			await database.collection("stories").updateMany({
-				"_id": {
-					$in: filterArr
-				}
-			}, {
-				$set: {
-					"status": "passed"
-				}
-			})
-			// console.log("---------------------")
-			// console.log("Stories ended........")
-			// console.log(filterArr)
-			// console.log("---------------------")
-
-			const currentTimestamp = new Date().getTime()
-			
-			const advertisements = await database.collection("advertisements").find({
-				$and: [{
-					endAt: {
-						$lt: currentTimestamp
-					}
-				}, {
-					status: "active"
-				}]
-			}).toArray()
-
-			const updatedAds = []
-
-			for (let a = 0; a < advertisements.length; a++) {
-				await database.collection("advertisements").findOneAndUpdate({
-					_id: advertisements[a]._id
-				}, {
-					$set: {
-						status: "inactive"
-					}
-				})
-
-				await database.collection("posts").findOneAndUpdate({
-					_id: advertisements[a].post._id
-				}, {
-					isBoost: false
-				})
-
-				updatedAds.push(advertisements[a]._id)
-			}
-
-			// console.log({
-			// 	updatedAds: updatedAds
-			// })
-		})
-
-		app.route("/joinGroupChatViaQRCode")
-			.get(function (request, result) {
-				result.render("joinGroupChatViaQRCode", {
-					_id: request.query._id
-				})
-			})
-			.post(async function (request, result) {
-				const accessToken = request.fields.accessToken
-		        const _id = request.fields._id
-
-		        const userObj = await database.collection("users").findOne({
-		            accessToken: accessToken
-		        })
-
-		        if (userObj == null) {
-		            result.json({
-		                status: "error",
-		                message: "User has been logged out. Please login again."
-		            })
-
-		            return
-		        }
-
-		        if (userObj.isBanned) {
-					result.json({
-						status: "error",
-						message: "You have been banned."
-					})
-
-					return
-				}
-
-				const group = await database.collection("groupChats").findOne({
-					_id: ObjectId(_id)
-			    })
-
-			    if (group == null) {
-					result.json({
-						status: "error",
-						message: "Group not found."
-					})
-
-					return
-				}
-
-				for (let a = 0; a < group.members.length; a++) {
-					if (group.members[a].user._id.toString() == userObj._id.toString()) {
-						result.json({
-							status: "error",
-							message: "You are already a member of this group."
-						})
-
-						return
-					}
-				}
-
-				const obj = {
-					_id: ObjectId(),
-					status: "Accepted",
-	    			user: {
-	    				_id: userObj._id,
-	    				name: userObj.name
-	    			},
-	    			invitedBy: {
-	    				_id: userObj._id,
-	    				name: userObj.name
-	    			},
-	    			createdAt: new Date().getTime()
-				}
-
-				await database.collection("groupChats").findOneAndUpdate({
-					_id: group._id
-				}, {
-					$push: {
-						members: obj
-					}
-				})
-
-				result.json({
-					status: "success",
-					message: "Group has been joined."
-				})
-			})
-
-		app.post("/fetchGroupChatDetail", async function (request, result) {
-			const accessToken = request.fields.accessToken
-	        const _id = request.fields._id ?? ""
-
-	        const user = await database.collection("users").findOne({
-	            accessToken: accessToken
-	        })
-
-	        if (user == null) {
-	            result.json({
-	                status: "error",
-	                message: "User has been logged out. Please login again."
-	            })
-
-	            return
-	        }
-
-	        if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-
-				return
-			}
-
-			const group = await database.collection("groupChats").findOne({
-				_id: ObjectId(_id)
-		    })
-
-		    if (group == null) {
-				result.json({
-					status: "error",
-					message: "Group not found."
-				})
-
-				return
-			}
-
-			result.json({
-				status: "success",
-				message: "Data has been fetched.",
-				group: group,
-				user: user._id
-			})
-		})
-
-		app.get("/joinGroupChat/:_id", async function (request, result) {
-			result.render("joinGroupChat", {
-				_id: request.params._id
-			})
-		})
-
-		app.post("/fetchGroupMembers", async function (request, result) {
-			const accessToken = request.fields.accessToken
-	        const _id = request.fields._id ?? ""
-
-	        const user = await database.collection("users").findOne({
-	            accessToken: accessToken
-	        })
-
-	        if (user == null) {
-	            result.json({
-	                status: "error",
-	                message: "User has been logged out. Please login again."
-	            })
-
-	            return
-	        }
-
-	        if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-
-				return
-			}
-
-			const group = await database.collection("groupChats").findOne({
-				_id: ObjectId(_id)
-		    })
-
-		    if (group == null) {
-				result.json({
-					status: "error",
-					message: "Group not found."
-				})
-
-				return
-			}
-
-		    let isMember = false
-		    for (let a = 0; a < group.members.length; a++) {
-		    	if (group.members[a].user._id.toString() == user._id.toString()
-		    		&& group.members[a].status == "Accepted") {
-		    		isMember = true
-		    		break
-		    	}
-		    }
-
-		    if (!isMember) {
-				result.json({
-					status: "error",
-					message: "You are not a member of this group."
-				})
-
-				return
-			}
-
-			result.json({
-				status: "success",
-				message: "Data has been fetched.",
-				data: group.members
-			})
-		})
-
-		app.post("/deleteGroupChat", async function (request, result) {
-			const accessToken = request.fields.accessToken
-	        const _id = request.fields._id ?? ""
-
-	        const user = await database.collection("users").findOne({
-	            accessToken: accessToken
-	        })
-
-	        if (user == null) {
-	            result.json({
-	                status: "error",
-	                message: "User has been logged out. Please login again."
-	            })
-
-	            return
-	        }
-
-	        if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-
-				return
-			}
-
-			const group = await database.collection("groupChats").findOne({
-				_id: ObjectId(_id)
-		    })
-
-		    if (group == null) {
-				result.json({
-					status: "error",
-					message: "Group not found."
-				})
-
-				return
-			}
-
-		    if (group.createdBy._id.toString() != user._id.toString()) {
-				result.json({
-					status: "error",
-					message: "Unauthorized."
-				})
-
-				return
-			}
-
-			const messages = await database.collection("messages").find({
-				"group._id": group._id
-			}).toArray()
-
-			for (let a = 0; a < messages.length; a++) {
-				for (let b = 0; b < messages[a].savedPaths.length; b++) {
-					fileSystem.unlink(messages[a].savedPaths[b], function (error) {
-						if (error) {
-							console.error(error)
-						}
-					})
-				}
-			}
-
-			await database.collection("messages").deleteMany({
-				"group._id": group._id
-			})
-
-			for (let a = 0; a < group.savedPaths.length; a++) {
-				fileSystem.unlink(group.savedPaths[a], function (error) {
-					if (error) {
-						console.error(error)
-					}
-				})
-			}
-
-			await database.collection("groupChats").deleteOne({
-				_id: group._id
-			})
-
-			result.json({
-				status: "success",
-				message: "Group has been deleted."
-			})
-		})
-
-		app.post("/deleteMemberFromGroupChat", async function (request, result) {
-			const accessToken = request.fields.accessToken
-	        const _id = request.fields._id
-	        const memberId = request.fields.memberId
-
-	        const user = await database.collection("users").findOne({
-	            accessToken: accessToken
-	        })
-
-	        if (user == null) {
-	            result.json({
-	                status: "error",
-	                message: "User has been logged out. Please login again."
-	            })
-
-	            return
-	        }
-
-	        if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-
-				return
-			}
-
-	        const group = await database.collection("groupChats").findOne({
-				_id: ObjectId(_id)
-		    })
-
-		    if (group == null) {
-				result.json({
-					status: "error",
-					message: "Group not found."
-				})
-
-				return
-			}
-
-		    if (group.createdBy._id.toString() != user._id.toString()) {
-				result.json({
-					status: "error",
-					message: "Unauthorized."
-				})
-
-				return
-			}
-
-			await database.collection("groupChats").findOneAndUpdate({
-				_id: group._id
-			}, {
-				$pull: {
-					members: {
-						_id: ObjectId(memberId)
-					}
-				}
-			})
-
-			result.json({
-				status: "success",
-				message: "Member has been removed."
-			})
-		})
-
-		app.post("/acceptInviteGroupChat", async function (request, result) {
-			const accessToken = request.fields.accessToken
-	        const _id = request.fields._id
-	        const memberId = request.fields.memberId
-
-	        const user = await database.collection("users").findOne({
-	            accessToken: accessToken
-	        })
-
-	        if (user == null) {
-	            result.json({
-	                status: "error",
-	                message: "User has been logged out. Please login again."
-	            })
-
-	            return
-	        }
-
-	        if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-
-				return
-			}
-
-	        const group = await database.collection("groupChats").findOne({
-				_id: ObjectId(_id)
-		    })
-
-		    if (group == null) {
-				result.json({
-					status: "error",
-					message: "Group not found."
-				})
-
-				return
-			}
-
-			let isMember = false
-		    for (let a = 0; a < group.members.length; a++) {
-		    	if (group.members[a].user._id.toString() == user._id.toString()
-		    		&& group.members[a]._id.toString() == memberId) {
-		    		isMember = true
-		    		break
-		    	}
-		    }
-
-		    if (!isMember) {
-				result.json({
-					status: "error",
-					message: "You are not a member of this group."
-				})
-
-				return
-			}
-
-			await database.collection("groupChats").findOneAndUpdate({
-				$and: [{
-					_id: group._id
-				}, {
-					"members._id": ObjectId(memberId)
-				}]
-			}, {
-				$set: {
-					"members.$.status": "Accepted"
-				}
-			})
-
-			result.json({
-				status: "success",
-				message: "Invitation has been accepted."
-			})
-		})
 
 		app.post("/sendVoiceNoteInGroupChat", async function (request, result) {
 			const base64 = request.fields.base64
@@ -713,97 +220,6 @@ http.listen(3000, function () {
 	        })
 		})
 
-		app.post("/deleteGroupMessage", async function (request, result) {
-			const accessToken = request.fields.accessToken
-		    const _id = request.fields._id ?? ""
-
-		    const user = await database.collection("users").findOne({
-				accessToken: accessToken
-			})
-			
-			if (user == null) {
-				result.json({
-					status: "error",
-					message: "User has been logged out. Please login again."
-				})
-				return
-			}
-			
-			if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-
-				return
-			}
-
-			const message = await database.collection("messages").findOne({
-				_id: ObjectId(_id)
-			})
-
-			if (message == null) {
-				result.json({
-					status: "error",
-					message: "Message does not exists."
-				})
-
-				return
-			}
-
-			if (message.user._id.toString() != user._id.toString()) {
-				result.json({
-					status: "error",
-					message: "Unauthorized."
-				})
-
-				return
-			}
-
-			const group = await database.collection("groupChats").findOne({
-				_id: message.group._id
-		    })
-
-		    if (group == null) {
-				result.json({
-					status: "error",
-					message: "Group not found."
-				})
-
-				return
-			}
-
-			let isMember = false
-		    for (let a = 0; a < group.members.length; a++) {
-		    	if (group.members[a].user._id.toString() == user._id.toString()
-		    		&& group.members[a].status == "Accepted") {
-		    		isMember = true
-		    		break
-		    	}
-		    }
-
-		    if (!isMember) {
-				result.json({
-					status: "error",
-					message: "You are not a member of this group."
-				})
-
-				return
-			}
-
-			await database.collection("messages").findOneAndUpdate({
-				_id: message._id
-			}, {
-				$set: {
-					isDeleted: true
-				}
-			})
-
-			result.json({
-				status: "success",
-				message: "Message has been deleted."
-			})
-		})
 
 		app.post("/inviteMemberForGroupChat", async function (request, result) {
 			// get logged-in users
@@ -1130,129 +546,8 @@ http.listen(3000, function () {
 		    })
 		})
 
-		app.post("/createGroupForChat", async function (request, result) {
-			const accessToken = request.fields.accessToken
-			const name = request.fields.name ?? ""
 
-			const user = await database.collection("users").findOne({
-				accessToken: accessToken
-			})
-			
-			if (user == null) {
-				result.json({
-					status: "error",
-					message: "User has been logged out. Please login again."
-				})
-				return
-			}
-			
-			if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-				return
-			}
-
-			const files = []
-	        if (Array.isArray(request.files.coverPhoto)) {
-	            for (let a = 0; a < request.files.coverPhoto.length; a++) {
-	                files.push(request.files.coverPhoto[a])
-	            }
-	        } else {
-	            files.push(request.files.coverPhoto)
-	        }
-
-	        functions.callbackFileUpload(files, 0, [], async function (savedPaths) {
-	        	const obj = {
-	        		name: name,
-	        		savedPaths: savedPaths,
-	        		members: [{
-	        			_id: ObjectId(),
-	        			status: "Accepted",
-	        			user: {
-	        				_id: user._id,
-	        				name: user.name
-	        			},
-	        			createdAt: new Date().getTime()
-	        		}],
-	        		createdBy: {
-	        			_id: user._id,
-	        			name: user.name
-	        		},
-	        		createdAt: new Date().getTime()
-	        	}
-	        	const response = await database.collection("groupChats").insertOne(obj)
-	        	obj._id = response.insertedId
-
-	        	result.json({
-					status: "success",
-					message: "Group has been created.",
-					group: obj
-				})
-	        })
-		})
-
-		app.get("/groupChat", function (request, result) {
-			result.render("groupChat")
-		})
 //Personas Cerca
-		app.post("/fetchNearby", async function (request, result) {
-			const accessToken = request.fields.accessToken
-
-			const user = await database.collection("users").findOne({
-				accessToken: accessToken
-			})
-			
-			if (user == null) {
-				result.json({
-					status: "error",
-					message: "User has been logged out. Please login again."
-				})
-				return
-			}
-			
-			if (user.isBanned) {
-				result.json({
-					status: "error",
-					message: "You have been banned."
-				})
-				return
-			}
-
-			const data = []
-			if (typeof user.location !== "undefined") {
-				let users = await database.collection("users").find({
-					$and: [{
-						_id: {
-							$ne: user._id
-						}
-					}, {
-						"location.city": user.location.city
-					}]
-				}).toArray()
-
-				users = users.sort(function (a, b) {
-					return 0.5 - Math.random()
-				})
-
-				for (let a = 0; a < users.length; a++) {
-					data.push({
-						_id: users[a]._id,
-						name: users[a].name,
-						profileImage: users[a].profileImage,
-						city:users[a].location.city,
-						country: users[a].country
-					})
-				}
-			}
-
-			result.json({
-				status: "success",
-				message: "Data has been fetched.",
-				data: data
-			})
-		})
 
 //** */
 app.post("/fetchNearbyCom", async function (request, result) {
@@ -1261,6 +556,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 	const user = await database.collection("users").findOne({
 		accessToken: accessToken
 	})
+
 	
 	if (user == null) {
 		result.json({
@@ -1279,6 +575,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 	}
 
 	const data = []
+	var _id = request.params._id;
 	if (typeof user.country !== "undefined") {
 		let users = await database.collection("users").find({
 			$and: [{
@@ -1287,23 +584,26 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				}
 			}, {
 				"country": user.country
+				
 			}]
 		}).toArray()
-
+		
+	//
 		users = users.sort(function (a, b) {
 			return 0.5 - Math.random()
 		})
-
 		for (let a = 0; a < users.length; a++) {
 			data.push({
 				_id: users[a]._id,
 				name: users[a].name,
 				profileImage: users[a].profileImage,
-				//city:users[a].location.city,
 				country: users[a].country
+				
 			})
 		}
 	}
+
+
 
 	result.json({
 		status: "success",
@@ -1317,127 +617,8 @@ app.post("/fetchNearbyCom", async function (request, result) {
 		})
 
 //*** */
-		app.post("/deleteStory", async function (request, result) {
-			const accessToken = request.fields.accessToken;
-			const _id = request.fields._id;
 
-			const user = await database.collection("users").findOne({
-				"accessToken": accessToken
-			});
 
-			if (user == null) {
-				result.json({
-					"status": "error",
-					"message": "User has been logged out. Please login again."
-				});
-				return false;
-			}
-
-			const story = await database.collection("stories").findOne({
-				"_id": ObjectId(_id)
-			});
-
-			if (story == null) {
-				result.json({
-					"status": "error",
-					"message": "Story does not exist."
-				});
-				return false;
-			}
-
-			if (story.user._id.toString() != user._id.toString()) {
-				result.json({
-					"status": "error",
-					"message": "Unauthorized."
-				});
-				return false;
-			}
-
-			if (story.attachment != "") {
-				fileSystem.unlink(story.attachment, function (error) {
-					console.log("Story attachment has been deleted: " + error);
-				});
-			}
-
-			await database.collection("stories").deleteOne({
-	            "_id": story._id
-	        });
-
-			result.json({
-				"status": "success",
-				"message": "Story has been deleted."
-			});
-		});
-
-		app.post("/storyViewed", async function (request, result) {
-			const accessToken = request.fields.accessToken;
-			const _id = request.fields._id;
-
-			const user = await database.collection("users").findOne({
-				"accessToken": accessToken
-			});
-
-			if (user == null) {
-				result.json({
-					"status": "error",
-					"message": "User has been logged out. Please login again."
-				});
-				return false;
-			}
-
-			const story = await database.collection("stories").findOne({
-				"_id": ObjectId(_id)
-			});
-
-			if (story == null) {
-				result.json({
-					"status": "error",
-					"message": "Story does not exist."
-				});
-				return false;
-			}
-
-			const isFriend = functions.isUserFriend(user, story.user._id);
-
-			if (story.user._id.toString() != user._id.toString() && !isFriend) {
-				result.json({
-					"status": "error",
-					"message": "Unauthorized."
-				});
-				return false;
-			}
-
-			let hasViewed = false;
-			for (let a = 0; a < story.viewers.length; a++) {
-				if (story.viewers[a].user._id.toString() == user._id.toString()) {
-					hasViewed = true;
-					break;
-				}
-			}
-
-			if (story.user._id.toString() != user._id.toString() && !hasViewed) {
-				await database.collection("stories").updateOne({
-					"_id": story._id
-				}, {
-					$push: {
-						"viewers": {
-							_id: ObjectId(),
-							user: {
-								_id: user._id,
-								name: user.name,
-								profileImage: user.profileImage
-							},
-							createdAt: new Date().getTime()
-						}
-					}
-				});
-			}
-
-			result.json({
-				"status": "success",
-				"message": "Story has been viewed."
-			});
-		});
 
 		app.post("/getSingleStory", async function (request, result) {
 			const accessToken = request.fields.accessToken;
@@ -1614,7 +795,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				if (user == null) {
 					result.json({
 						'status': "error",
-						'message': "Email does not exists."
+						'message': "Correo no existes."
 					});
 				} else {
 					var reset_token = new Date().getTime();
@@ -1682,7 +863,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				if (user == null) {
 					result.json({
 						'status': "error",
-						'message': 'Email does not exists. Or verification link is expired.'
+						'message': 'Correo no existes. Or verification link is expired.'
 					});
 				} else {
 
@@ -1731,7 +912,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				if (user == null) {
 					result.json({
 						'status': "error",
-						'message': 'Email does not exists. Or recovery link is expired.'
+						'message': 'Correo no existes. Or recovery link is expired.'
 					});
 				} else {
 
@@ -1837,7 +1018,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			var isBanned = false;
 			var verification_token = new Date().getTime();
 			// verification_token = ""
-
+			
 			database.collection("users").findOne({
 				$or: [{
 					"email": email
@@ -1846,7 +1027,9 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				}]
 			}, function (error, user) {
 				if (user == null) {
-
+				const dominio = email.split("@");
+				console.log(dominio)
+				if(dominio[1]=="santillana.com"||dominio[1]=="clb.santillana.com"){
 					bcrypt.genSalt(10, function(err, salt) {
 					    bcrypt.hash(password, salt, async function(err, hash) {
 					    	database.collection("users").insertOne({
@@ -1863,72 +1046,37 @@ app.post("/fetchNearbyCom", async function (request, result) {
 								"country": "",
 								"aboutMe": "",
 								"friends": [],
-								"pages": [],
 								"notifications": [],
 								"groups": [],
 								"isVerified": isVerified,
 								"verification_token": verification_token,
 								"isBanned": isBanned
 							}, function (error, data) {
-
-								/*var transporter = nodemailer.createTransport(nodemailerObject);
-
-								var text = "Please verify your account by click the following link: " + mainURL + "/verifyEmail/" + email + "/" + verification_token;
-								var html = "Please verify your account by click the following link: <br><br> <a href='" + mainURL + "/verifyEmail/" + email + "/" + verification_token + "'>Confirm Email</a> <br><br> Thank you.";
-
-								transporter.sendMail({
-									from: nodemailerFrom,
-									to: email,
-									subject: "Email Verification",
-									text: text,
-									html: html
-								}, function (error, info) {
-									if (error) {
-										console.error(error);
-									} else {
-										console.log("Email sent: " + info.response);
-									}*/
-									
+								if (password.length >= 8 && password.length<=12) {
 									result.json({
 										"status": "success",
 										"message": "Se ha registrado correctamente. Podrás iniciar sesión y empezar a usar Al día Ecuador."
 									});
-
-								// });
-
-								mongoClient.connect("mongodb+srv://prueba:OMQwl0A1VopVj7ZA@mern.68vlpne.mongodb.net/mern?retryWrites=true&w=majority", {
-									useUnifiedTopology: true
-								}, async function (error, client) {
-									var videoDatabase = client.db("youtube");
-									console.log("Video streaming database connected.");
-
-									const firstName = name.split(" ").length > 0 ? name.split(" ")[0] : name
-									const lastName = name.split(" ").length > 1 ? name.split(" ")[1] : name
-
-									await videoDatabase.collection("users").insertOne({
-										"first_name": firstName,
-										"last_name": lastName,
-										"email": email,
-										"password": hash,
-										"subscribers": [],
-										"reset_token": reset_token,
-										"isVerified": isVerified,
-										"verification_token": verification_token
-									})
-
+								} else {
 									result.json({
-										"status": "success",
-										"message": "Signed up successfully."
-									})
-								})
-								
+										"status": "error",
+										"message": "La contraseña debe contener al menos 8 dígitos y no más de 12"
+									});
+								}
+					
 							})
 					    })
 					})
+				}else{
+					result.json({
+						"status": "error",
+						"message": "El dominio del correo electronico no es el correcto"
+					});
+				}
 				} else {
 					result.json({
 						"status": "error",
-						"message": "Email or username already exist."
+						"message": "Correo ya existe."
 					});
 				}
 			});
@@ -2045,7 +1193,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				if (user == null) {
 					result.json({
 						"status": "error",
-						"message": "Email does not exist"
+						"message": "Correo no existe"
 					});
 					
 				} else {
@@ -2060,7 +1208,10 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 					bcrypt.compare(password, user.password, function (error, res) {
 						if (res === true) {
-
+							const dominio = user.email.split("@");
+							console.log(dominio)
+							if(dominio[1]=="santillana.com"||dominio[1]=="clb.santillana.com"){
+							
 							if (user.isVerified) {
 								var accessToken = jwt.sign({ email: email }, accessTokenSecret);
 								database.collection("users").findOneAndUpdate({
@@ -2086,7 +1237,13 @@ app.post("/fetchNearbyCom", async function (request, result) {
 								});
 								return
 							}
-							
+							}else{
+								result.json({
+									"status": "error",
+									"message": "Escriba el dominio correcto."
+								});
+								return
+							}	
 						} else {
 							result.json({
 								"status": "error",
@@ -3153,63 +2310,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			})
 		})
 
-		app.post("/fetchCommentsByStory", async function (request, result) {
-			const accessToken = request.fields.accessToken
-			const _id = request.fields._id
 
-			const user = await database.collection("users").findOne({
-				"accessToken": accessToken
-			})
-
-			if (user == null) {
-				result.json({
-					"status": "error",
-					"message": "User has been logged out. Please login again."
-				})
-
-				return
-			}
-
-			if (user.isBanned) {
-				result.json({
-					"status": "error",
-					"message": "You have been banned."
-				})
-
-				return
-			}
-
-			const post = await database.collection("stories").findOne({
-				"_id": ObjectId(_id)
-			})
-
-			if (post == null) {
-				result.json({
-					"status": "error",
-					"message": "Story does not exist."
-				})
-
-				return
-			}
-
-			if (post.user._id.toString() != user._id.toString()) {
-				result.json({
-					"status": "error",
-					"message": "Unauthorized."
-				})
-
-				return
-			}
-
-			let comments = post.comments
-			comments = comments.reverse()
-
-			result.json({
-				status: "success",
-				message: "Data has been fetched.",
-				comments: comments
-			})
-		})
 
 		app.post("/fetchCommentsByPost", async function (request, result) {
 			const accessToken = request.fields.accessToken
@@ -3260,117 +2361,19 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			})
 		})
 
-		app.post("/postCommentOnStory", async function (request, result) {
-			var accessToken = request.fields.accessToken
-			var _id = request.fields._id
-			var comment = request.fields.comment
-			var createdAt = new Date().getTime()
-
-			const user = await database.collection("users").findOne({
-				"accessToken": accessToken
-			})
-
-			if (user == null) {
-				result.json({
-					"status": "error",
-					"message": "User has been logged out. Please login again."
-				})
-
-				return
-			}
-
-			if (user.isBanned) {
-				result.json({
-					"status": "error",
-					"message": "You have been banned."
-				})
-
-				return
-			}
-
-			const post = await database.collection("stories").findOne({
-				"_id": ObjectId(_id)
-			})
-
-			if (post == null) {
-				result.json({
-					"status": "error",
-					"message": "Story does not exist."
-				})
-
-				return
-			}
-
-			var commentId = ObjectId()
-			const commentObj = {
-				"_id": commentId,
-				"user": {
-					"_id": user._id,
-					"name": user.name,
-					"profileImage": user.profileImage,
-				},
-				"comment": comment,
-				"createdAt": createdAt,
-				"replies": []
-			}
-
-			await database.collection("stories").updateOne({
-				"_id": ObjectId(_id)
-			}, {
-				$push: {
-					"comments": commentObj
-				}
-			})
-
-			if (user._id.toString() != post.user._id.toString()) {
-				await database.collection("users").updateOne({
-					"_id": post.user._id
-				}, {
-					$push: {
-						"notifications": {
-							"_id": ObjectId(),
-							"type": "new_comment_on_story",
-							"content": user.name + " commented on your story.",
-							"profileImage": user.profileImage,
-							"story": {
-								"_id": post._id
-							},
-							"isRead": false,
-							"createdAt": new Date().getTime()
-						}
-					}
-				})
-			}
-
-			const updatePost = await database.collection("stories").findOne({
-				"_id": ObjectId(_id)
-			})
-
-			if (updatePost == null) {
-				result.json({
-					"status": "success",
-					"message": "Story does not exists."
-				})
-
-				return
-			}
-
-			socketIO.emit("commentPostedOnStory", {
-				story: updatePost,
-				comment: commentObj
-			})
-
-			result.json({
-				"status": "success",
-				"message": "Comment has been posted.",
-				"updatePost": updatePost
-			})
-		})
 
 		app.post("/postComment", async function (request, result) {
 			var accessToken = request.fields.accessToken
 			var _id = request.fields._id
 			var comment = request.fields.comment
+			if(comment = filter.isProfane(comment)){
+				result.json({
+					"status": "error",
+					"message": "Contiene lenguaje ofensivo o abusivo."
+				})
+			}else{
+				var comment = request.fields.comment
+			
 			var createdAt = new Date().getTime()
 
 			const user = await database.collection("users").findOne({
@@ -3443,7 +2446,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 								notifications: {
 									_id: ObjectId(),
 									type: "new_comment",
-									content: user.name + " commented on your post.",
+									content: user.name + " comento en tu publicacion.",
 									profileImage: user.profileImage,
 									isRead: false,
 									post: {
@@ -3462,7 +2465,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 							"notifications": {
 								"_id": ObjectId(),
 								"type": "new_comment",
-								"content": user.name + " commented on your post.",
+								"content": user.name + " comento en tu publicacion.",
 								"profileImage": user.profileImage,
 								"post": {
 									"_id": post._id
@@ -3513,110 +2516,12 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 			result.json({
 				"status": "success",
-				"message": "Comment has been posted.",
+				"message": "Comentario hecho",
 				"updatePost": updatePost
 			})
+		}
 		})
-
-		app.post("/postReply", function (request, result) {
-
-			var accessToken = request.fields.accessToken;
-			var postId = request.fields.postId;
-			var commentId = request.fields.commentId;
-			var reply = request.fields.reply;
-			var createdAt = new Date().getTime();
-
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-
-					if (user.isBanned) {
-						result.json({
-							"status": "error",
-							"message": "You have been banned."
-						});
-						return false;
-					}
-
-					database.collection("posts").findOne({
-						"_id": ObjectId(postId)
-					}, function (error, post) {
-						if (post == null) {
-							result.json({
-								"status": "error",
-								"message": "Post does not exist."
-							});
-						} else {
-
-							var replyId = ObjectId()
-							const replyObj = {
-								"_id": replyId,
-								"user": {
-									"_id": user._id,
-									"name": user.name,
-									"profileImage": user.profileImage,
-								},
-								"reply": reply,
-								"createdAt": createdAt
-							}
-
-							database.collection("posts").updateOne({
-								$and: [{
-									"_id": ObjectId(postId)
-								}, {
-									"comments._id": ObjectId(commentId)
-								}]
-							}, {
-								$push: {
-									"comments.$.replies": replyObj
-								}
-							}, function (error, data) {
-
-								database.collection("users").updateOne({
-									$and: [{
-										"_id": post.user._id
-									}, {
-										"posts._id": post._id
-									}, {
-										"posts.comments._id": ObjectId(commentId)
-									}]
-								}, {
-									$push: {
-										"posts.$[].comments.$[].replies": replyObj
-									}
-								});
-
-								database.collection("posts").findOne({
-									"_id": ObjectId(postId)
-								}, function (error, updatePost) {
-
-									socketIO.emit("postReply", {
-										post: updatePost,
-										reply: replyObj,
-										commentId: commentId
-									})
-
-									result.json({
-										"status": "success",
-										"message": "Reply has been posted.",
-										"updatePost": updatePost,
-										replyObj: replyObj
-									});
-								});
-							});
-
-						}
-					});
-				}
-			});
-		});
-
+	
 		app.get("/search/:query", function (request, result) {
 			var query = request.params.query
 			result.render("search", {
@@ -4050,7 +2955,8 @@ app.post("/fetchNearbyCom", async function (request, result) {
 		        });
 
 		        // messageObj.message = cryptr.decrypt(messageObj.message);
-		        socketIO.to(users[user._id]).emit("messageReceived", messageObj)
+		        //socketIO.to(users[user._id]).emit("messageReceived", messageObj)
+				socketIO.emit("messageReceived",messageObj)
 
 		        result.json({
 		            status: "success",
@@ -4559,6 +3465,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			var name = request.fields.name;
 			var additionalInfo = request.fields.additionalInfo;
 			var coverPhoto = "";
+			var area = request.fields.area;//new area
             var type = request.fields.type;
             var imageData = request.fields.imageData;
 
@@ -4595,6 +3502,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
                             "name": name,
                             "additionalInfo": additionalInfo,
                             "coverPhoto": coverPhoto,
+							"area":area,
                             "members": [{
                                 "_id": user._id,
                                 "name": user.name,
@@ -4623,7 +3531,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
                                 result.json({
                                     "status": "success",
-                                    "message": "Group has been created."
+                                    "message": "Comunidad ha sido creada"
                                 });
                             });
                         });
@@ -4647,6 +3555,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 		    							"name": name,
 		    							"additionalInfo": additionalInfo,
 		    							"coverPhoto": coverPhoto,
+										"area":area,
 		    							"members": [{
 		    								"_id": user._id,
 		    								"name": user.name,
@@ -4675,7 +3584,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 		    								result.json({
 		    									"status": "success",
-		    									"message": "Group has been created."
+		    									"message": "Comunidad ha sido creada"
 		    								});
 		    							});
 		    						});
@@ -5016,7 +3925,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 												"notifications": {
 													"_id": ObjectId(),
 													"type": "group_join_request",
-													"content": user.name + " sent a request to join your group.",
+													"content": user.name + " envio una invitación para unirse a la comunidad.",
 													"profileImage": user.profileImage,
 													"groupId": group._id,
 													"userId": user._id,

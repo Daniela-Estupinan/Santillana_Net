@@ -32,52 +32,11 @@ module.exports = {
 
                 if (files[index].size > 0) {
                     const filePath = "uploads/" + new Date().getTime() + "-" + files[index].name
-                    const base64 = new Buffer(data).toString('base64')
-
-                    if (files[index].type.includes("image")) {
-                        self.requestModule.post("http://127.0.0.1:8888/scripts/social-networking-site/class.ImageFilter.php", {
-                            formData: {
-                                "validate_image": 1,
-                                "base_64": base64
-                            }
-                        }, function(err, res, body) {
-                            if (!err && res.statusCode === 200) {
-                                // console.log(body);
-
-                                if (body > 60) {
-                                    self.result.json({
-                                        "status": "error",
-                                        "message": "Image contains nudity."
-                                    });
-
-                                    return false;
-                                } else {
-                                    fileSystem.writeFile(filePath, data, async function (error) {
-                                        if (error) {
-                                            console.error(error)
-                                            return
-                                        }
-
-                                        savedPaths.push(filePath)
-
-                                        if (index == (files.length - 1)) {
-                                            success(savedPaths)
-                                        } else {
-                                            index++
-                                            self.callbackFileUpload(files, index, savedPaths, success)
-                                        }
-                                    })
-
-                                    fileSystem.unlink(files[index].path, function (error) {
-                                        if (error) {
-                                            console.error(error)
-                                            return
-                                        }
-                                    })
-                                }
-                            }
-                        })
-                    } else {
+                    const base64 = buffer=>{
+                        let _buffer = new Buffer.from(buffer,'base64');
+                        return _buffer.toString('base64')
+                      };
+{
                         fileSystem.writeFile(filePath, data, async function (error) {
                             if (error) {
                                 console.error(error)
@@ -176,7 +135,7 @@ module.exports = {
         if (post == null) {
             result.json({
                 status: "error",
-                message: "Post does not exist."
+                message: "Post no existe."
             })
 
             return
@@ -186,42 +145,21 @@ module.exports = {
             if (post.user._id.toString() != user._id.toString()) {
                 result.json({
                     status: "error",
-                    message: "Sorry, you do not own this post."
+                    message: "No le pertenece esta publicación."
                 })
 
                 return
             }
-        } else if (type == "page_post") {
-            const page = await database.collection("pages").findOne({
+        } else if (type == "post") {
+            const group = await database.collection("posts").findOne({
                 _id: ObjectId(_id)
+                
             })
-
-            if (page == null) {
-                result.json({
-                    status: "error",
-                    message: "Page does not exist."
-                })
-
-                return
-            }
-
-            if (page.user._id.toString() != user._id.toString()) {
-                result.json({
-                    status: "error",
-                    message: "Sorry, you do not own this page."
-                })
-
-                return
-            }
-        } else if (type == "group_post") {
-            const group = await database.collection("groups").findOne({
-                _id: ObjectId(_id)
-            })
-
+            console.log(group);
             if (group == null) {
                 result.json({
                     status: "error",
-                    message: "Group does not exist."
+                    message: "Comunidad no existe."
                 })
 
                 return

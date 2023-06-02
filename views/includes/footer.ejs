@@ -88,7 +88,7 @@
 <div id="edit-post-modal" class="modal">
 	<!-- Modal content -->
 	<div class="modal-content">
-		<h3>Edit post <span class="close" onclick="closeModal('edit-post-modal')">&times;</span></h3>
+		<h3>Editar publicación <span class="close" onclick="closeModal('edit-post-modal')">&times;</span></h3>
 
 		<form method="POST" action="/editPost" enctype="multipart/form-data" id="form-edit-post" onsubmit="return doEditPost(this)">			
 			<input type="hidden" name="_id" />
@@ -107,7 +107,7 @@
 
 					<li>
 						<button type="submit" name="submit">
-							Post
+							Publicar
 							<i class="fa fa-spinner fa-spin" style="display: none;"></i>
 						</button>
 					</li>
@@ -444,38 +444,6 @@
 							}
 						}
 
-					/*	var html = `<li>
-							<i class="ti-help"></i>
-							 <a href="/customer-support">Customer support</a>
-						</li>`
-						if (document.getElementById("left-sidebar") != null) {
-							document.getElementById("left-sidebar").innerHTML += html
-						}*/
-
-						/*$.getJSON("http://www.geoplugin.net/json.gp", function(data) {
-							// console.log(JSON.stringify(data, null, 2))
-							const city = data.geoplugin_city
-							const continent = data.geoplugin_continentName
-							const country = data.geoplugin_countryName
-							const currencyConverter = data.geoplugin_currencyConverter
-							const latitude = data.geoplugin_latitude
-							const longitude = data.geoplugin_longitude
-							const region = data.geoplugin_region
-							const ipAddress = data.geoplugin_request
-							const timezone = data.geoplugin_timezone
-
-							const locationObj = {
-								city: city,
-								continent: continent,
-								country: country,
-								currencyConverter: currencyConverter,
-								latitude: latitude,
-								longitude: longitude,
-								region: region,
-								ipAddress: ipAddress,
-								timezone: timezone
-							}
-						})*/
 
 						socketIO.on("commentPosted", function (data) {
 							// console.log(data)
@@ -521,12 +489,9 @@
 
 			
 			html += '<li>';
-				//html += '<a href="/friends">Friends <i class="fa fa-angle-right"></i></a>';
+				html += '<a href="/friends">Contactos <i class="fa fa-angle-right"></i></a>';
 			html += '</li>';
 
-			html += '<li>';
-				//html += '<a href="/pages">Pages <i class="fa fa-angle-right"></i></a>';
-			html += '</li>';
 
 			html += '<li>';
 				html += '<a href="/groups">Comunidad <i class="fa fa-angle-right"></i></a>';
