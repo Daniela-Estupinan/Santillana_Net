@@ -1063,35 +1063,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 										"message": "La contraseña debe contener al menos 8 dígitos y no más de 12"
 									});
 								}
-
-								// });
-/*
-								mongoClient.connect("mongodb+srv://prueba:OMQwl0A1VopVj7ZA@mern.68vlpne.mongodb.net/mern?retryWrites=true&w=majority", {
-									useUnifiedTopology: true
-								}, async function (error, client) {
-									var videoDatabase = client.db("youtube");
-									console.log("Video streaming database connected.");
-
-									const firstName = name.split(" ").length > 0 ? name.split(" ")[0] : name
-									const lastName = name.split(" ").length > 1 ? name.split(" ")[1] : name
-
-									await videoDatabase.collection("users").insertOne({
-										"first_name": firstName,
-										"last_name": lastName,
-										"email": email,
-										"password": hash,
-										"subscribers": [],
-										"reset_token": reset_token,
-										"isVerified": isVerified,
-										"verification_token": verification_token
-									})
-
-									result.json({
-										"status": "success",
-										"message": "Signed up successfully."
-									})
-								})
-								*/
+					
 							})
 					    })
 					})
@@ -2983,7 +2955,8 @@ app.post("/fetchNearbyCom", async function (request, result) {
 		        });
 
 		        // messageObj.message = cryptr.decrypt(messageObj.message);
-		        socketIO.to(users[user._id]).emit("messageReceived", messageObj)
+		        //socketIO.to(users[user._id]).emit("messageReceived", messageObj)
+				socketIO.emit("messageReceived",messageObj)
 
 		        result.json({
 		            status: "success",

@@ -43,7 +43,7 @@
 											<ul class="chatting-area" id="chatting-area"></ul>
 
 											<div class="message-text-container">
-												<form method="post" onsubmit="sendMessage(); event.preventDefault()" enctype="multipart/form-data" id="form-send-message" >
+												<form method="post" onsubmit="sendMessage()" enctype="multipart/form-data" id="form-send-message" >
 													<textarea name="message"></textarea>
 
 													<div class="attachments" style="display: flex; padding-right: 0px; padding-left: 0px; border: none;">
@@ -73,7 +73,7 @@
 														</ul>
 													</div>
 
-													<button title="send" name="submit" type="submit" style="top: 80%;">
+													<button id="send" title="send" name="submit" type="submit" style="top: 80%;">
 														<i class="fa fa-paper-plane"></i>
 													</button>
 												</form>
@@ -284,7 +284,14 @@
 		html += '</li>';
 		return html;
 	}
-
+	var socket = io();
+	$(()=>{
+		$("#send").click(()=>{
+			sendMessage({message:$("#form-send-message").val})
+		})
+		renderMessage()
+	})
+	socket.on('message',doSendMessage)
 	function deleteMessage(self) {
 		swal({
 			title: "Eliminar mensaje",
@@ -445,5 +452,5 @@
 		ajax.send(formData);
 	}
 </script>
-
+<script src="/socket.io/socket.io.js"></script>
 <%- include ("includes/footer") %>
