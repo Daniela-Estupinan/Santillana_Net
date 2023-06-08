@@ -152,7 +152,7 @@ http.listen(3000, function () {
 	        if (user.isBanned) {
 				result.json({
 					status: "error",
-					message: "You have been banned."
+					message: "Ha sido bloqueado"
 				})
 
 				return
@@ -242,7 +242,7 @@ http.listen(3000, function () {
 			if (user.isBanned) {
 				result.json({
 					status: "error",
-					message: "You have been banned."
+					message: "Ha sido bloqueado"
 				})
 				return
 			}
@@ -359,7 +359,7 @@ http.listen(3000, function () {
 			if (user.isBanned) {
 				result.json({
 					status: "error",
-					message: "You have been banned."
+					message: "Ha sido bloqueado"
 				})
 				return
 			}
@@ -429,7 +429,7 @@ http.listen(3000, function () {
 			if (user.isBanned) {
 				result.json({
 					status: "error",
-					message: "You have been banned."
+					message: "Ha sido bloqueado"
 				})
 				return
 			}
@@ -524,7 +524,7 @@ http.listen(3000, function () {
 			if (user.isBanned) {
 				result.json({
 					status: "error",
-					message: "You have been banned."
+					message: "Ha sido bloqueado"
 				})
 				return
 			}
@@ -569,7 +569,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 	if (user.isBanned) {
 		result.json({
 			status: "error",
-			message: "You have been banned."
+			message: "Ha sido bloqueado"
 		})
 		return
 	}
@@ -973,7 +973,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -999,7 +999,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 						} else {
 							result.json({
 								"status": "error",
-								"message": "Current password is not correct"
+								"message": "Current Contraseña no es correcta"
 							})
 						}
 					})
@@ -1106,7 +1106,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (me.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return
@@ -1162,7 +1162,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return
@@ -1201,7 +1201,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -1247,7 +1247,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 						} else {
 							result.json({
 								"status": "error",
-								"message": "Password is not correct"
+								"message": "Contraseña no es correcta"
 							});
 							return
 						}
@@ -1306,7 +1306,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return
@@ -1418,7 +1418,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -1492,7 +1492,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -1573,7 +1573,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -1734,7 +1734,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 				return false
 			}
@@ -1821,7 +1821,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return false
@@ -1911,7 +1911,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return false
@@ -2065,7 +2065,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return false
@@ -2173,7 +2173,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return false
@@ -2328,7 +2328,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return
@@ -2388,7 +2388,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return
@@ -2584,7 +2584,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -2691,7 +2691,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -2790,7 +2790,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -2985,7 +2985,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -3026,7 +3026,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -3137,7 +3137,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 				return false
 			}
@@ -3328,7 +3328,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -3432,7 +3432,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -3478,7 +3478,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -3626,7 +3626,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return
@@ -3838,7 +3838,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -3968,7 +3968,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -4056,7 +4056,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -4100,7 +4100,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 					if (user.isBanned) {
 						result.json({
 							"status": "error",
-							"message": "You have been banned."
+							"message": "Ha sido bloqueado"
 						});
 						return false;
 					}
@@ -4189,7 +4189,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return false
@@ -4357,7 +4357,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
@@ -4464,7 +4464,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
@@ -4584,7 +4584,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
@@ -4631,7 +4631,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
@@ -4735,17 +4735,13 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
 
 			var ids = [];
 			ids.push(user._id);
-
-			for (var a = 0; a < user.pages.length; a++) {
-				ids.push(user.pages[a]._id);
-			}
 
 			for (var a = 0; a < user.groups.length; a++) {
 				if (user.groups[a].status == "Accepted") {
@@ -4799,7 +4795,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return false
@@ -4856,7 +4852,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return false
@@ -4904,7 +4900,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return false
@@ -4961,7 +4957,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				})
 
 				return false
@@ -5008,7 +5004,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
@@ -5059,7 +5055,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
@@ -5148,7 +5144,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
@@ -5191,7 +5187,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
@@ -5245,7 +5241,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				result.render("editTicket", {
 					"_id": request.params._id,
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 
 				return false;
@@ -5364,7 +5360,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			if (user.isBanned) {
 				result.json({
 					"status": "error",
-					"message": "You have been banned."
+					"message": "Ha sido bloqueado"
 				});
 				return false;
 			}
