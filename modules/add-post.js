@@ -160,7 +160,7 @@ callbackFileUpload: function (files, index, savedPaths = [], success = null) {
         if (user.isBanned) {
             result.json({
                 "status": "error",
-                "message": "You have been banned."
+                "message": "Ha sido bloqueado"
             });
             return false;
         }
