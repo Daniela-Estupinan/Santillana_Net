@@ -238,7 +238,7 @@ module.exports = {
 
         var postsRouter = express.Router();
         postsRouter.get("/", function (request, result) {
-            result.render("admin/posts/index");
+            result.render("admin/posts");
         });
 
         postsRouter.post("/unban", async function (request, result) {
@@ -279,7 +279,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "Post has been unbanned."
+                "message": "Publicación ha sido desbloqueada"
             });
         });
 
@@ -338,7 +338,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "Post has been banned."
+                "message": "Publicación ha sido bloqueada"
             });
         });
 
@@ -411,9 +411,7 @@ module.exports = {
             }
 
             var posts = await self.database.collection("posts")
-                .find({
-                    "type": "post"
-                })
+            .find({})
                 .skip(skip)
                 .limit(limit)
                 .sort({
@@ -433,7 +431,7 @@ module.exports = {
         });
 
         app.use("/admin/posts", postsRouter);
-
+//user
         var usersRouter = express.Router();
         usersRouter.get("/", function (request, result) {
             result.render("admin/users/index");
@@ -477,7 +475,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "User has been unbanned."
+                "message": "Usuario ha sido desbloqueado"
             });
         });
 
@@ -503,7 +501,7 @@ module.exports = {
             if (user == null) {
                 result.json({
                     "status": "error",
-                    "message": "User does not exists."
+                    "message": "Usuario no existe."
                 });
 
                 return false;
@@ -519,7 +517,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "User has been banned."
+                "message": "Usuario ha sido bloqueado"
             });
         });
 
@@ -569,11 +567,13 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "User has been deleted."
+                "message": "Usuario ha sido eliminado."
             });
         });
 
         usersRouter.post("/fetch", async function (request, result) {
+
+  
 
             var accessToken = request.fields.accessToken;
             var skip = parseInt(request.fields.skip);
@@ -635,6 +635,7 @@ module.exports = {
 
             var users = await self.database.collection("users").count();
             var groups = await self.database.collection("groups").count();
+            var posts = await self.database.collection("posts").count();
             var supportRequests = 0;
 
             result.json({
@@ -642,6 +643,7 @@ module.exports = {
                 "message": "Data has been fetched.",
                 "users": users,
                 "groups": groups,
+                "posts": posts,
                 "supportRequests": supportRequests
             });
         });
@@ -683,15 +685,30 @@ module.exports = {
                     "message": "Correo no existe"
                 });
 
+                return
+
                 //return false;
             }else{
+
+                var accessToken = self.jwt.sign({ email: email}, "myAdminAccessTokenSecret1234567890");
+                await self.database.collection("admins").findOneAndUpdate({
+                    "email": email
+                }, {
+                    $set: {
+                        accessToken: accessToken
+                    }
+                });
+
+                // wait please
+
                 result.json({
                     "status": "success",
-                    "message": "Login successfully"
+                    "message": "Login successfully",
+                    accessToken: accessToken
                 });
             }
 
-            self.bcrypt.compare(password, admin.password, async function (error, res) {
+            /*self.bcrypt.compare(password, admin.password, async function (error, res) {
                 if (res === true) {
 
                     var accessToken = self.jwt.sign({ email: email });
@@ -707,10 +724,10 @@ module.exports = {
                 } else {
                     result.json({
                         "status": "error",
-                        "message": "Password is not correct"
+                        "message": "Contraseña no es correcta"
                     });
                 }
-            });
+            });*/
         });
 
         app.post("/admin/getAdmin", async function (request, result) {

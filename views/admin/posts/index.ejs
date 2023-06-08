@@ -3,7 +3,7 @@
 <div class="content">
     <div class="container">
         <div class="page-title">
-            <h3>Posts
+            <h3>Publicaciones
                 <!-- <a href="<%= mainURL %>/admin/users/add" class="btn btn-sm btn-outline-primary float-right"><i class="fas fa-user-shield"></i> Add</a> -->
             </h3>
         </div>
@@ -13,26 +13,15 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Caption</th>
-                            <th>Image</th>
-                            <th>Video</th>
-                            <th>Uploader</th>
-                            <th>Stats</th>
-                            <th>Actions</th>
+                            <th>Detalles</th>
+                            <th>Usuario</th>
+                            <th>Comunidad</th>
+                            <th>Estados</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr>
-                            <td>Philip Chaney</td>
-                            <td>philip.chaney@gmail.com</td>
-                            <td>Manager</td>
-                            <td>Admin</td>
-                            <td>Active</td>
-                            <td class="text-right">
-                                <a href="" class="btn btn-outline-info btn-rounded"><i class="fas fa-pen"></i></a>
-                                <a href="" class="btn btn-outline-danger btn-rounded"><i class="fas fa-trash"></i></a>
-                            </td>
-                        </tr> -->
+
                     </tbody>
                 </table>
 
@@ -82,29 +71,23 @@
                             var banNode = "";
                             banNode += `<form method="POST" onsubmit="return unbanPost(this);" ` + unbanVisible + ` id="form-unban-post-` + post._id + `">
                                 <input type="hidden" name="_id" value="` + post._id + `" />
-                                <button type="submit" name="submit" class="btn btn-success" style="margin-right: 10px;">Unban</button>
+                                <button type="submit" name="submit" class="btn btn-success" style="margin-right: 10px;">Desbloquear</button>
                             </form>
 
                             <form method="POST" onsubmit="return banPost(this);" ` + banVisible + `
                                 id="form-ban-post-` + post._id + `">
                                 <input type="hidden" name="_id" value="` + post._id + `" />
-                                <button type="submit" name="submit" class="btn btn-info" style="margin-right: 10px;">Ban</button>
+                                <button type="submit" name="submit" class="btn btn-info" style="margin-right: 10px;">Bloquear</button>
                             </form>`;
 
                             html += `<tr>
                                 <td>` + post._id + `</td>
                                 <td>` + post.caption + `</td>
-                                <td>` + imageNode + `</td>
-                                <td>` + videoNode + `</td>
-                                <td>
-                                    Name: ` + post.user.name + ` <br />
-                                    Username: ` + post.user.username + ` <br />
-                                    <img src='` + post.user.profileImage + `' class='img-fluid' onerror="this.src = '/public/img/default_cover.jpg';" />
-                                </td>
+                                <td>` + post.uploader.name + `</td>
+                                <td>` + post.user.username + `</td>
                                 <td>
                                     <i class="fa fa-eye"></i> ` + post.likers.length + ` <br />
                                     <i class="fa fa-comment"></i> ` + post.comments.length + ` <br />
-                                    <i class="fa fa-share"></i> ` + post.shares.length + `
                                 </td>
                                 <td>
                                     <div style="display: flex;">
@@ -112,7 +95,7 @@
 
                                         <form method="POST" onsubmit="return deletePost(this);">
                                             <input type="hidden" name="_id" value="` + post._id + `" />
-                                            <button type="submit" name="submit" class="btn btn-danger">Delete</button>
+                                            <button type="submit" name="submit" class="btn btn-danger">Eliminar</button>
                                         </form>
                                     </div>
                                 </td>
@@ -155,8 +138,8 @@
     function unbanPost(form) {
 
         swal({
-            title: "Are you sure?",
-            text: "Are you sure you want to unban this post ?",
+            title: "Desbloquear",
+            text: "¿Está seguro que quiere desbloquear esta publicación?",
             icon: "warning",
             buttons: true,
             dangerMode: true,
@@ -210,7 +193,7 @@
     function banPost(form) {
 
         swal({
-            text: "Enter reason to ban.",
+            text: "Ingrese la razón de bloqueo",
             content: "input",
             button: {
                 text: "Ban",

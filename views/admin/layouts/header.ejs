@@ -22,7 +22,7 @@
 <body>
 
     <script>
-        var mainURL = "http://192.168.8.101:3000";
+        var mainURL = "http://localhost:3000";
 
         var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     </script>
@@ -43,20 +43,21 @@
             </div>
             <ul class="list-unstyled components text-secondary">
                 <li>
-                    <a href="<%= mainURL %>/admin" id="link-dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="<%= mainURL %>/admin" id="link-dashboard"><i class="fas fa-home"></i> Página principal</a>
                 </li>
 
                 <li>
                     <a href="<%= mainURL %>/admin/users" id="link-users"><i class="fas fa-user-friends"></i>Usuarios</a>
                 </li>
-<!--
+
                 <li>
-                    <a href="<%= mainURL %>/admin/posts" id="link-posts"><i class="fas fa-table"></i>Posts</a>
+                    <a href="<%= mainURL %>/admin/posts" id="link-posts"><i class="fas fa-table"></i>Publicaciones</a>
                 </li>
--->
+<!--
                 <li>
                     <a href="<%= mainURL %>/admin/tickets" id="link-tickets"><i class="fas fa-info"></i>Soporte</a>
                 </li>
+                -->
             </ul>
         </nav>
         <div id="body" class="active1">
@@ -70,10 +71,9 @@
                                 <div class="dropdown-menu dropdown-menu-right nav-link-menu">
                                     <ul class="nav-list">
                                         
-                                        <!-- <li><a href="" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
-                                        <div class="dropdown-divider"></div> -->
+                                        
 
-                                        <li><a href="javascript:void(0);" class="dropdown-item" onclick="return doLogout();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                        <li><a href="javascript:void(0);" class="dropdown-item" onclick="return doLogout();"><i class="fas fa-sign-out-alt"></i> Salir</a></li>
                                     </ul>
                                 </div>
                             </div>
