@@ -418,7 +418,6 @@ module.exports = {
                     "_id": -1
                 })
                 .toArray();
-
             var totalPages = await self.database.collection("posts").count() / limit;
             totalPages = Math.ceil(totalPages);
 
@@ -599,7 +598,7 @@ module.exports = {
                     "_id": -1
                 })
                 .toArray();
-
+                
             for (var a = 0; a < users.length; a++) {
                 delete users[a].password;
             }
@@ -650,18 +649,7 @@ module.exports = {
 
         app.get("/admin", function (request, result) {
             self.database.collection("admins").findOne({}, function (error, admin) {
-             /*   if (!admin) {
-
-                    self.bcrypt.genSalt(10, function(err, salt) {
-                        self.bcrypt.hash("admin", salt, async function(err, hash) {
-                            self.database.collection("admins").insertOne({
-                                "email": "admin@santillana.com",
-                                "password": "admin"
-                            })
-                        })
-                    })
-                }*/
-            });
+                     });
 
             result.render("admin/index");
         });
