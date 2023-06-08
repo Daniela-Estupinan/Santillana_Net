@@ -279,7 +279,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "Post has been unbanned."
+                "message": "Publicación ha sido desbloqueada"
             });
         });
 
@@ -338,7 +338,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "Post has been banned."
+                "message": "Publicación ha sido bloqueada"
             });
         });
 
@@ -411,9 +411,7 @@ module.exports = {
             }
 
             var posts = await self.database.collection("posts")
-                .find({
-                    "type": "post"
-                })
+            .find({})
                 .skip(skip)
                 .limit(limit)
                 .sort({
@@ -637,6 +635,7 @@ module.exports = {
 
             var users = await self.database.collection("users").count();
             var groups = await self.database.collection("groups").count();
+            var posts = await self.database.collection("posts").count();
             var supportRequests = 0;
 
             result.json({
@@ -644,6 +643,7 @@ module.exports = {
                 "message": "Data has been fetched.",
                 "users": users,
                 "groups": groups,
+                "posts": posts,
                 "supportRequests": supportRequests
             });
         });
