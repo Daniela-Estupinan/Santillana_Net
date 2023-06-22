@@ -9,6 +9,11 @@
         </div>
         <div class="box box-primary">
             <div class="box-body">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Buscar por usuario...">
+                    <button id="search-button">Buscar</button>
+                </div>
+            </br>
                 <table width="100%" class="table table-bordered" id="dataTables-users">
                     <thead>
                         <tr>
@@ -284,6 +289,32 @@
 
         return false;
     }
+
+    document.getElementById("search-button").addEventListener("click", function() {
+        var query = document.getElementById("search-input").value.trim();
+        filterTable(query);
+    });
+
+    function filterTable(query) {
+    query = query.toLowerCase();
+    var table = document.getElementById("dataTables-users");
+    var rows = table.getElementsByTagName("tr");
+
+    for (var i = 1; i < rows.length; i++) {
+        var row = rows[i];
+        var cell = row.getElementsByTagName("td")[2]; // Índice 3 corresponde a la columna "Nombre"
+        if (cell) {
+            var cellText = cell.textContent || cell.innerText;
+
+            if (query === "" || cellText.toLowerCase().indexOf(query) > -1) 
+            {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
+}
 </script>
 
 <%- include ("../layouts/footer") %>
