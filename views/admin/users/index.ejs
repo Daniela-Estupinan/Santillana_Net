@@ -13,6 +13,25 @@
                     <input type="text" id="search-input" placeholder="Buscar por usuario...">
                     <button id="search-button">Buscar</button>
                 </div>
+
+                <div class="filter-container">
+                    <select id="country-filter">
+                        <option value="">Todos las áreas</option>
+                        <option value="Ventas">Ventas</option>
+						<option value="Comunicaciones">Comunicaciones</option>
+						<option value="Contabilidad">Contabilidad</option>
+						<option value="Marketing">Marketing</option>
+						<option value="RRHH">RRHH</option>
+                    </select>
+                    <select id="city-filter">
+                        <option value="">Todas las ciudades</option>
+                        <option value="Quito">Quito</option>
+						<option value="Guayaquil">Guayaquil</option>
+						<option value="Cuenca">Cuenca</option>
+						<option value="Otro">Otro</option>
+                    </select>
+                    <button id="filter-button">Filtrar</button>
+                </div>
             </br>
                 <table width="100%" class="table table-bordered" id="dataTables-users">
                     <thead>
@@ -40,6 +59,17 @@
 </div>
 
 <script>
+            var filterContainer = document.querySelector(".filter-container");
+       // var container = document.querySelector(".container");
+
+        // Establece el estilo flex y ajusta la alineación y el orden de los elementos
+        filterContainer.style.display = "flex";
+        filterContainer.style.justifyContent = "flex-end";
+        filterContainer.style.alignItems = "center";
+        filterContainer.style.order = "2";
+
+        // Agrega margen derecho al contenedor principal
+        filterContainer.style.marginRight = "10px";
     var isUsersPage = true;
     const limit = 10;
 
@@ -52,9 +82,8 @@
         ajax.onreadystatechange = function () {
             if (this.readyState == 4) {
                 if (this.status == 200) {
-                    // console.log(this.responseText);
                     var response = JSON.parse(this.responseText);
-                    // console.log(response);
+                    
 
                     if (response.status == "success") {
                         var html = "";
@@ -315,6 +344,41 @@
         }
     }
 }
+
+//filtro
+document.getElementById("filter-button").addEventListener("click", function() {
+    var country = document.getElementById("country-filter").value;
+    var city = document.getElementById("city-filter").value;
+    filterTableByCountryAndCity(country, city);
+});
+
+function filterTableByCountryAndCity(country, city) {
+    country = country.toLowerCase();
+    city = city.toLowerCase();
+    var table = document.getElementById("dataTables-users");
+    var rows = table.getElementsByTagName("tr");
+
+    for (var i = 1; i < rows.length; i++) {
+        var row = rows[i];
+        var countryCell = row.getElementsByTagName("td")[4]; // Índice 5 corresponde a la columna "Área"
+        var cityCell = row.getElementsByTagName("td")[5]; // Índice 6 corresponde a la columna "Ciudad"
+
+        if (countryCell && cityCell) {
+            var countryText = countryCell.textContent || countryCell.innerText;
+            var cityText = cityCell.textContent || cityCell.innerText;
+
+            var countryMatch = country === "" || countryText.toLowerCase() === country;
+            var cityMatch = city === "" || cityText.toLowerCase() === city;
+
+            if (countryMatch && cityMatch) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
+}
+
 </script>
 
 <%- include ("../layouts/footer") %>

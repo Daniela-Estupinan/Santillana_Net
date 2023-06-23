@@ -58,16 +58,6 @@
                         for (var a = 0; a < response.data.length; a++) {
                             var post = response.data[a];
 
-                            var imageNode = "";
-                            if (post.image != "") {
-                                imageNode = `<img src='` + mainURL + `/` + post.image + `' class='img-fluid' onerror="this.src = '/public/img/default_cover.jpg';" />`;
-                            }
-
-                            var videoNode = "";
-                            if (post.video != "") {
-                                videoNode = `<video class="post-video" style="height: 359px; width: 100%;" controls src="` + mainURL + `/` + post.video + `" poster="/public/img/default_cover.jpg"></video>`;
-                            }
-
                             var banVisible = post.isBanned ? "style='display: none';" : "";
                             var unbanVisible = post.isBanned ? "" : "style='display: none';";
 
