@@ -41,51 +41,7 @@ callbackFileUpload: function (files, index, savedPaths = [], success = null) {
             let _buffer = new Buffer.from(buffer,'base64');
             return _buffer.toString('base64')
           };
-          /*
-          if (files[index].type.includes("image")) {
-            self.requestModule.post("../class.ImageFilter.php", {
-              formData: {
-                "validate_image": 1,
-                "base_64": base64
-              }
-            }, function (err, res, body) {
-              if (!err && res.statusCode === 200) {
-                // console.log(body);
-  
-                if (body > 60) {
-                  self.result.json({
-                    "status": "error",
-                    "message": "Image contains nudity."
-                  });
-  
-                  return false;
-                } else {
-                  self.fileSystem.writeFile(filePath, data, async function (error) {
-                    if (error) {
-                      console.error(error);
-                      return;
-                    }
-  
-                    savedPaths.push(filePath);
-  
-                    if (index === files.length - 1) {
-                      success(savedPaths);
-                    } else {
-                      index++;
-                      self.callbackFileUpload(files, index, savedPaths, success);
-                    }
-                  });
-  
-                  self.fileSystem.unlink(files[index].path, function (error) {
-                    if (error) {
-                      console.error(error);
-                      return;
-                    }
-                  });
-                }
-              }
-            });
-          } else */{
+         {
             self.fileSystem.writeFile(filePath, data, async function (error) {
               if (error) {
                 console.error(error);

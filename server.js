@@ -3450,6 +3450,8 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				}
 			});
 		});
+
+		
 //Get My Communitys
 		app.get("/createGroup", function (request, result) {
 			result.render("createGroup");
