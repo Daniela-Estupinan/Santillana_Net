@@ -577,7 +577,7 @@ function renderSinglePost(data) {
 
 					html += '<div class="description">';
 						html += '<p>'
-							html += result
+							html += result.replace(/#(\w+)/g, '<span style="color: blue;">#$1</span>');
 							// html += caption
 						html += '</p>'
 					html += '</div>';
@@ -654,6 +654,7 @@ function renderSinglePost(data) {
 	html += '</div>';
 	return html;
 }
+
 
 function showCommentsModal(postId) {
 	$("#postCommentsModal input[name=_id]").val(postId)
@@ -1319,10 +1320,9 @@ function showAddPost() {
 					html += '<form method="post" id="form-add-post" onsubmit="return doPost(this);" novalidate enctype="multipart/form-data">';
 
 						html += '<input name="type" type="hidden" value="post" />';
-						html += '<textarea rows="2" name="caption" placeholder="comparte tus ideas"></textarea>';
+						html += '<textarea rows="2" name="caption" class="caption-input" placeholder="comparte tus ideas"></textarea>';
 						html += '<div class="attachments">';
 							html += '<ul>';
-
 
 								html += '<li>';
 									html += '<input type="file" multiple name="files" accept="image/*,audio/*,video/*" />';
