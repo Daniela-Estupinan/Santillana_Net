@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post Statistics</title>
+    <!-- Agrega aquí tus enlaces a los archivos CSS y otros recursos -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Post Statistics</h1>
+
+    <table id="statisticsTable">
+        <thead>
+            <tr>
+                <th>Hashtag</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (var i = 0; i < statistics.length; i++) { %>
+                <tr>
+                    <td><%= statistics[i]._id %></td>
+                    <td><%= statistics[i].count %></td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+    <a href="/admin/statistics">Volver a las estadísticas</a>
+
+    <script>
+        $(document).ready(function () {
+            // Realizar la solicitud AJAX para obtener los datos de estadísticas
+            $.ajax({
+                url: "/admin/posts/statistics",
+                method: "GET",
+                success: function (response) {
+                    if (response.status === "success") {
+                        var statistics = response.data;
+
+                        // Generar las filas de la tabla con los datos de estadísticas
+                        var $tbody = $("#statisticsTable tbody");
+                        for (var i = 0; i < statistics.length; i++) {
+                            var $row = $("<tr>");
+                            $row.append($("<td>").text(statistics[i]._id));
+                            $row.append($("<td>").text(statistics[i].count));
+                            $tbody.append($row);
+                        }
+                    } else {
+                        console.error(response.message);
+                    }
+                },
+                error: function (error) {
+                    console.error("Error en la solicitud AJAX:", error);
+                }
+            });
+        });
+    </script>
+
+    <!-- Agrega aquí tus enlaces a los archivos JavaScript y otros recursos -->
+</body>
+</html>

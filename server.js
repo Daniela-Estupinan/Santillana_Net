@@ -2725,7 +2725,7 @@ app.post("/fetchNearbyCom", async function (request, result) {
 									"notifications": {
 										"_id": ObjectId(),
 										"type": "friend_request_accepted",
-										"content": me.name + " accepted your friend request.",
+										"content": me.name + " acepto tu solicitud de contacto.",
 										"profileImage": me.profileImage,
 										"isRead": false,
 										"createdAt": new Date().getTime()

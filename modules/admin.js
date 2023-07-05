@@ -740,6 +740,12 @@ module.exports = {
                 "data": admin
             });
         });
+//estadisticas
+
 
     }
+
+
+
+
 };
