@@ -1,0 +1,6 @@
+[build]
+  command = "npx nodemon server.js"
+  functions = "dist/functions" # Si tienes funciones de servidor adicionales
+
+[dev]
+  command = "npx nodemon server.js"
