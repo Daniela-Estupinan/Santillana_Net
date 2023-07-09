@@ -53,7 +53,7 @@ var socketIO = require("socket.io")(http);
 var socketID = "";
 var users = [];
 
-global.mainURL = "http://localhost:3000";
+global.mainURL = "https://al-dia-ecuador.onrender.com/";
 
 var nodemailerFrom = "danielitabelen2009@hotmail.com";
 var nodemailerObject = {
