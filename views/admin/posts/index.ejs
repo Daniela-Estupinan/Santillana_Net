@@ -305,8 +305,8 @@
 
         for (var i = 1; i < rows.length; i++) {
             var row = rows[i];
-            var cell = row.getElementsByTagName("td")[3]; // Index 3 corresponds to the "Comunidad" column
-            var dateCell = row.getElementsByTagName("td")[5]; // Index 5 corresponds to the "Fecha" column
+            var cell = row.getElementsByTagName("td")[2]; // Index 3 corresponds to the "Comunidad" column
+            var dateCell = row.getElementsByTagName("td")[4]; // Index 5 corresponds to the "Fecha" column
             if (cell && dateCell) {
                 var cellText = cell.textContent || cell.innerText;
                 var dateText = dateCell.textContent || dateCell.innerText;
