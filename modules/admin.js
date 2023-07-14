@@ -14,7 +14,74 @@ module.exports = {
     init: function (app, express) {
         var self = this
 
+//estadisticas
+// Ruta para obtener las estadísticas mensuales
+app.get("/admin/stats", async function (request, result) {
+    var accessToken = request.query.accessToken;
 
+    var admin = await self.database.collection("admins").findOne({
+        "accessToken": accessToken
+    });
+
+    if (admin == null) {
+        result.json({
+            "status": "error",
+            "message": self.logoutMessage
+        });
+
+        return false;
+    }
+
+    try {
+        var monthlyStats = await self.getMonthlyStatistics();
+        result.render("admin/stats", { stats: monthlyStats });
+    } catch (error) {
+        result.json({
+            "status": "error",
+            "message": "Failed to fetch monthly statistics."
+        });
+    }
+});
+
+// Función para obtener las estadísticas mensuales
+async function getMonthlyStatistics() {
+    var pipeline = [
+        {
+            $group: {
+                _id: {
+                    year: { $year: { $toDate: "$createdAt" } },
+                    month: { $month: { $toDate: "$createdAt" } }
+                },
+                totalPosts: { $sum: 1 },
+                uniqueUsers: { $addToSet: "$uploader.name" }
+            }
+        },
+        {
+            $project: {
+                month: {
+                    $dateToString: {
+                        format: "%Y-%m",
+                        date: {
+                            $dateFromParts: {
+                                year: "$_id.year",
+                                month: "$_id.month"
+                            }
+                        }
+                    }
+                },
+                totalPosts: 1,
+                uniqueUsers: { $size: "$uniqueUsers" }
+            }
+        },
+        {
+            $sort: { month: 1 }
+        }
+    ];
+
+    var stats = await self.database.collection("posts").aggregate(pipeline).toArray();
+    return stats;
+}
+//
         const ticketsRouter = express.Router();
         ticketsRouter.get("/", function (request, result) {
             result.render("admin/tickets/index");
