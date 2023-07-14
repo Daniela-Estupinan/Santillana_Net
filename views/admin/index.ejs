@@ -79,14 +79,56 @@
                     </div>
                     <div class="footer">
                         <hr />
-                        <!-- <div class="stats">
-                          <i class="fas fa-sync"></i> Refresh 
-                        </div>--> 
+
                     </div>
                 </div>
             </div>
         </div>
 
+<!--ESTADISTICA-->
+<div class="col-sm-6 col-md-6 mt-3">
+    <div class="card">
+        <div class="content">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="icon-big text-center">
+                        <i class="fas fa-user" style="color: #00A1E4;"></i>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="detail">
+                        <p class="detail-subtitle">Usuarios por Mes</p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Mes</th>
+                                    <th>Usuarios</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (userStats && userStats.length > 0) { %>
+                                    <% for (var i = 0; i < userStats.length; i++) { %>
+                                        <tr>
+                                            <td><%= userStats[i].month %></td>
+                                            <td><%= userStats[i].users %></td>
+                                        </tr>
+                                    <% } %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="2">No hay estadísticas disponibles.</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="footer">
+                <hr />
+            </div>
+        </div>
+    </div>
+</div>
 <!--
         <div class="col-sm-6 col-md-6 col-lg-3 mt-3">
             <div class="card">
