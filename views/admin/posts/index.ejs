@@ -15,7 +15,7 @@
                 <table width="100%" class="table table-bordered" id="dataTables-posts">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            
                             <th>Detalles</th>
                             <th>Usuario</th>
                             <th>Comunidad</th>
@@ -74,7 +74,6 @@
                             </form>`;
 
                             html += `<tr>
-                                <td>` + post._id + `</td>
                                 <td>` + post.caption + `</td>
                                 <td>` + post.uploader.name + `</td>
                                 <td>` + post.user.username + `</td>
@@ -305,7 +304,7 @@
 
     for (var i = 1; i < rows.length; i++) {
         var row = rows[i];
-        var cell = row.getElementsByTagName("td")[3]; // Índice 3 corresponde a la columna "Comunidad"
+        var cell = row.getElementsByTagName("td")[2]; // Índice 3 corresponde a la columna "Comunidad"
         if (cell) {
             var cellText = cell.textContent || cell.innerText;
             if (query === "" || cellText.toLowerCase().indexOf(query) > -1) 
