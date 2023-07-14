@@ -37,7 +37,7 @@
                     <thead>
                         <tr>
                             
-                            <th>Foto de perfil</th>
+                            
                             <th>Nombre</th>
                             <th>Correo</th>
                             <th>Área</th>
@@ -107,7 +107,6 @@
 
                             html += `<tr>
                                 
-                                <td><img src='` + mainURL + `/` + user.profileImage + `' class='img-fluid' onerror="this.src = '/public/img/default_cover.jpg';" /></td>                              
                                 <td>` + user.name + `</td>
                                 <td>` + user.email + `</td>
                                 <td>` + user.country + `</td>
@@ -331,7 +330,7 @@
 
     for (var i = 1; i < rows.length; i++) {
         var row = rows[i];
-        var cell = row.getElementsByTagName("td")[1]; // Índice 2 corresponde a la columna "Nombre"
+        var cell = row.getElementsByTagName("td")[0]; // Índice 2 corresponde a la columna "Nombre"
         if (cell) {
             var cellText = cell.textContent || cell.innerText;
 
