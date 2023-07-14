@@ -17,11 +17,12 @@
                 <table width="100%" class="table table-bordered" id="dataTables-posts">
                     <thead>
                         <tr>
+                            
+                            <th>Detalles</th>
                             <th>Usuario</th>
-                            <th>Detalles</th>                          
                             <th>Comunidad</th>
                             <th>Estados</th>
-                            <th>Fecha Publicación</th>
+                            <th>Fecha</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -76,9 +77,9 @@
                             </form>`;
 
                             html += `<tr>
-                                <td>` + post.uploader.name + `</td>
+                               
                                 <td>` + post.caption + `</td>
-                                
+                                <td>` + post.uploader.name + `</td>
                                 <td>` + post.user.username + `</td>
                                 <td>
                                     <i class="fa fa-eye"></i> ` + post.likers.length + ` <br />
