@@ -61,6 +61,8 @@
     }
 
     getStats();
+    var formData = new FormData();
+    formData.append("accessToken", localStorage.getItem("adminAccessToken"));
 </script>
 
 <%- include ("../layouts/footer") %>
