@@ -36,9 +36,8 @@
                 <table width="100%" class="table table-bordered" id="dataTables-users">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Foto de perfil</th>
-                            <th>Nombre</th>
+                            <th>Nombre</th> 0
+                            <th>Foto de perfil</th> 1
                             <th>Correo</th>
                             <th>Área</th>
                             <th>Ciudad</th>
@@ -106,9 +105,8 @@
                             </form>`;
 
                             html += `<tr>
-                                <td>` + user._id + `</td>
-                                <td><img src='` + mainURL + `/` + user.profileImage + `' class='img-fluid' onerror="this.src = '/public/img/default_cover.jpg';" /></td>
                                 <td>` + user.name + `</td>
+                                <td><img src='` + mainURL + `/` + user.profileImage + `' class='img-fluid' onerror="this.src = '/public/img/default_cover.jpg';" /></td>                              
                                 <td>` + user.email + `</td>
                                 <td>` + user.country + `</td>
                                 <td>` + user.city+ `</td>
@@ -331,7 +329,7 @@
 
     for (var i = 1; i < rows.length; i++) {
         var row = rows[i];
-        var cell = row.getElementsByTagName("td")[2]; // Índice 3 corresponde a la columna "Nombre"
+        var cell = row.getElementsByTagName("td")[0]; // Índice 3 corresponde a la columna "Nombre"
         if (cell) {
             var cellText = cell.textContent || cell.innerText;
 
