@@ -85,7 +85,7 @@
                                     <i class="fa fa-eye"></i> ` + post.likers.length + ` <br />
                                     <i class="fa fa-comment"></i> ` + post.comments.length + ` <br />
                                 </td>
-                                <td>` + post.createdAt + `</td>
+                                <td>` + new Date(post.createdAt).toLocaleDateString() + `</td>
                                 <td>
                                     <div style="display: flex;">
                                         ` + banNode + `
