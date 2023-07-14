@@ -1477,80 +1477,131 @@ app.post("/fetchNearbyCom", async function (request, result) {
 
 		app.post("/uploadProfileImage", function (request, result) {
 			var accessToken = request.fields.accessToken;
-			var profileImage = "";
-
+		  
 			database.collection("users").findOne({
-				"accessToken": accessToken
+			  "accessToken": accessToken
 			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-
-					if (user.isBanned) {
-						result.json({
-							"status": "error",
-							"message": "Ha sido bloqueado"
-						});
-						return false;
-					}
-
-					if (request.files.profileImage.size > 0 && request.files.profileImage.type.includes("image")) {
-
-						if (user.profileImage != "") {
-							fileSystem.unlink(user.profileImage, function (error) {
-								// console.log("error deleting file: " + error);
-							});
-						}
-
-						profileImage = "public/images/profile-" + new Date().getTime() + "-" + request.files.profileImage.name;
-
-						// Read the file
-	                    fileSystem.readFile(request.files.profileImage.path, function (err, data) {
-	                        if (err) throw err;
-	                        console.log('File read!');
-
-	                        // Write the file
-	                        fileSystem.writeFile(profileImage, data, function (err) {
-	                            if (err) throw err;
-	                            console.log('File written!');
-
-	                            database.collection("users").updateOne({
-									"accessToken": accessToken
-								}, {
-									$set: {
-										"profileImage": profileImage
-									}
-								}, async function (error, data) {
-
-									await functions.updateUser(user, profileImage, user.name);
-
-									result.json({
-										"status": "status",
-										"message": "Profile image has been updated.",
-										data: mainURL + "/" + profileImage
-									});
-								});
-	                        });
-
-	                        // Delete the file
-	                        fileSystem.unlink(request.files.profileImage.path, function (err) {
-	                            if (err) throw err;
-	                            console.log('File deleted!');
-	                        });
-	                    });
-
-					} else {
-						result.json({
-							"status": "error",
-							"message": "Please select valid image."
-						});
-					}
+			  if (user == null) {
+				result.json({
+				  "status": "error",
+				  "message": "User has been logged out. Please login again."
+				});
+			  } else {
+				if (user.isBanned) {
+				  result.json({
+					"status": "error",
+					"message": "Ha sido bloqueado"
+				  });
+				  return false;
 				}
+		  
+				if (request.files.profileImage.size > 0 && request.files.profileImage.type.includes("image")) {
+				  if (user.profileImage != "") {
+					// Eliminar la imagen anterior si existe
+					deleteImageFromMongoDB(user.profileImage);
+				  }
+		  
+				  // Leer el archivo de imagen
+				  fileSystem.readFile(request.files.profileImage.path, function (err, data) {
+					if (err) {
+					  console.error(err);
+					  result.json({
+						"status": "error",
+						"message": "Failed to read profile image file."
+					  });
+					} else {
+					  // Guardar los datos binarios de la imagen en MongoDB
+					  saveImageToMongoDB(data)
+						.then((objectId) => {
+						  // Actualizar el campo "profileImage" en el documento de usuario con el ObjectId de la imagen
+						  updateUserProfileImage(accessToken, objectId)
+							.then(() => {
+							  // Resto del código...
+							  result.json({
+								"status": "success",
+								"message": "Profile image has been updated.",
+								"data": `${mainURL}/${objectId}`
+							  });
+							})
+							.catch((error) => {
+							  console.error(error);
+							  result.json({
+								"status": "error",
+								"message": "Failed to update profile image in the database."
+							  });
+							});
+						})
+						.catch((error) => {
+						  console.error(error);
+						  result.json({
+							"status": "error",
+							"message": "Failed to save profile image to MongoDB."
+						  });
+						});
+					}
+		  
+					// Eliminar el archivo temporal de la imagen
+					fileSystem.unlink(request.files.profileImage.path, function (err) {
+					  if (err) {
+						console.error(err);
+					  }
+					});
+				  });
+				} else {
+				  result.json({
+					"status": "error",
+					"message": "Please select a valid image."
+				  });
+				}
+			  }
 			});
-		});
+		  });
+		  
+		  // Función para guardar los datos binarios de la imagen en MongoDB
+		  function saveImageToMongoDB(imageData) {
+			return new Promise((resolve, reject) => {
+			  database.collection("images").insertOne(
+				{ "imageData": new Binary(imageData) },
+				function (error, result) {
+				  if (error) {
+					reject(error);
+				  } else {
+					resolve(result.insertedId.toString());
+				  }
+				}
+			  );
+			});
+		  }
+		  
+		  // Función para eliminar una imagen de MongoDB
+		  function deleteImageFromMongoDB(objectId) {
+			database.collection("images").deleteOne(
+			  { "_id": ObjectId(objectId) },
+			  function (error, result) {
+				if (error) {
+				  console.error(error);
+				}
+			  }
+			);
+		  }
+		  
+		  // Función para actualizar el campo "profileImage" en el documento de usuario
+		  function updateUserProfileImage(accessToken, profileImageObjectId) {
+			return new Promise((resolve, reject) => {
+			  database.collection("users").updateOne(
+				{ "accessToken": accessToken },
+				{ $set: { "profileImage": profileImageObjectId } },
+				function (error, data) {
+				  if (error) {
+					reject(error);
+				  } else {
+					resolve();
+				  }
+				}
+			  );
+			});
+		  }
+		  
 
 		app.post("/updateProfile", function (request, result) {
 			var accessToken = request.fields.accessToken;
