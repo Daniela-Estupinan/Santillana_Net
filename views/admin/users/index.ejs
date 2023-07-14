@@ -106,8 +106,9 @@
                             </form>`;
 
                             html += `<tr>
-                                <td>` + user.name + `</td>
+                                
                                 <td><img src='` + mainURL + `/` + user.profileImage + `' class='img-fluid' onerror="this.src = '/public/img/default_cover.jpg';" /></td>                              
+                                <td>` + user.name + `</td>
                                 <td>` + user.email + `</td>
                                 <td>` + user.country + `</td>
                                 <td>` + user.city+ `</td>
@@ -330,7 +331,7 @@
 
     for (var i = 1; i < rows.length; i++) {
         var row = rows[i];
-        var cell = row.getElementsByTagName("td")[1]; // Índice 3 corresponde a la columna "Nombre"
+        var cell = row.getElementsByTagName("td")[1]; // Índice 2 corresponde a la columna "Nombre"
         if (cell) {
             var cellText = cell.textContent || cell.innerText;
 
