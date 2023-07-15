@@ -2,6 +2,7 @@ const multer = require('multer');
 const { Storage } = require('@google-cloud/storage');
 var express = require("express");
 var app = express();
+const upload = multer();
 
 var formidable = require("express-formidable");
 app.use(formidable({
@@ -1461,83 +1462,65 @@ app.post("/fetchNearbyCom", async function (request, result) {
 			});
 		});
 
-		app.post("/uploadProfileImage", function (request, result) {
-			var accessToken = request.fields.accessToken;
-			var profileImage = "";
-
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-
-					if (user.isBanned) {
-						result.json({
-							"status": "error",
-							"message": "Ha sido bloqueado"
-						});
-						return false;
-					}
-
-					if (request.files.profileImage.size > 0 && request.files.profileImage.type.includes("image")) {
-
-						if (user.profileImage != "") {
-							fileSystem.unlink(user.profileImage, function (error) {
-								// console.log("error deleting file: " + error);
-							});
-						}
-
-						profileImage = "public/images/profile-" + new Date().getTime() + "-" + request.files.profileImage.name;
-
-						// Read the file
-	                    fileSystem.readFile(request.files.profileImage.path, function (err, data) {
-	                        if (err) throw err;
-	                        console.log('File read!');
-
-	                        // Write the file
-	                        fileSystem.writeFile(profileImage, data, function (err) {
-	                            if (err) throw err;
-	                            console.log('File written!');
-
-	                            database.collection("users").updateOne({
-									"accessToken": accessToken
-								}, {
-									$set: {
-										"profileImage": profileImage
-									}
-								}, async function (error, data) {
-
-									await functions.updateUser(user, profileImage, user.name);
-
-									result.json({
-										"status": "status",
-										"message": "Profile image has been updated.",
-										data: mainURL + "/" + profileImage
-									});
-								});
-	                        });
-
-	                        // Delete the file
-	                        fileSystem.unlink(request.files.profileImage.path, function (err) {
-	                            if (err) throw err;
-	                            console.log('File deleted!');
-	                        });
-	                    });
-
-					} else {
-						result.json({
-							"status": "error",
-							"message": "Please select valid image."
-						});
-					}
-				}
-			});
-		});
-
+		app.post('/uploadProfileImage', upload.single('profileImage'), async (req, res) => {
+			try {
+			  const accessToken = req.fields.accessToken;
+			  const user = await User.findOne({ "accessToken": accessToken });
+		  
+			  if (!user) {
+				res.json({
+				  "status": "error",
+				  "message": "User has been logged out. Please login again."
+				});
+				return;
+			  }
+		  
+			  if (user.isBanned) {
+				res.json({
+				  "status": "error",
+				  "message": "Ha sido bloqueado"
+				});
+				return;
+			  }
+		  
+			  if (!req.file) {
+				res.json({
+				  "status": "error",
+				  "message": "Please select a valid image."
+				});
+				return;
+			  }
+		  
+			  const image = {
+				data: req.file.buffer,
+				contentType: req.file.mimetype,
+			  };
+		  
+			  if (user.profileImage && user.profileImage.data) {
+				// Eliminar la imagen de perfil anterior en MongoDB
+				await User.updateOne({ "accessToken": accessToken }, { $unset: { "profileImage": 1 } });
+			  }
+		  
+			  // Actualizar la referencia de la imagen de perfil en la base de datos
+			  await User.updateOne({ "accessToken": accessToken }, { $set: { "profileImage": image } });
+		  
+			  res.json({
+				"status": "success",
+				"message": "Profile image has been updated.",
+				"data": getUserImageURL(user._id) // Cambiar esto según cómo estés manejando las imágenes en el frontend.
+			  });
+			} catch (error) {
+			  console.error('Error al guardar la imagen:', error);
+			  res.status(500).json({ error: 'Error al guardar la imagen' });
+			}
+		  });
+		  
+		  // Función para obtener la URL de acceso público a una imagen de perfil (Este es solo un ejemplo, puedes implementar tu propia lógica)
+		  function getUserImageURL(userId) {
+			return `https://aldiaecuador.com/profile-image`; // Cambiar esto según cómo estés manejando las imágenes en el frontend.
+		  }
+		  
+//
 		app.post("/updateProfile", function (request, result) {
 			var accessToken = request.fields.accessToken;
 			var name = request.fields.name;
