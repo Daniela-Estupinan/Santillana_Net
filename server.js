@@ -1,7 +1,6 @@
 const multer = require('multer');
 var express = require("express");
 const admin = require("firebase-admin");
-const formidable = require("formidable");
 const fs = require("fs");
 
 var app = express();
