@@ -1,3 +1,5 @@
+const multer = require('multer');
+const { Storage } = require('@google-cloud/storage');
 var express = require("express");
 var app = express();
 
@@ -5,7 +7,18 @@ var formidable = require("express-formidable");
 app.use(formidable({
     multiples: true, // request.files to be arrays of files
 }));
+// Configuración de Google Cloud Storage
+const storage = new Storage({
+  projectId: 'capstone-392917',
+  //keyFilename: 'RUTA_A_TU_ARCHIVO_DE_CREDENCIALES_JSON',
+});
+const bucketName = 'capstone-dbem';
 
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
+
+//
 var mongodb = require("mongodb");
 var mongoClient = mongodb.MongoClient;
 var ObjectId = mongodb.ObjectId;
@@ -260,23 +273,7 @@ http.listen(3000, function () {
 				return
 			}
 
-			/*let isMember = false
-		    for (let a = 0; a < group.members.length; a++) {
-		    	if (group.members[a].user._id.toString() == user._id.toString()
-		    		&& group.members[a].status == "Accepted") {
-		    		isMember = true
-		    		break
-		    	}
-		    }
-
-		    if (!isMember) {
-				result.json({
-					status: "error",
-					message: "You are not a member of this group."
-				})
-
-				return
-			}*/
+		
 
 			if (group.createdBy._id.toString() != user._id.toString()) {
 				result.json({
@@ -1400,157 +1397,127 @@ app.post("/fetchNearbyCom", async function (request, result) {
 		app.get("/logout", function (request, result) {
 			result.redirect("/login");
 		});
-
-		app.post("/uploadCoverPhoto", function (request, result) {
-			var accessToken = request.fields.accessToken;
-			var coverPhoto = "";
-
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-
-					if (user.isBanned) {
-						result.json({
-							"status": "error",
-							"message": "Ha sido bloqueado"
-						});
-						return false;
-					}
-
-					if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
-
-						if (user.coverPhoto != "") {
-							fileSystem.unlink(user.coverPhoto, function (error) {
-								//
-							});
-						}
-
-						coverPhoto = "public/images/cover-" + new Date().getTime() + "-" + request.files.coverPhoto.name;
-
-						// Read the file
-	                    fileSystem.readFile(request.files.coverPhoto.path, function (err, data) {
-	                        if (err) throw err;
-	                        console.log('File read!');
-
-	                        // Write the file
-	                        fileSystem.writeFile(coverPhoto, data, function (err) {
-	                            if (err) throw err;
-	                            console.log('File written!');
-
-	                            database.collection("users").updateOne({
-									"accessToken": accessToken
-								}, {
-									$set: {
-										"coverPhoto": coverPhoto
-									}
-								}, function (error, data) {
-									result.json({
-										"status": "status",
-										"message": "Cover photo has been updated.",
-										data: mainURL + "/" + coverPhoto
-									});
-								});
-	                        });
-
-	                        // Delete the file
-	                        fileSystem.unlink(request.files.coverPhoto.path, function (err) {
-	                            if (err) throw err;
-	                            console.log('File deleted!');
-	                        });
-	                    });
-						
-					} else {
-						result.json({
-							"status": "error",
-							"message": "Please select valid image."
-						});
-					}
-				}
-			});
-		});
-
-		app.post("/uploadProfileImage", function (request, result) {
-			var accessToken = request.fields.accessToken;
-			var profileImage = "";
-
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-
-					if (user.isBanned) {
-						result.json({
-							"status": "error",
-							"message": "Ha sido bloqueado"
-						});
-						return false;
-					}
-
-					if (request.files.profileImage.size > 0 && request.files.profileImage.type.includes("image")) {
-
-						if (user.profileImage != "") {
-							fileSystem.unlink(user.profileImage, function (error) {
-								// console.log("error deleting file: " + error);
-							});
-						}
-
-						profileImage = "public/images/profile-" + new Date().getTime() + "-" + request.files.profileImage.name;
-
-						// Read the file
-	                    fileSystem.readFile(request.files.profileImage.path, function (err, data) {
-	                        if (err) throw err;
-	                        console.log('File read!');
-
-	                        // Write the file
-	                        fileSystem.writeFile(profileImage, data, function (err) {
-	                            if (err) throw err;
-	                            console.log('File written!');
-
-	                            database.collection("users").updateOne({
-									"accessToken": accessToken
-								}, {
-									$set: {
-										"profileImage": profileImage
-									}
-								}, async function (error, data) {
-
-									await functions.updateUser(user, profileImage, user.name);
-
-									result.json({
-										"status": "status",
-										"message": "Profile image has been updated.",
-										data: mainURL + "/" + profileImage
-									});
-								});
-	                        });
-
-	                        // Delete the file
-	                        fileSystem.unlink(request.files.profileImage.path, function (err) {
-	                            if (err) throw err;
-	                            console.log('File deleted!');
-	                        });
-	                    });
-
-					} else {
-						result.json({
-							"status": "error",
-							"message": "Please select valid image."
-						});
-					}
-				}
-			});
-		});
+//
+app.post('/uploadCoverPhoto', upload.single('coverPhoto'), async (req, res) => {
+	const accessToken = req.fields.accessToken;
+  
+	const user = await database.collection("users").findOne({ "accessToken": accessToken });
+  
+	if (!user) {
+	  res.json({
+		"status": "error",
+		"message": "User has been logged out. Please login again."
+	  });
+	  return;
+	}
+  
+	if (user.isBanned) {
+	  res.json({
+		"status": "error",
+		"message": "Ha sido bloqueado"
+	  });
+	  return;
+	}
+  
+	if (req.file.size > 0 && req.file.mimetype.includes("image")) {
+	  if (user.coverPhoto !== "") {
+		// Eliminar la imagen de portada anterior en Google Cloud Storage
+		await deleteImageFromCloudStorage(user.coverPhoto);
+	  }
+  
+	  const coverPhoto = `cover-${Date.now()}-${req.file.originalname}`;
+  
+	  // Subir la imagen de portada a Google Cloud Storage
+	  await uploadImageToCloudStorage(req.file.buffer, coverPhoto);
+  
+	  // Actualizar la referencia de la imagen de portada en la base de datos
+	  await database.collection("users").updateOne({ "accessToken": accessToken }, { $set: { "coverPhoto": coverPhoto } });
+  
+	  res.json({
+		"status": "success",
+		"message": "Cover photo has been updated.",
+		"data": getCloudStorageURL(coverPhoto)
+	  });
+	} else {
+	  res.json({
+		"status": "error",
+		"message": "Please select a valid image."
+	  });
+	}
+  });
+  
+  app.post('/uploadProfileImage', upload.single('profileImage'), async (req, res) => {
+	const accessToken = req.fields.accessToken;
+  
+	const user = await database.collection("users").findOne({ "accessToken": accessToken });
+  
+	if (!user) {
+	  res.json({
+		"status": "error",
+		"message": "User has been logged out. Please login again."
+	  });
+	  return;
+	}
+  
+	if (user.isBanned) {
+	  res.json({
+		"status": "error",
+		"message": "Ha sido bloqueado"
+	  });
+	  return;
+	}
+  
+	if (req.file.size > 0 && req.file.mimetype.includes("image")) {
+	  if (user.profileImage !== "") {
+		// Eliminar la imagen de perfil anterior en Google Cloud Storage
+		await deleteImageFromCloudStorage(user.profileImage);
+	  }
+  
+	  const profileImage = `profile-${Date.now()}-${req.file.originalname}`;
+  
+	  // Subir la imagen de perfil a Google Cloud Storage
+	  await uploadImageToCloudStorage(req.file.buffer, profileImage);
+  
+	  // Actualizar la referencia de la imagen de perfil en la base de datos
+	  await database.collection("users").updateOne({ "accessToken": accessToken }, { $set: { "profileImage": profileImage } });
+  
+	  // Realizar otras acciones necesarias
+	  // await functions.updateUser(user, profileImage, user.name);
+  
+	  res.json({
+		"status": "success",
+		"message": "Profile image has been updated.",
+		"data": getCloudStorageURL(profileImage)
+	  });
+	} else {
+	  res.json({
+		"status": "error",
+		"message": "Please select a valid image."
+	  });
+	}
+  });
+  
+  // Función para subir una imagen a Google Cloud Storage
+  async function uploadImageToCloudStorage(buffer, filename) {
+	const bucket = storage.bucket(bucketName);
+	const file = bucket.file(filename);
+  
+	await file.save(buffer);
+  }
+  
+  // Función para eliminar una imagen de Google Cloud Storage
+  async function deleteImageFromCloudStorage(filename) {
+	const bucket = storage.bucket(bucketName);
+	const file = bucket.file(filename);
+  
+	await file.delete();
+  }
+  
+  // Función para obtener la URL de acceso público a una imagen en Google Cloud Storage
+  function getCloudStorageURL(filename) {
+	return `https://storage.googleapis.com/${bucketName}/${filename}`;
+  }
+  //
 
 		app.post("/updateProfile", function (request, result) {
 			var accessToken = request.fields.accessToken;
