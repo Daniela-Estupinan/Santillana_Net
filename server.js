@@ -1,6 +1,6 @@
 const multer = require('multer');
 var express = require("express");
-const admin = require("firebase-admin");
+const admins = require("firebase-admin");
 const fs = require("fs");
 
 var app = express();
@@ -11,8 +11,8 @@ app.use(formidable({
 }));
 
 const serviceAccount = require("./al-dia-ecuador-firebase-adminsdk-ttlxd-e3b8c0ae82.json");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+admins.initializeApp({
+  credential: admins.credential.cert(serviceAccount),
   storageBucket: "al-dia-ecuador.appspot.com" // Reemplaza "tubucket" con el nombre de tu bucket de Firebase Cloud Storage
 });
 const bucket = admin.storage().bucket();
