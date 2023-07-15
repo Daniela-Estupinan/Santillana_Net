@@ -1,22 +1,10 @@
-const multer = require('multer');
 var express = require("express");
-const admins = require("firebase-admin");
-const fs = require("fs");
-
 var app = express();
 
 var formidable = require("express-formidable");
 app.use(formidable({
     multiples: true, // request.files to be arrays of files
 }));
-
-const serviceAccount = require("./al-dia-ecuador-firebase-adminsdk-ttlxd-e3b8c0ae82.json");
-admins.initializeApp({
-  credential: admins.credential.cert(serviceAccount),
-  storageBucket: "al-dia-ecuador.appspot.com" // Reemplaza "tubucket" con el nombre de tu bucket de Firebase Cloud Storage
-});
-const bucket = admins.storage().bucket();
-
 
 var mongodb = require("mongodb");
 var mongoClient = mongodb.MongoClient;
@@ -272,7 +260,23 @@ http.listen(3000, function () {
 				return
 			}
 
-		
+			/*let isMember = false
+		    for (let a = 0; a < group.members.length; a++) {
+		    	if (group.members[a].user._id.toString() == user._id.toString()
+		    		&& group.members[a].status == "Accepted") {
+		    		isMember = true
+		    		break
+		    	}
+		    }
+
+		    if (!isMember) {
+				result.json({
+					status: "error",
+					message: "You are not a member of this group."
+				})
+
+				return
+			}*/
 
 			if (group.createdBy._id.toString() != user._id.toString()) {
 				result.json({
@@ -1470,69 +1474,83 @@ app.post("/fetchNearbyCom", async function (request, result) {
 				}
 			});
 		});
-//
-	// Ruta para cargar la imagen de perfil
-app.post("/uploadProfileImage", (req, res) => {
-	const form = formidable({ multiples: false });
-  
-	form.parse(req, async (err, fields, files) => {
-	  if (err) {
-		return res.status(500).json({
-		  status: "error",
-		  message: "Error al procesar el formulario."
+
+		app.post("/uploadProfileImage", function (request, result) {
+			var accessToken = request.fields.accessToken;
+			var profileImage = "";
+
+			database.collection("users").findOne({
+				"accessToken": accessToken
+			}, function (error, user) {
+				if (user == null) {
+					result.json({
+						"status": "error",
+						"message": "User has been logged out. Please login again."
+					});
+				} else {
+
+					if (user.isBanned) {
+						result.json({
+							"status": "error",
+							"message": "Ha sido bloqueado"
+						});
+						return false;
+					}
+
+					if (request.files.profileImage.size > 0 && request.files.profileImage.type.includes("image")) {
+
+						if (user.profileImage != "") {
+							fileSystem.unlink(user.profileImage, function (error) {
+								// console.log("error deleting file: " + error);
+							});
+						}
+
+						profileImage = "public/images/profile-" + new Date().getTime() + "-" + request.files.profileImage.name;
+
+						// Read the file
+	                    fileSystem.readFile(request.files.profileImage.path, function (err, data) {
+	                        if (err) throw err;
+	                        console.log('File read!');
+
+	                        // Write the file
+	                        fileSystem.writeFile(profileImage, data, function (err) {
+	                            if (err) throw err;
+	                            console.log('File written!');
+
+	                            database.collection("users").updateOne({
+									"accessToken": accessToken
+								}, {
+									$set: {
+										"profileImage": profileImage
+									}
+								}, async function (error, data) {
+
+									await functions.updateUser(user, profileImage, user.name);
+
+									result.json({
+										"status": "status",
+										"message": "Profile image has been updated.",
+										data: mainURL + "/" + profileImage
+									});
+								});
+	                        });
+
+	                        // Delete the file
+	                        fileSystem.unlink(request.files.profileImage.path, function (err) {
+	                            if (err) throw err;
+	                            console.log('File deleted!');
+	                        });
+	                    });
+
+					} else {
+						result.json({
+							"status": "error",
+							"message": "Please select valid image."
+						});
+					}
+				}
+			});
 		});
-	  }
-  
-	  const accessToken = fields.accessToken;
-	  const profileImage = files.profileImage;
-  
-	  // Aquí puedes agregar la validación del token de acceso y el usuario si es necesario.
-  
-	  if (!profileImage || !profileImage.type.includes("image")) {
-		return res.status(400).json({
-		  status: "error",
-		  message: "Por favor, selecciona una imagen válida."
-		});
-	  }
-  
-	  const fileName = `profile-${Date.now()}-${profileImage.name}`;
-	  const filePath = `public/images/${fileName}`;
-  
-	  // Mueve la imagen subida al directorio local
-	  fs.renameSync(profileImage.path, filePath);
-  
-	  try {
-		// Sube el archivo al Firebase Cloud Storage
-		await bucket.upload(filePath, {
-		  destination: `users/${fileName}`,
-		  metadata: {
-			contentType: profileImage.type
-		  }
-		});
-  
-		// Obtiene la URL pública del archivo subido
-		const publicUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket.name}/o/users%2F${encodeURIComponent(fileName)}?alt=media`;
-  
-		// Actualiza la base de datos con la URL de la imagen de perfil
-		// Aquí debes implementar tu propia lógica de actualización de la base de datos.
-  
-		// Elimina el archivo local después de subirlo a Firebase Cloud Storage
-		fs.unlinkSync(filePath);
-  
-		return res.json({
-		  status: "success",
-		  message: "La imagen de perfil ha sido actualizada.",
-		  data: publicUrl
-		});
-	  } catch (error) {
-		console.error("Error al subir la imagen:", error);
-		return res.status(500).json({
-		  status: "error",
-		  message: "Ocurrió un error al subir la imagen de perfil."
-		});
-	  }
-	});
-  });
 
 		app.post("/updateProfile", function (request, result) {
 			var accessToken = request.fields.accessToken;
