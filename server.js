@@ -15,7 +15,7 @@ admins.initializeApp({
   credential: admins.credential.cert(serviceAccount),
   storageBucket: "al-dia-ecuador.appspot.com" // Reemplaza "tubucket" con el nombre de tu bucket de Firebase Cloud Storage
 });
-const bucket = admin.storage().bucket();
+const bucket = admins.storage().bucket();
 
 
 var mongodb = require("mongodb");
