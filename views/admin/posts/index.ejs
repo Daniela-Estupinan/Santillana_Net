@@ -298,33 +298,37 @@
     }
 
     function filterTable(query) {
-        query = query.toLowerCase();
-        var table = document.getElementById("dataTables-posts");
-        var rows = table.getElementsByTagName("tr");
-        var startDate = new Date(document.getElementById("start-date").value).getTime();
-        var endDate = new Date(document.getElementById("end-date").value).getTime();
+    query = query.toLowerCase();
+    var table = document.getElementById("dataTables-posts");
+    var rows = table.getElementsByTagName("tr");
+    var startDate = new Date(document.getElementById("start-date").value).getTime();
+    var endDate = new Date(document.getElementById("end-date").value).getTime();
 
-        for (var i = 1; i < rows.length; i++) {
-            var row = rows[i];
-            var cell = row.getElementsByTagName("td")[2]; // Index 3 corresponds to the "Comunidad" column
-            var dateCell = row.getElementsByTagName("td")[4]; // Index 5 corresponds to the "Fecha" column
-            if (cell && dateCell) {
-                var cellText = cell.textContent || cell.innerText;
-                var dateText = dateCell.textContent || dateCell.innerText;
-                if ((query === "" || cellText.toLowerCase().indexOf(query) > -1) &&
-                    (startDate === "" || endDate === "" || (startDate <= parseInt(dateText) && parseInt(dateText) <= endDate))) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
+    for (var i = 1; i < rows.length; i++) {
+        var row = rows[i];
+        var cell = row.getElementsByTagName("td")[2]; // Index 3 corresponds to the "Comunidad" column
+        var dateCell = row.getElementsByTagName("td")[4]; // Index 5 corresponds to the "Fecha" column
+        if (cell && dateCell) {
+            var cellText = cell.textContent || cell.innerText;
+            var dateText = dateCell.textContent || dateCell.innerText;
+
+            // Check if the search query and date range are empty
+            if (
+                (query === "" || cellText.toLowerCase().indexOf(query) > -1) &&
+                (startDate === "" || endDate === "" || (startDate <= parseInt(dateText) && parseInt(dateText) <= endDate))
+            ) {
+                row.style.display = ""; // Show the row
+            } else {
+                row.style.display = "none"; // Hide the row
             }
         }
     }
+}
 
-    document.getElementById("search-button").addEventListener("click", function() {
-        var query = document.getElementById("search-input").value.trim();
-        filterTable(query);
-    });
+document.getElementById("search-button").addEventListener("click", function() {
+    var query = document.getElementById("search-input").value.trim();
+    filterTable(query);
+});
 
     getPosts();
     app.get('/statistics', (req, res) => {
