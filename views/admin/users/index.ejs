@@ -37,11 +37,11 @@
                     <thead>
                         <tr>
                             
-                            <th>Nombre</th>
-                            <th>Correo</th>
-                            <th>Área</th>
-                            <th>Ciudad</th>
-                            <th>Acciones</th>
+                            <th>Nombre</th>0
+                            <th>Correo</th>1
+                            <th>Área</th>2
+                            <th>Ciudad</th>3
+                            <th>Acciones</th>4
                         </tr>
                     </thead>
                     <tbody>
@@ -358,8 +358,8 @@ function filterTableByCountryAndCity(country, city) {
 
     for (var i = 1; i < rows.length; i++) {
         var row = rows[i];
-        var countryCell = row.getElementsByTagName("td")[3]; // Índice 3 corresponde a la columna "Área"
-        var cityCell = row.getElementsByTagName("td")[4]; // Índice 4 corresponde a la columna "Ciudad"
+        var countryCell = row.getElementsByTagName("td")[2]; // Índice 3 corresponde a la columna "Área"
+        var cityCell = row.getElementsByTagName("td")[3]; // Índice 4 corresponde a la columna "Ciudad"
 
         if (countryCell && cityCell) {
             var countryText = countryCell.textContent || countryCell.innerText;
