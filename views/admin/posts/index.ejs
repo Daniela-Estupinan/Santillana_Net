@@ -318,7 +318,7 @@
                 var dateText = dateCell.textContent || dateCell.innerText;
 
                 var communityFilter = query === "" || cellText.toLowerCase().indexOf(query) > -1;
-                var dateFilter = startDate === "" && endDate === "" || (startDate !== "" && endDate !== "" && startDate <= postDate && postDate <= endDate);
+                var dateFilter = startDate === "" || endDate === "" || (startDate <= parseInt(dateText) && parseInt(dateText) <= endDate);
 
                 if (communityFilter && dateFilter) {
                     row.style.display = "";
