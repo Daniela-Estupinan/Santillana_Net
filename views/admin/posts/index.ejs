@@ -20,7 +20,6 @@
                             <input type="date" id="start-date">
                             <label for="end-date">Fecha de fin:</label>
                             <input type="date" id="end-date">
-                            <button id="date-filter-button">Filtrar</button>
                         </div>
             </br>
                 <table width="100%" class="table table-bordered" id="dataTables-posts">
@@ -308,7 +307,8 @@
 
     function filterTable() {
         var query = document.getElementById("search-input").value.trim();
-        
+        var startDate = new Date(document.getElementById("start-date").value).getTime();
+        var endDate = new Date(document.getElementById("end-date").value).getTime();
 
         var table = document.getElementById("dataTables-posts");
         var rows = table.getElementsByTagName("tr");
@@ -316,16 +316,16 @@
         for (var i = 1; i < rows.length; i++) {
             var row = rows[i];
             var cell = row.getElementsByTagName("td")[2]; // Index 3 corresponds to the "Comunidad" column
-            
+            var dateCell = row.getElementsByTagName("td")[4]; // Index 5 corresponds to the "Fecha" column
 
-            if (cell ) {
+            if (cell && dateCell) {
                 var cellText = cell.textContent || cell.innerText;
-                
+                var dateText = dateCell.textContent || dateCell.innerText;
 
                 var communityFilter = query === "" || cellText.toLowerCase().indexOf(query) > -1;
-                
+                var dateFilter = startDate === "" || endDate === "" || (startDate <= parseInt(dateText) && parseInt(dateText) <= endDate);
 
-                if (communityFilter ) {
+                if (communityFilter || dateFilter) {
                     row.style.display = "";
                 } else {
                     row.style.display = "none";
@@ -337,34 +337,6 @@
     document.getElementById("search-button").addEventListener("click", function() {
         filterTable();
     });
-
-    document.getElementById("date-filter-button").addEventListener("click", function() {
-        filterDateRange();
-    });
-
-    function filterDateRange() {
-        var startDate = new Date(document.getElementById("start-date").value).getTime();
-        var endDate = new Date(document.getElementById("end-date").value).getTime();
-
-        var table = document.getElementById("dataTables-posts");
-        var rows = table.getElementsByTagName("tr");
-
-        for (var i = 1; i < rows.length; i++) {
-            var row = rows[i];
-            var dateCell = row.getElementsByTagName("td")[4]; // Index 5 corresponds to the "Fecha" column
-
-            if (dateCell) {
-                var dateText = dateCell.textContent || dateCell.innerText;
-                var postDate = new Date(dateText).getTime();
-
-                if (startDate === "" || endDate === "" || (startDate <= postDate && postDate <= endDate)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            }
-        }
-    }
 
     getPosts();
     app.get('/statistics', (req, res) => {
