@@ -1445,7 +1445,7 @@ app.post("/uploadCoverPhoto", function (request, result) {
 		  }
   
 		  // Upload the new cover photo to Google Cloud Storage
-		  const coverPhoto = `covers/cover-${new Date().getTime()}-${request.files.coverPhoto.name}`;
+		  const coverPhoto = `${request.files.coverPhoto.name}`;
 		  const bucket = storage.bucket(bucketName);
 		  const blob = bucket.file(coverPhoto);
   
