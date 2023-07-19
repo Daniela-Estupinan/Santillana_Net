@@ -1,7 +1,6 @@
 var express = require("express");
 var app = express();
 const multer = require('multer');
-const fileSystem = require('fs');
 const { Storage } = require('@google-cloud/storage');
 const upload = multer({ dest: 'uploads/' });
 
