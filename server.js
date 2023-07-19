@@ -1465,11 +1465,11 @@ app.post("/uploadCoverPhoto", function (request, result) {
 				"accessToken": accessToken
 			}, {
 				$set: {
-					"profileImage": profileImage
+					"coverPhoto": coverPhoto
 				}
 			}, async function (error, data) {
 
-				await functions.updateUser(user, profileImage, user.name);
+				await functions.updateUser(user, coverPhoto, user.name);
 
 				result.json({
 					"status": "status",
