@@ -12,10 +12,10 @@ app.use(formidable({
 //
 // Set up Google Cloud Storage
 const storage = new Storage({
-	projectId: 'capstone-392917', // Replace with your actual Google Cloud project ID
-	keyFilename: "./capstone-392917-02f50643e575.json" // Replace with the path to your JSON keyfile
+	projectId: "capstone-392917", // Replace with your actual Google Cloud project ID
+	keyFilename: "capstone-392917-02f50643e575.json", // Replace with the path to your JSON keyfile
   });
-  const bucketName = 'al-dia-ecuador';
+  const bucketName = "al-dia-ecuador";
 //
 
 var mongodb = require("mongodb");
@@ -56,7 +56,7 @@ admin.init(app, express);
 
 app.use("/voice-notes", express.static(__dirname + "/voice-notes"))
 app.use("/public", express.static(__dirname + "/public"))
-app.use("/uploads", express.static(__dirname + "/uploads"))
+//app.use("/uploads", express.static(__dirname + "/uploads"))
 app.use("/audios", express.static(__dirname + "/audios"))
 app.use("/documents", express.static(__dirname + "/documents"))
 app.set("view engine", "ejs")
@@ -1446,6 +1446,7 @@ app.post("/uploadCoverPhoto", function (request, result) {
   
 		  // Upload the new cover photo to Google Cloud Storage
 		  const coverPhoto = `${request.files.coverPhoto.name}`;
+		  console.log(coverPhoto);
 		  const bucket = storage.bucket(bucketName);
 		  const blob = bucket.file(coverPhoto);
   
@@ -1464,6 +1465,7 @@ app.post("/uploadCoverPhoto", function (request, result) {
 			  database.collection("users").updateOne(
 				{ "accessToken": accessToken },
 				{ $set: { "coverPhoto": coverPhoto } },
+				
 				function (error, data) {
 				  result.json({
 					"status": "success",
