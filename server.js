@@ -1459,18 +1459,23 @@ app.post("/uploadCoverPhoto", function (request, result) {
 			})
 			.on('finish', () => {
 			  // Update the user's coverPhoto field in the database
-			  database.collection("users").updateOne(
-				{ "accessToken": accessToken },
-				{ $set: { "coverPhoto": coverPhoto } },
-				
-				function (error, data) {
-				  result.json({
-					"status": "success",
-					"message": "Cover photo has been updated.",
-					data: `https://storage.googleapis.com/${bucketName}/${coverPhoto}`
-				  });
+			  database.collection("users").updateOne({
+				"accessToken": accessToken
+			}, {
+				$set: {
+					"coverPhoto": coverPhoto
 				}
-			  );
+			}, async function (error, data) {
+
+				await functions.updateUser(user, coverPhoto, user.name);
+
+				result.json({
+					"status": "status",
+					"message": "Profile image has been updated.",
+					data: `https://storage.googleapis.com/${bucketName}/${coverPhoto}`
+				});
+			});
+			  
 			});
   
 		  // Delete the local file after uploading
