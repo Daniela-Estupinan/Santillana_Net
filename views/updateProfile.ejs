@@ -75,7 +75,7 @@
 			if (this.readyState == 4 && this.status == 200) {
 
 				var response = JSON.parse(this.responseText);
-				document.querySelector(".cover-photo").setAttribute("src", baseImageUrl + response.data);
+				document.querySelector(".cover-photo").setAttribute("src",response.data);
 			}
 		};
 
