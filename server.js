@@ -13,7 +13,7 @@ app.use(formidable({
 // Set up Google Cloud Storage
 const storage = new Storage({
 	projectId: 'capstone-392917', // Replace with your actual Google Cloud project ID
-	keyFilename: "./capstone-392917-05f2c716da44.json" // Replace with the path to your JSON keyfile
+	keyFilename: "./capstone-392917-02f50643e575.json" // Replace with the path to your JSON keyfile
   });
   const bucketName = 'al-dia-ecuador';
 //
