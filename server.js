@@ -63,6 +63,7 @@ var socketID = "";
 var users = [];
 
 global.mainURL = "https://aldiaecuador.com";
+global.photoURL = "https://storage.googleapis.com/al-dia-ecuador";
 
 var nodemailerFrom = "danielitabelen2009@hotmail.com";
 var nodemailerObject = {
@@ -1459,23 +1460,23 @@ app.post("/uploadCoverPhoto", function (request, result) {
 			})
 			.on('finish', () => {
 			  // Update the user's coverPhoto field in the database
+			  
 			  database.collection("users").updateOne({
 				"accessToken": accessToken
 			}, {
 				$set: {
-					"coverPhoto": coverPhoto
+					"profileImage": profileImage
 				}
 			}, async function (error, data) {
 
-				await functions.updateUser(user, coverPhoto, user.name);
+				await functions.updateUser(user, profileImage, user.name);
 
 				result.json({
 					"status": "status",
 					"message": "Profile image has been updated.",
-					data: `https://storage.googleapis.com/${bucketName}/${coverPhoto}`
+					data: photoURL + "/" + coverPhoto
 				});
 			});
-			  
 			});
   
 		  // Delete the local file after uploading
