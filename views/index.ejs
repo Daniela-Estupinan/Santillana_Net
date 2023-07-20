@@ -32,6 +32,17 @@
 			</div>
 
 			<script>
+			function getProfileImage(user) {
+					// Aquí obtienes la URL completa de la imagen de perfil desde el objeto "user"
+					const fullImageUrl = user.profileImage;
+
+					// Luego, extraes el nombre de la imagen de la URL utilizando métodos de cadena
+					const imageName = fullImageUrl.split('/').pop();
+					console.log(imageName)
+
+					// Devuelves solo el nombre de la imagen (por ejemplo, "profile-123456789.jpg")
+					return imageName;
+			}
 				function showStories() {
 					const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 					let storiesApp = new Vue({
@@ -39,7 +50,7 @@
 						data: {
 							addURL: baseImageUrl + "/addStory",
 							profileImageBaseURL: "https://storage.googleapis.com/al-dia-ecuador/",
-							profileImage: getProfileImage(imageName),
+							profileImage: getProfileImage(user),
 							stories: []
 							},
 
@@ -76,16 +87,7 @@
 						}
 					});
 				}
-				function getProfileImage(user) {
-  // Aquí obtienes la URL completa de la imagen de perfil desde el objeto "user"
-  const fullImageUrl = user.profileImage;
 
-  // Luego, extraes el nombre de la imagen de la URL utilizando métodos de cadena
-  const imageName = fullImageUrl.split('/').pop();
-
-  // Devuelves solo el nombre de la imagen (por ejemplo, "profile-123456789.jpg")
-  return imageName;
-}
 
 			</script>
 
