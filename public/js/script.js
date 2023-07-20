@@ -495,7 +495,7 @@ function renderFeed(response) {
 }
 
 function renderSinglePost(data) {
-
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	if (data.isBanned) {
 		return "";
 	}
@@ -510,7 +510,7 @@ function renderSinglePost(data) {
 				}
 
 				html += '<figure>';
-					html += '<img src="' + mainURL + "/" + (data.type == "group_post" ? data.uploader.profileImage : data.user.profileImage) + '" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_profile.jpg\';" />';
+					html += '<img src="' + baseImageUrl + "/" + (data.type == "group_post" ? data.uploader.profileImage : data.user.profileImage) + '" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_profile.jpg\';" />';
 				html += '</figure>';
 
 				html += '<div class="friend-name">';
