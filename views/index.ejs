@@ -32,10 +32,11 @@
 
 			<script>
 				function showStories() {
+					const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 					let storiesApp = new Vue({
 						el: "#storiesApp",
 						data: {
-							addURL: mainURL + "/addStory",
+							addURL: baseImageUrl + "/addStory",
 							profileImage: getProfileImage(user),
 							stories: []
 						},
