@@ -42,6 +42,19 @@
 
 										<div id="friends"></div>
 
+										<!-- <div class="chat_list">
+											<div class="chat_people">
+												<div class="chat_img">
+													<img src="https://ptetutorials.com/images/user-profile.png" alt="sunil" />
+												</div>
+
+												<div class="chat_ib">
+													<h5>Sunil Rajput <span class="chat_date">Dec 25</span></h5>
+													<p>Test, which is a new approach to have all solutions astrology under one roof.</p>
+												</div>
+											</div>
+										</div> -->
+
 									</div>
 								</div>
 
@@ -1120,7 +1133,7 @@
 		return html
 	}
 	
-/*
+
 	function renderGroupMessage(message) {
 		if (message.isDeleted) {
 			return ""
@@ -1202,7 +1215,7 @@
 		}
 
 		return html
-	}*/
+	}
 
 	function deleteGroupMessage(self) {
 		swal({
@@ -1239,7 +1252,6 @@
 	}
 
 	function renderSingleGroup(data) {
-		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 
 		let badgeUnread = ""
 		if (data.unread && data.unread > 0) {
@@ -1251,7 +1263,7 @@
 		const html = `<div class="chat_list" data-id="` + data._id + `" data-group-id="` + data._id + `" onclick="groupSelected(this);" style="cursor: pointer;">
 				<div class="chat_people">
 					<div class="chat_img">
-						<img src="` + baseImageUrl + `/` + image + `" alt="sunil" onerror="this.src = \'/public/img/default_profile.jpg\';" />
+						<img src="` + mainURL + `/` + image + `" alt="sunil" onerror="this.src = \'/public/img/default_profile.jpg\';" />
 					</div>
 
 					<div class="chat_ib">
@@ -1310,7 +1322,6 @@
 	}
 
 	async function renderMessage(message, derivedKey = null) {
-		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		if (message.is_deleted) {
 			return ""
 		}
@@ -1352,7 +1363,7 @@
 				const parts = message.savedPaths[a].split(".")
 				const extension = parts[parts.length - 1]
 				if (extension == "jpg" || extension == "jpeg" || extension == "png") {
-					html += `<img class="post-image" src="` + baseImageUrl + "/" + message.savedPaths[a] + `" onerror="this.style.display = 'none'" />`
+					html += `<img class="post-image" src="` + mainURL + "/" + message.savedPaths[a] + `" onerror="this.style.display = 'none'" />`
 				} else if (extension == "mp4" || extension == "mov" || extension == "mkv") {
 					html += `<video class="post-video" style="height: 359px; width: 100%;" controls src="` + mainURL + "/" + message.savedPaths[a] + `" onerror="this.style.display = 'none'"></video>`
 				} else if (extension == "mp3" || extension == "m4a" || extension == "aac") {
@@ -1505,7 +1516,7 @@
 	}
 
 	function renderSingleFriend(data) {
-		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
+
 		let badgeUnread = ""
 		if (data.unread && data.unread > 0) {
 			badgeUnread = `<span class="badge unread" style="background-color: #7EC352; color: white;">` + data.unread + `</span>`
@@ -1514,7 +1525,7 @@
 		const html = `<div class="chat_list" data-id="` + data._id + `" onclick="friendSelected(this);" style="cursor: pointer;">
 				<div class="chat_people">
 					<div class="chat_img">
-						<img src="` + baseImageUrl + `/` + data.profileImage + `" alt="sunil" onerror="this.src = \'/public/img/default_profile.jpg\';" />
+						<img src="` + mainURL + `/` + data.profileImage + `" alt="sunil" onerror="this.src = \'/public/img/default_profile.jpg\';" />
 					</div>
 
 					<div class="chat_ib">

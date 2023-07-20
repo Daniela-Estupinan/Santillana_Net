@@ -596,9 +596,9 @@ function renderSinglePost(data) {
 							if (extension == "jpg" || extension == "jpeg" || extension == "png") {
 								html += '<img class="post-image" src="' + baseImageUrl + "/" + data.savedPaths[a] + '" />';
 							} else if (extension == "mp4" || extension == "mov" || extension == "mkv") {
-								html += '<video class="post-video" style="height: 359px; width: 100%;" controls src="' + mainURL + "/" + data.savedPaths[a] + '"></video>';
+								html += '<video class="post-video" style="height: 359px; width: 100%;" controls src="' + baseImageUrl + "/" + data.savedPaths[a] + '"></video>';
 							} else if (extension == "mp3" || extension == "m4a" || extension == "aac") {
-								html += '<audio class="post-audio" controls src="' + mainURL + "/" + data.savedPaths[a] + '" id="audio-post-' + data._id + '"></audio> <div id="waveform-post-' + data._id + '"></div>'
+								html += '<audio class="post-audio" controls src="' + baseImageUrl + "/" + data.savedPaths[a] + '" id="audio-post-' + data._id + '"></audio> <div id="waveform-post-' + data._id + '"></div>'
 							}
 
 							if (a == 3) {
