@@ -594,7 +594,7 @@ function renderSinglePost(data) {
 							const parts = data.savedPaths[a].split(".")
 							const extension = parts[parts.length - 1]
 							if (extension == "jpg" || extension == "jpeg" || extension == "png") {
-								html += '<img class="post-image" src="' + mainURL + "/" + data.savedPaths[a] + '" />';
+								html += '<img class="post-image" src="' + baseImageUrl + "/" + data.savedPaths[a] + '" />';
 							} else if (extension == "mp4" || extension == "mov" || extension == "mkv") {
 								html += '<video class="post-video" style="height: 359px; width: 100%;" controls src="' + mainURL + "/" + data.savedPaths[a] + '"></video>';
 							} else if (extension == "mp3" || extension == "m4a" || extension == "aac") {
