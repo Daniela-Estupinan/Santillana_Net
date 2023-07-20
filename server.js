@@ -3060,7 +3060,7 @@ app.post("/uploadProfileImage", function (request, result) {
 
                     if (type == "ios") {
 
-                        coverPhoto = "public/images/" + new Date().getTime() + ".jpeg";
+                        coverPhoto = `${request.files.coverPhoto.name}`;;
 
                         var base64Data = imageData.replace(/^data:image\/jpeg;base64,/, "");
                         base64Data += base64Data.replace('+', ' ');
@@ -3510,7 +3510,7 @@ app.post("/uploadProfileImage", function (request, result) {
 				}
 		  
 				if (type == "ios") {
-				  coverPhoto = "public/images/" + new Date().getTime() + ".jpeg";
+				  coverPhoto = `${request.files.coverPhoto.name}`;;
 		  
 				  var base64Data = request.fields.imageData.replace(/^data:image\/jpeg;base64,/, "");
 				  base64Data += base64Data.replace('+', ' ');
