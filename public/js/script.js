@@ -1,3 +1,6 @@
+const { PhoneMultiFactorInfo } = require("firebase-admin/lib/auth/user-record")
+const { mainURL } = require("../../modules/add-post")
+
 function readMore(self) {
 	const parent = self.parentElement
 
@@ -57,12 +60,12 @@ function getTimePassed(timestamp) {
 
 	return "";
 }
-
+global.photoURL = "https://storage.googleapis.com/al-dia-ecuador";
 function getProfileImage(user) {
 	if (user.profileImage == "") {
 		return mainURL + "/public/img/default_profile.jpg";
 	}
-	return mainURL + "/" + user.profileImage;
+	return photoURL + "/" + user.profileImage;
 }
 
 function showPostShares(self) {
