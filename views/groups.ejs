@@ -34,7 +34,7 @@
 	var isGroups = true;
 
 	function getGroups() {
-
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var ajax = new XMLHttpRequest();
 		ajax.open("POST", "/getGroups", true);
 
@@ -62,7 +62,7 @@
 
 						let imagesHtml = ``
 						for (b = 0; b < ad.savedPaths.length; b++) {
-							imagesHtml += `<img src="` + mainURL + `/` + ad.savedPaths[b] + `" onerror="this.src = \'/public/img/default_cover.jpg\';">`
+							imagesHtml += `<img src="` + baseImageUrl + `/` + ad.savedPaths[b] + `" onerror="this.src = \'/public/img/default_cover.jpg\';">`
 						}
 
 						html += `<li>
@@ -86,7 +86,7 @@
 						<div class="nearly-pepls">
 							<figure>
 								<a href="/group/` + data._id + `">
-									<img src="` + mainURL + `/` + data.coverPhoto + `" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_cover.jpg\';">
+									<img src="` + baseImageUrl + `/` + data.coverPhoto + `" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_cover.jpg\';">
 								</a>
 							</figure>
 

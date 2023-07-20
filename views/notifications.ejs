@@ -43,6 +43,7 @@
 	var isNotifications = true;
 
 	function showNotifications() {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var html = "";
 
 		var notifications = window.user.notifications.reverse();
@@ -57,7 +58,7 @@
 				{
 					html += "<a href='/post/" + data.post._id + "'>";
 				}
-					html += '<figure><img src="' + mainURL + '/' + data.profileImage + '" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_profile.jpg\';"></figure>';
+					html += '<figure><img src="' + baseImageUrl + '/' + data.profileImage + '" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_profile.jpg\';"></figure>';
 					html += '<div class="notifi-meta">';
 						html += '<p>' + data.content + '</p>';
 
