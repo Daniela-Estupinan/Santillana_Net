@@ -3483,7 +3483,7 @@ app.post("/uploadProfileImage", function (request, result) {
 		app.get("/createGroup", function (request, result) {
 			result.render("createGroup");
 		});
-
+//
 		app.post("/createGroup", function (request, result) {
 			var accessToken = request.fields.accessToken;
 			var name = request.fields.name;
