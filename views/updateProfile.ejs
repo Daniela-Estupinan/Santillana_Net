@@ -51,7 +51,8 @@
 	var isUpdateProfile = true;
 
 	function showProfileData() {
-		document.querySelector(".cover-photo").setAttribute("src", photoURL + "/" + window.user.coverPhoto);
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador/";
+		document.querySelector(".cover-photo").setAttribute("src", baseImageUrl + "/" + window.user.coverPhoto);
 		document.querySelector(".profile-image").setAttribute("src", mainURL + "/" + window.user.profileImage);
 
 		document.querySelector(".user-name").innerHTML = window.user.name;
@@ -69,7 +70,7 @@
 		var ajax = new XMLHttpRequest();
 		ajax.open("POST", "/uploadCoverPhoto", true);
 		// Establecer el URL base para las imágenes de portada
-	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador/";
+	
 
 		ajax.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
