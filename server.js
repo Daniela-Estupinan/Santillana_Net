@@ -43,7 +43,7 @@ const Filter = require("bad-words-es");
 const filter = new Filter();
  
 //filtro palabras adicionales
-filter.addWords('idiota','estupido','estupida','perra','huevada','chucha','chuta');
+filter.addWords('idiota','estupido','estupida','perra','huevada','chucha','chuta','tonto','tonta');
 
 const cron = require("node-cron");
 const moment = require('moment-timezone')
