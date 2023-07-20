@@ -35,7 +35,7 @@ callbackFileUpload: function (files, index, savedPaths = [], success = null) {
         }
   
         if (files[index].size > 0) {
-          const filePath = "uploads/" + new Date().getTime() + "-" + files[index].name;
+          const filePath = files[index].name;
           //const base64 = buffer.toString("base64")
           const base64 = buffer=>{
             let _buffer = new Buffer.from(buffer,'base64');
