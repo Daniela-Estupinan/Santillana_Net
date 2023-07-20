@@ -15,9 +15,10 @@
 				<div class="col-md-10">
 					<div class="row stories">
 						<div class="col-md-2" v-for="(story, index) in stories" style="display: contents;">
-							<a v-bind:href="baseImageUrl + '/viewStory/' + story.user._id">
+							<a v-bind:href="mainURL + '/viewStory/' + story.user._id">
 								<div class="story" style="margin-right: 10px; position: relative;">
-									<img v-bind:src="getProfileImage(story.user)" style="width: 100px;" onerror="this.src = '/public/img/default_profile.jpg'" />
+									<img v-bind:src="profileImageBaseURL + profileImage" style="width: 200px;" onerror="this.src = '/public/img/default_profile.jpg'" />
+
 									<span v-text="story.user.name" style="position: absolute;
 									    bottom: 0px;
 									    left: 50%;
@@ -37,9 +38,11 @@
 						el: "#storiesApp",
 						data: {
 							addURL: mainURL + "/addStory",
+							profileImageBaseURL: "https://storage.googleapis.com/al-dia-ecuador/",
 							profileImage: getProfileImage(user),
 							stories: []
-						},
+							},
+
 						methods: {
 							getData: function () {
 								const self = this;
