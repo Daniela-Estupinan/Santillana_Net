@@ -658,6 +658,7 @@ function renderSinglePost(data) {
 
 
 function showCommentsModal(postId) {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	$("#postCommentsModal input[name=_id]").val(postId)
 	$("#postCommentsModal").modal("show")
 
@@ -685,7 +686,7 @@ function showCommentsModal(postId) {
 						html += `<div class="row" style="border: 1px solid lightgray; padding: 15px; margin-bottom: 20px; border-radius: 10px;">
 							<div class="col-md-2">
 								<a href="` + mainURL + `/user/` + comment.user._id + `">
-									<img class="profile-image" style="width: 50px; height: 50px; object-fit: cover; display: block; border-radius: 50%;" src="` + mainURL + "/" + comment.user.profileImage +`" onerror="this.src = '/public/img/default_profile.jpg'" />
+									<img class="profile-image" style="width: 50px; height: 50px; object-fit: cover; display: block; border-radius: 50%;" src="` + baseImageUrl + "/" + comment.user.profileImage +`" onerror="this.src = '/public/img/default_profile.jpg'" />
 
 									` + comment.user.name + `
 								</a>
@@ -1178,10 +1179,11 @@ function createSingleReplySection(reply) {
 }
 
 function createSingleCommentSection(comment, data) {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	let html = ""
 	html += '<li style="list-style-type: none;">';
 		html += '<div class="comet-avatar">';
-			html += '<img src="' + mainURL + '/' + comment.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+			html += '<img src="' + baseImageUrl + '/' + comment.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 		html += '</div>';
 
 		html += '<div class="we-comment">';
@@ -1215,6 +1217,7 @@ function createSingleCommentSection(comment, data) {
 }
 
 function createCommentsSection(data) {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	var html = "";
 
 	html += '<div class="coment-area">';
@@ -1231,7 +1234,7 @@ function createCommentsSection(data) {
 		html += '<ul class="we-comet" style="margin-bottom: 0px;">';
 			html += '<li class="post-comment">';
 				html += '<div class="comet-avatar">';
-					html += '<img src="' + mainURL + '/' + window.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+					html += '<img src="' + baseImageUrl + '/' + window.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 				html += '</div>';
 				html += '<div class="post-comt-box">';
 					html += '<form method="post" onsubmit="return doPostComment(this);" style="margin-bottom: 0px;">';
@@ -1308,13 +1311,14 @@ function prepareToReply(self) {
 
 
 function showAddPost() {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	if (localStorage.getItem("accessToken")) {
 		var html = "";
 
 		html += '<div class="central-meta">';
 			html += '<div class="new-postbox">';
 				html += '<figure>';
-					html += '<img src="' + mainURL + '/' + window.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+					html += '<img src="' + baseImageUrl + '/' + window.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 				html += '</figure>';
 
 				html += '<div class="newpst-input">';

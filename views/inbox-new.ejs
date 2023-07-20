@@ -1252,6 +1252,7 @@
 	}
 
 	function renderSingleGroup(data) {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 
 		let badgeUnread = ""
 		if (data.unread && data.unread > 0) {
@@ -1263,7 +1264,7 @@
 		const html = `<div class="chat_list" data-id="` + data._id + `" data-group-id="` + data._id + `" onclick="groupSelected(this);" style="cursor: pointer;">
 				<div class="chat_people">
 					<div class="chat_img">
-						<img src="` + mainURL + `/` + image + `" alt="sunil" onerror="this.src = \'/public/img/default_profile.jpg\';" />
+						<img src="` + baseImageUrl + `/` + image + `" alt="sunil" onerror="this.src = \'/public/img/default_profile.jpg\';" />
 					</div>
 
 					<div class="chat_ib">
@@ -1516,7 +1517,7 @@
 	}
 
 	function renderSingleFriend(data) {
-
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		let badgeUnread = ""
 		if (data.unread && data.unread > 0) {
 			badgeUnread = `<span class="badge unread" style="background-color: #7EC352; color: white;">` + data.unread + `</span>`
@@ -1525,7 +1526,7 @@
 		const html = `<div class="chat_list" data-id="` + data._id + `" onclick="friendSelected(this);" style="cursor: pointer;">
 				<div class="chat_people">
 					<div class="chat_img">
-						<img src="` + mainURL + `/` + data.profileImage + `" alt="sunil" onerror="this.src = \'/public/img/default_profile.jpg\';" />
+						<img src="` + baseImageUrl + `/` + data.profileImage + `" alt="sunil" onerror="this.src = \'/public/img/default_profile.jpg\';" />
 					</div>
 
 					<div class="chat_ib">

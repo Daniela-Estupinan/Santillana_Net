@@ -52,6 +52,7 @@
 	var isSearchResults = true;
 
 	function showSearchResults() {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var ajax = new XMLHttpRequest();
 		ajax.open("POST", "/search", true);
 
@@ -83,7 +84,7 @@
 							html += '<div class="nearly-pepls">';
 								html += '<figure>';
 									html += '<a href="/">';
-										html += '<img src="' + mainURL + '/' + user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+										html += '<img src="' + baseImageUrl + '/' + user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 									html += '</a>';
 								html += '</figure>';
 
