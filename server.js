@@ -53,7 +53,7 @@ admin.init(app, express);
 
 app.use("/voice-notes", express.static(__dirname + "/voice-notes"))
 app.use("/public", express.static(__dirname + "/public"))
-//app.use("/uploads", express.static(__dirname + "/uploads"))
+app.use("/uploads", express.static(__dirname + "/uploads"))
 app.use("/audios", express.static(__dirname + "/audios"))
 app.use("/documents", express.static(__dirname + "/documents"))
 app.set("view engine", "ejs")
