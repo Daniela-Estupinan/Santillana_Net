@@ -120,7 +120,7 @@
 				var response = JSON.parse(this.responseText);
 				console.log(response);
 				const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
-				document.getElementById("group-cover-photo").setAttribute("src", baseImageUrl + "/" + response.group.coverPhoto);
+				document.getElementById("group-cover-photo").setAttribute("src",response.group.coverPhoto);
 				document.getElementById("group-members").innerHTML = response.group.members.length + " members";
 				document.getElementById("group-name").innerHTML = response.group.name;
 				document.getElementById("group-info").innerHTML = response.group.additionalInfo;
