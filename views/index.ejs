@@ -7,7 +7,7 @@
 			<div class="row" id="storiesApp" style="margin-bottom: 20px; margin-left: 20px; margin-right: 20px; position: relative;">
 				<div class="col-md-2">
 					<div id="add-story">
-						<img onerror="this.src = '/public/img/default_profile.jpg'" v-bind:src="profileImageBaseURL + profileImage" style="width: 200px;" />
+						<img onerror="this.src = '/public/img/default_profile.jpg'" v-bind:src="profileImageBaseURL + profileImage.name" style="width: 200px;" />
 					<!--	<a v-bind:href="addURL" class="btn btn-primary btn-sm" style="position: absolute; left: 118px; bottom: 5px; color: white;">+ Add Story</a>
 					--></div>
 				</div>
@@ -17,7 +17,7 @@
 						<div class="col-md-2" v-for="(story, index) in stories" style="display: contents;">
 							<a v-bind:href="baseImageUrl + '/viewStory/' + story.user._id">
 								<div class="story" style="margin-right: 10px; position: relative;">
-									<img v-bind:src="profileImageBaseURL + profileImage" style="width: 200px;" onerror="this.src = '/public/img/default_profile.jpg'" />
+									<img v-bind:src="profileImageBaseURL + profileImage.name" style="width: 200px;" onerror="this.src = '/public/img/default_profile.jpg'" />
 
 									<span v-text="story.user.name" style="position: absolute;
 									    bottom: 0px;
