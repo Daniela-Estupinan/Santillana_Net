@@ -53,7 +53,7 @@
 	function showProfileData() {
 		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		document.querySelector(".cover-photo").setAttribute("src", baseImageUrl + "/" + window.user.coverPhoto);
-		document.querySelector(".profile-image").setAttribute("src", mainURL + "/" + window.user.profileImage);
+		document.querySelector(".profile-image").setAttribute("src", baseImageUrl + "/" + window.user.profileImage);
 
 		document.querySelector(".user-name").innerHTML = window.user.name;
 		document.querySelector(".name").value = window.user.name;

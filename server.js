@@ -1497,84 +1497,88 @@ app.post("/uploadCoverPhoto", function (request, result) {
 	});
   });
 
-//
-		app.post("/uploadProfileImage", function (request, result) {
-			var accessToken = request.fields.accessToken;
-			var profileImage = "";
-
-			database.collection("users").findOne({
-				"accessToken": accessToken
-			}, function (error, user) {
-				if (user == null) {
-					result.json({
-						"status": "error",
-						"message": "User has been logged out. Please login again."
-					});
-				} else {
-
-					if (user.isBanned) {
-						result.json({
-							"status": "error",
-							"message": "Ha sido bloqueado"
-						});
-						return false;
-					}
-
-					if (request.files.profileImage.size > 0 && request.files.profileImage.type.includes("image")) {
-
-						if (user.profileImage != "") {
-							fileSystem.unlink(user.profileImage, function (error) {
-								// console.log("error deleting file: " + error);
-							});
-						}
-
-						profileImage = "public/images/profile-" + new Date().getTime() + "-" + request.files.profileImage.name;
-
-						// Read the file
-	                    fileSystem.readFile(request.files.profileImage.path, function (err, data) {
-	                        if (err) throw err;
-	                        console.log('File read!');
-
-	                        // Write the file
-	                        fileSystem.writeFile(profileImage, data, function (err) {
-	                            if (err) throw err;
-	                            console.log('File written!');
-
-	                            database.collection("users").updateOne({
-									"accessToken": accessToken
-								}, {
-									$set: {
-										"profileImage": profileImage
-									}
-								}, async function (error, data) {
-
-									await functions.updateUser(user, profileImage, user.name);
-
-									result.json({
-										"status": "status",
-										"message": "Profile image has been updated.",
-										data: mainURL + "/" + profileImage
-									});
-								});
-	                        });
-
-	                        // Delete the file
-	                        fileSystem.unlink(request.files.profileImage.path, function (err) {
-	                            if (err) throw err;
-	                            console.log('File deleted!');
-	                        });
-	                    });
-
-					} else {
-						result.json({
-							"status": "error",
-							"message": "Please select valid image."
-						});
-					}
-				}
-			});
+// Profile 
+app.post("/uploadProfileImage", function (request, result) {
+	var accessToken = request.fields.accessToken;
+	var profileImage = "";
+  
+	database.collection("users").findOne({
+	  "accessToken": accessToken
+	}, function (error, user) {
+	  if (user == null) {
+		result.json({
+		  "status": "error",
+		  "message": "User has been logged out. Please login again."
 		});
-
+	  } else {
+		if (user.isBanned) {
+		  result.json({
+			"status": "error",
+			"message": "Ha sido bloqueado"
+		  });
+		  return false;
+		}
+  
+		if (request.files.profileImage.size > 0 && request.files.profileImage.type.includes("image")) {
+		  if (user.profileImage != "") {
+			// Delete the previous profile image from Google Cloud Storage
+			const fileName = user.profileImage.split('/').pop();
+			const bucket = storage.bucket(bucketName);
+			bucket.file(`profiles/${fileName}`).delete().catch((err) => {
+			  console.error('Error deleting previous profile image from GCS:', err);
+			});
+		  }
+  
+		  // Upload the new profile image to Google Cloud Storage
+		  profileImage = `${request.files.profileImage.name}`;
+		  const bucket = storage.bucket(bucketName);
+		  const blob = bucket.file(profileImage);
+  
+		  // Stream the file to Google Cloud Storage
+		  fileSystem.createReadStream(request.files.profileImage.path)
+			.pipe(blob.createWriteStream())
+			.on('error', (err) => {
+			  console.error('Error uploading profile image to GCS:', err);
+			  result.json({
+				"status": "error",
+				"message": "An error occurred while uploading the profile image."
+			  });
+			})
+			.on('finish', async () => {
+			  // Update the user's profileImage field in the database
+			  database.collection("users").updateOne(
+				{ "accessToken": accessToken },
+				{ $set: { "profileImage": profileImage } },
+				async function (error, data) {
+				  await functions.updateUser(user, profileImage, user.name);
+				  result.json({
+					"status": "success",
+					"message": "Profile image has been updated.",
+					data: `https://storage.googleapis.com/${bucketName}/${profileImage}`
+				  });
+				}
+			  );
+			});
+  
+		  // Delete the local file after uploading
+		  fileSystem.unlink(request.files.profileImage.path, (err) => {
+			if (err) {
+			  console.error('Error deleting local profile image:', err);
+			} else {
+			  console.log('Local profile image deleted!');
+			}
+		  });
+		} else {
+		  result.json({
+			"status": "error",
+			"message": "Please select a valid image."
+		  });
+		}
+	  }
+	});
+  });
+  
+//
 		app.post("/updateProfile", function (request, result) {
 			var accessToken = request.fields.accessToken;
 			var name = request.fields.name;
