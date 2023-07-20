@@ -118,8 +118,8 @@
 			if (this.readyState == 4 && this.status == 200) {
 
 				var response = JSON.parse(this.responseText);
-
-				document.getElementById("group-cover-photo").setAttribute("src", mainURL + "/" + response.group.coverPhoto);
+				const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
+				document.getElementById("group-cover-photo").setAttribute("src", baseImageUrl + "/" + response.group.coverPhoto);
 				document.getElementById("group-members").innerHTML = response.group.members.length + " members";
 				document.getElementById("group-name").innerHTML = response.group.name;
 				document.getElementById("group-info").innerHTML = response.group.additionalInfo;
