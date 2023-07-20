@@ -59,10 +59,11 @@ function getTimePassed(timestamp) {
 }
 
 function getProfileImage(user) {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	if (user.profileImage == "") {
 		return mainURL + "/public/img/default_profile.jpg";
 	}
-	return photoURL + "/" + user.profileImage;
+	return baseImageUrl + "/" + user.profileImage;
 }
 
 function showPostShares(self) {
