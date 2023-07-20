@@ -1133,7 +1133,7 @@
 		return html
 	}
 	
-
+/*
 	function renderGroupMessage(message) {
 		if (message.isDeleted) {
 			return ""
@@ -1215,7 +1215,7 @@
 		}
 
 		return html
-	}
+	}*/
 
 	function deleteGroupMessage(self) {
 		swal({
@@ -1323,6 +1323,7 @@
 	}
 
 	async function renderMessage(message, derivedKey = null) {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		if (message.is_deleted) {
 			return ""
 		}
@@ -1364,7 +1365,7 @@
 				const parts = message.savedPaths[a].split(".")
 				const extension = parts[parts.length - 1]
 				if (extension == "jpg" || extension == "jpeg" || extension == "png") {
-					html += `<img class="post-image" src="` + mainURL + "/" + message.savedPaths[a] + `" onerror="this.style.display = 'none'" />`
+					html += `<img class="post-image" src="` + baseImageUrl + "/" + message.savedPaths[a] + `" onerror="this.style.display = 'none'" />`
 				} else if (extension == "mp4" || extension == "mov" || extension == "mkv") {
 					html += `<video class="post-video" style="height: 359px; width: 100%;" controls src="` + mainURL + "/" + message.savedPaths[a] + `" onerror="this.style.display = 'none'"></video>`
 				} else if (extension == "mp3" || extension == "m4a" || extension == "aac") {
