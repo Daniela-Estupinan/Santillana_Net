@@ -7,7 +7,7 @@
 			<div class="row" id="storiesApp" style="margin-bottom: 20px; margin-left: 20px; margin-right: 20px; position: relative;">
 				<div class="col-md-2">
 					<div id="add-story">
-						<img onerror="this.src = '/public/img/default_profile.jpg'" v-bind:src="profileImage" style="width: 200px;" />
+						<img onerror="this.src = '/public/img/default_profile.jpg'" v-bind:src="profileImageBaseURL + profileImage" style="width: 200px;" />
 					<!--	<a v-bind:href="addURL" class="btn btn-primary btn-sm" style="position: absolute; left: 118px; bottom: 5px; color: white;">+ Add Story</a>
 					--></div>
 				</div>
@@ -37,7 +37,7 @@
 					let storiesApp = new Vue({
 						el: "#storiesApp",
 						data: {
-							addURL: mainURL + "/addStory",
+							addURL: baseImageUrl + "/addStory",
 							profileImageBaseURL: "https://storage.googleapis.com/al-dia-ecuador/",
 							profileImage: getProfileImage(user),
 							stories: []
