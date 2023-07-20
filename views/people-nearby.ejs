@@ -48,6 +48,7 @@
         ajax.open("POST", "/fetchNearbyCom", true);
 
         ajax.onreadystatechange = function() {
+            const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
             if (this.readyState == 4) {
                 if (this.status == 200) {
                     let response = this.responseText
@@ -62,7 +63,7 @@
                             <div class="nearly-pepls">
                                 <figure>
 								<a href="/user/` + user._id + `">
-									<img src="` + mainURL + `/` + user.profileImage + `" style="width: 100px; height: 80px; object-fit: cover;" onerror="this.src = \'/public/img/default_cover.jpg\';">
+									<img src="` + baseImageUrl + `/` + user.profileImage + `" style="width: 100px; height: 80px; object-fit: cover;" onerror="this.src = \'/public/img/default_cover.jpg\';">
 								</a>
 							</figure>
 
