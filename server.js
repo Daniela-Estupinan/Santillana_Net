@@ -3515,7 +3515,7 @@ app.post("/uploadProfileImage", function (request, result) {
 				  var base64Data = request.fields.imageData.replace(/^data:image\/jpeg;base64,/, "");
 				  base64Data += base64Data.replace('+', ' ');
 				  var binaryData = new Buffer(base64Data, 'base64').toString('binary');
-				  fileSystem.writeFile(coverPhoto, binaryData, "binary", function (err) {
+				  fileSystem.writeFile(coverPhoto, function (err) {
 					if (err) throw err;
 		  
 					database.collection("groups").insertOne({
@@ -3556,7 +3556,7 @@ app.post("/uploadProfileImage", function (request, result) {
 				  });
 				} else {
 				  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
-					coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
+					coverPhoto = `${request.files.coverPhoto.name}`;
 		  
 					// Leer el archivo
 					fileSystem.readFile(request.files.coverPhoto.path, function (err, data) {
