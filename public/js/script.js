@@ -62,7 +62,7 @@ function getProfileImage(user) {
 	if (user.profileImage == "") {
 		return mainURL + "/public/img/default_profile.jpg";
 	}
-	return mainURL + "/" + user.profileImage;
+	return photoURL + "/" + user.profileImage;
 }
 
 function showPostShares(self) {
