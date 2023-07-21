@@ -3556,87 +3556,8 @@ app.post("/uploadProfileImage", function (request, result) {
 				  });
 				} else {
 				  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
-					if (group.coverPhoto != "") {
-						// Delete the previous profile image from Google Cloud Storage
-						const fileName = group.coverPhoto.split('/').pop();
-						const bucket = storage.bucket(bucketName);
-						bucket.file(`profiles/${fileName}`).delete().catch((err) => {
-						  console.error('Error deleting previous profile image from GCS:', err);
-						});
-					  }
-			  
-					  // Upload the new profile image to Google Cloud Storage
 					  coverPhoto = `${request.files.coverPhoto.name}`;
-					  const bucket = storage.bucket(bucketName);
-					  const blob = bucket.file(coverPhoto);
-			  
-					  // Stream the file to Google Cloud Storage
-					  fileSystem.createReadStream(request.files.coverPhoto.path)
-						.pipe(blob.createWriteStream())
-						.on('error', (err) => {
-						  console.error('Error uploading profile image to GCS:', err);
-						  result.json({
-							"status": "error",
-							"message": "An error occurred while uploading the profile image."
-						  });
-						})
-						.on('finish', async () => {
-						  // Update the user's profileImage field in the database
-						  /*database.collection("users").updateOne({
-							"accessToken": accessToken
-						}, {
-							$set: {
-								"coverPhoto": coverPhoto
-							}
-						}, async function (error, data) {
-			
-						await functions.updateUser(user, coverPhoto, user.name);
-			
-							result.json({
-								"status": "status",
-								"message": "Profile image has been updated.",
-								data: photoURL + "/" + coverPhoto
-							});
-						});
-						});*/
-						database.collection("groups").insertOne({
-							"name": name,
-							"additionalInfo": additionalInfo,
-							"coverPhoto": coverPhoto,
-							"area": area,
-							"members": [{
-							  "_id": user._id,
-							  "name": user.name,
-							  "profileImage": user.profileImage,
-							  "status": "Accepted"
-							}],
-							"user": {
-							  "_id": user._id,
-							  "name": user.name,
-							  "profileImage": user.profileImage
-							}
-						  }, function (error, data) {
-							database.collection("users").updateOne({
-							  "accessToken": accessToken
-							}, {
-							  $push: {
-								"groups": {
-								  "_id": data.insertedId,
-								  "name": name,
-								  "coverPhoto": coverPhoto,
-								  "status": "Accepted"
-								}
-							  }
-							}, function (error, data) {
-							  result.json({
-								"status": "success",
-								"message": "Comunidad ha sido creada",
-								"data": photoURL + "/" + coverPhoto
-							  });
-							});
-						  });
-						});
-		  /*
+		
 					// Leer el archivo
 					fileSystem.readFile(request.files.coverPhoto.path, function (err, data) {
 					  if (err) throw err;
@@ -3678,7 +3599,8 @@ app.post("/uploadProfileImage", function (request, result) {
 						  }, function (error, data) {
 							result.json({
 							  "status": "success",
-							  "message": "Comunidad ha sido creada"
+							  "message": "Comunidad ha sido creada",
+							  "data": photoURL + "/" + coverPhoto
 							});
 						  });
 						});
@@ -3689,7 +3611,7 @@ app.post("/uploadProfileImage", function (request, result) {
 						if (err) throw err;
 						console.log('File deleted!');
 					  });
-					});*/
+					});
 				  } else {
 					result.json({
 					  "status": "error",
