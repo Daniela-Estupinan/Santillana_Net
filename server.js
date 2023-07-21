@@ -3484,152 +3484,143 @@ app.post("/uploadProfileImage", function (request, result) {
 			result.render("createGroup");
 		});
 //
-app.post("/createGroup", function (request, result) {
-	var accessToken = request.fields.accessToken;
-	var name = request.fields.name;
-	var additionalInfo = request.fields.additionalInfo;
-	var coverPhoto = "";
-	var area = request.fields.area; // nueva area
-	var type = request.fields.type;
-  
-	database.collection("users").findOne({
-	  "accessToken": accessToken
-	}, function (error, user) {
-	  if (user == null) {
-		result.json({
-		  "status": "error",
-		  "message": "User has been logged out. Please login again."
-		});
-	  } else {
-		if (user.isBanned) {
-		  result.json({
-			"status": "error",
-			"message": "Ha sido bloqueado"
-		  });
-		  return false;
-		}
-  
-		if (type == "ios") {
-		  coverPhoto = `${request.files.coverPhoto.name}`;
-  
-		  var base64Data = request.fields.imageData.replace(/^data:image\/jpeg;base64,/, "");
-		  base64Data += base64Data.replace('+', ' ');
-		  var binaryData = new Buffer(base64Data, 'base64').toString('binary');
-		  fileSystem.writeFile(coverPhoto, function (err) {
-			if (err) throw err;
-  
-			createGroupWithCoverPhoto(user, name, additionalInfo, area, coverPhoto, result);
-		  });
-		} else {
-		  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
-			coverPhoto = `${request.files.coverPhoto.name}`;
-  
-			// Leer el archivo
-			fileSystem.readFile(request.files.coverPhoto.path, function (err, data) {
-			  if (err) throw err;
-			  console.log('File read!');
-  
-			  // Escribir el archivo
-			  fileSystem.writeFile(coverPhoto, data, function (err) {
-				if (err) throw err;
-				console.log('File written!');
-  
-				createGroupWithCoverPhoto(user, name, additionalInfo, area, coverPhoto, result);
-  
-				// Eliminar el archivo temporal
-				fileSystem.unlink(request.files.coverPhoto.path, function (err) {
-				  if (err) throw err;
-				  console.log('File deleted!');
-				});
-			  });
-			});
-		  } else {
-			result.json({
-			  "status": "error",
-			  "message": "Please select a cover photo."
-			});
-		  }
-		}
-	  }
-	});
-  });
-  
-  function createGroupWithCoverPhoto(user, name, additionalInfo, area, coverPhoto, result) {
-	// Delete the previous cover photo from Google Cloud Storage if user has one
-	if (user.coverPhoto != "") {
-	  const fileName = user.coverPhoto.split('/').pop();
-	  const bucket = storage.bucket(bucketName);
-	  bucket.file(`covers/${fileName}`).delete().catch((err) => {
-		console.error('Error deleting previous cover photo from GCS:', err);
-	  });
-	}
-  
-	// Upload the new cover photo to Google Cloud Storage
-	const bucket = storage.bucket(bucketName);
-	const blob = bucket.file(coverPhoto);
-  
-	// Stream the file to Google Cloud Storage
-	fileSystem.createReadStream(coverPhoto)
-	  .pipe(blob.createWriteStream())
-	  .on('error', (err) => {
-		console.error('Error uploading cover photo to GCS:', err);
-		result.json({
-		  "status": "error",
-		  "message": "An error occurred while uploading the cover photo."
-		});
-	  })
-	  .on('finish', () => {
-		// Update the user's coverPhoto field in the database
-		database.collection("users").updateOne({
-		  "accessToken": accessToken
-		}, {
-		  $set: {
-			"coverPhoto": coverPhoto
-		  }
-		}, async function (error, data) {
-  
-		  await functions.updateUser(user, coverPhoto, user.name);
-  
-		  // Create the group in the database
-		  database.collection("groups").insertOne({
-			"name": name,
-			"additionalInfo": additionalInfo,
-			"coverPhoto": coverPhoto,
-			"area": area,
-			"members": [{
-			  "_id": user._id,
-			  "name": user.name,
-			  "profileImage": user.profileImage,
-			  "status": "Accepted"
-			}],
-			"user": {
-			  "_id": user._id,
-			  "name": user.name,
-			  "profileImage": user.profileImage
-			}
-		  }, function (error, data) {
-			database.collection("users").updateOne({
+		app.post("/createGroup", function (request, result) {
+			var accessToken = request.fields.accessToken;
+			var name = request.fields.name;
+			var additionalInfo = request.fields.additionalInfo;
+			var coverPhoto = "";
+			var area = request.fields.area; // nueva area
+			var type = request.fields.type;
+		  
+			database.collection("users").findOne({
 			  "accessToken": accessToken
-			}, {
-			  $push: {
-				"groups": {
-				  "_id": data.insertedId,
-				  "name": name,
-				  "coverPhoto": coverPhoto,
-				  "status": "Accepted"
+			}, function (error, user) {
+			  if (user == null) {
+				result.json({
+				  "status": "error",
+				  "message": "User has been logged out. Please login again."
+				});
+			  } else {
+				if (user.isBanned) {
+				  result.json({
+					"status": "error",
+					"message": "Ha sido bloqueado"
+				  });
+				  return false;
+				}
+		  
+				if (type == "ios") {
+				  coverPhoto = `${request.files.coverPhoto.name}`;;
+		  
+				  var base64Data = request.fields.imageData.replace(/^data:image\/jpeg;base64,/, "");
+				  base64Data += base64Data.replace('+', ' ');
+				  var binaryData = new Buffer(base64Data, 'base64').toString('binary');
+				  fileSystem.writeFile(coverPhoto, function (err) {
+					if (err) throw err;
+		  
+					database.collection("groups").insertOne({
+					  "name": name,
+					  "additionalInfo": additionalInfo,
+					  "coverPhoto": coverPhoto,
+					  "area": area,
+					  "members": [{
+						"_id": user._id,
+						"name": user.name,
+						"profileImage": user.profileImage,
+						"status": "Accepted"
+					  }],
+					  "user": {
+						"_id": user._id,
+						"name": user.name,
+						"profileImage": user.profileImage
+					  }
+					}, function (error, data) {
+					  database.collection("users").updateOne({
+						"accessToken": accessToken
+					  }, {
+						$push: {
+						  "groups": {
+							"_id": data.insertedId,
+							"name": name,
+							"coverPhoto": coverPhoto,
+							"status": "Accepted"
+						  }
+						}
+					  }, function (error, data) {
+						result.json({
+						  "status": "success",
+						  "message": "Comunidad ha sido creada"
+						});
+					  });
+					});
+				  });
+				} else {
+				  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
+					coverPhoto = `${request.files.coverPhoto.name}`;
+		  
+					// Leer el archivo
+					fileSystem.readFile(request.files.coverPhoto.path, function (err, data) {
+					  if (err) throw err;
+					  console.log('File read!');
+		  
+					  // Escribir el archivo
+					  fileSystem.writeFile(coverPhoto, data, function (err) {
+						if (err) throw err;
+						console.log('File written!');
+		  
+						database.collection("groups").insertOne({
+						  "name": name,
+						  "additionalInfo": additionalInfo,
+						  "coverPhoto": coverPhoto,
+						  "area": area,
+						  "members": [{
+							"_id": user._id,
+							"name": user.name,
+							"profileImage": user.profileImage,
+							"status": "Accepted"
+						  }],
+						  "user": {
+							"_id": user._id,
+							"name": user.name,
+							"profileImage": user.profileImage
+						  }
+						}, function (error, data) {
+						  database.collection("users").updateOne({
+							"accessToken": accessToken
+						  }, {
+							$push: {
+							  "groups": {
+								"_id": data.insertedId,
+								"name": name,
+								"coverPhoto": coverPhoto,
+								"status": "Accepted"
+							  }
+							}
+						  }, function (error, data) {
+							result.json({
+							  "status": "success",
+							  "message": "Comunidad ha sido creada"
+							});
+						  });
+						});
+					  });
+		  
+					  // Eliminar el archivo temporal
+					  fileSystem.unlink(request.files.coverPhoto.path, function (err) {
+						if (err) throw err;
+						console.log('File deleted!');
+					  });
+					});
+				  } else {
+					result.json({
+					  "status": "error",
+					  "message": "Please select a cover photo."
+					});
+				  }
 				}
 			  }
-			}, function (error, data) {
-			  result.json({
-				"status": "success",
-				"message": "Comunidad ha sido creada"
-			  });
 			});
 		  });
-  
-		});
-	  });
-  }
 //		  
 
 		app.get("/groups", function (request, result) {
