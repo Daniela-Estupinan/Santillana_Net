@@ -3509,7 +3509,7 @@ app.post("/uploadProfileImage", function (request, result) {
 				  return false;
 				}
 		 	  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
-					  coverPhoto = `${request.files.coverPhoto.name}`;
+				coverPhoto = "uploads/" + new Date().getTime() + "-" +`${request.files.coverPhoto.name}`;
 		
 					// Leer el archivo
 					fileSystem.readFile(request.files.coverPhoto.path, function (err, data) {
