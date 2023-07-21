@@ -3488,7 +3488,7 @@ app.post("/uploadProfileImage", function (request, result) {
 			var accessToken = request.fields.accessToken;
 			var name = request.fields.name;
 			var additionalInfo = request.fields.additionalInfo;
-			var coverPhoto = "";
+			var coverPhotoGroup = "";
 			var area = request.fields.area; // nueva area
 			var type = request.fields.type;
 		  
@@ -3509,11 +3509,11 @@ app.post("/uploadProfileImage", function (request, result) {
 				  return false;
 				}
 		  
-				if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
+				if (request.files.coverPhotoGroup.size > 0 && request.files.coverPhoto.type.includes("image")) {
   
 						if (user.coverPhoto != "") {
 						  // Delete the previous cover photo from Google Cloud Storage
-						  const fileName = user.coverPhoto.split('/').pop();
+						  const fileName = user.coverPhotoGroup.split('/').pop();
 						  const bucket = storage.bucket(bucketName);
 						  bucket.file(`covers/${fileName}`).delete().catch((err) => {
 							console.error('Error deleting previous cover photo from GCS:', err);
@@ -3521,13 +3521,13 @@ app.post("/uploadProfileImage", function (request, result) {
 						}
 				
 						// Upload the new cover photo to Google Cloud Storage
-						const coverPhoto = `${request.files.coverPhoto.name}`;
-						console.log(coverPhoto);
+						const coverPhotoGroup = `${request.files.coverPhotoGroup.name}`;
+						console.log(coverPhotoGroup);
 						const bucket = storage.bucket(bucketName);
-						const blob = bucket.file(coverPhoto);
+						const blob = bucket.file(coverPhotoGroup);
 				
 						// Stream the file to Google Cloud Storage
-						fileSystem.createReadStream(request.files.coverPhoto.path)
+						fileSystem.createReadStream(request.files.coverPhotoGroup.path)
 						  .pipe(blob.createWriteStream())
 						  .on('error', (err) => {
 							console.error('Error uploading cover photo to GCS:', err);
@@ -3542,7 +3542,7 @@ app.post("/uploadProfileImage", function (request, result) {
 							database.collection("groups").insertOne({
 								"name": name,
 								"additionalInfo": additionalInfo,
-								"coverPhoto": coverPhoto,
+								"coverPhotoGroup": coverPhotoGroup,
 								"area": area,
 								"members": [{
 								  "_id": user._id,
@@ -3563,7 +3563,7 @@ app.post("/uploadProfileImage", function (request, result) {
 									"groups": {
 									  "_id": data.insertedId,
 									  "name": name,
-									  "coverPhoto": coverPhoto,
+									  "coverPhotoGroup": coverPhotoGroup,
 									  "status": "Accepted"
 									}
 								  }
@@ -3577,7 +3577,7 @@ app.post("/uploadProfileImage", function (request, result) {
 							});
 				//
 						// Delete the local file after uploading
-						fileSystem.unlink(request.files.coverPhoto.path, (err) => {
+						fileSystem.unlink(request.files.coverPhotoGroup.path, (err) => {
 						  if (err) {
 							console.error('Error deleting local cover photo:', err);
 						  } else {
