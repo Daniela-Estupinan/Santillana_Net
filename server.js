@@ -3508,7 +3508,7 @@ app.post("/uploadProfileImage", function (request, result) {
 				  });
 				  return false;
 				}
-		  
+		  /*
 				if (type == "ios") {
 				  coverPhoto = `${request.files.coverPhoto.name}`;
 		  
@@ -3554,38 +3554,14 @@ app.post("/uploadProfileImage", function (request, result) {
 					  });
 					});
 				  });
-				} else {
-					if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
-						coverPhoto = `${request.files.coverPhoto.name}`;
-			  
-						// Leer el archivo
-						fs.readFile(request.files.coverPhoto.path, function (err, data) {
-						  if (err) throw err;
-			  
-						  // Subir la coverPhoto al bucket de Google Cloud Storage
-						  const file = storage.bucket(bucketName).file(coverPhoto);
-						  const stream = file.createWriteStream({
-							metadata: {
-							  contentType: request.files.coverPhoto.type,
-							},
-						  });
-						  stream.on('error', (err) => {
-							console.error('Error al subir la coverPhoto:', err);
-							result.json({
-							  "status": "error",
-							  "message": "Error al subir la cover photo."
-							});
-						  });
-			  
-						  stream.on('finish', () => {
-							console.log('Cover photo subida exitosamente.');
-			  
-							// Eliminar el archivo temporal
-							fs.unlink(request.files.coverPhoto.path, function (err) {
-							  if (err) throw err;
-							  console.log('Archivo temporal eliminado.');
-							});
-						  
+				} else {*/
+				  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
+					  coverPhoto = `${request.files.coverPhoto.name}`;
+		
+					// Leer el archivo
+					fileSystem.readFile(request.files.coverPhoto.path, function (err, data) {
+					  if (err) throw err;
+					  console.log('File read!');
 		  
 					  // Escribir el archivo
 					  fileSystem.writeFile(coverPhoto, data, function (err) {
@@ -3624,7 +3600,7 @@ app.post("/uploadProfileImage", function (request, result) {
 							result.json({
 							  "status": "success",
 							  "message": "Comunidad ha sido creada",
-							 
+							  "data": photoURL + "/" + coverPhoto
 							});
 						  });
 						});
@@ -3643,7 +3619,7 @@ app.post("/uploadProfileImage", function (request, result) {
 					});
 				  }
 				}
-			  }
+			  //}
 			});
 		  });
 //		  
