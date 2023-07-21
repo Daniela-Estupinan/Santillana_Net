@@ -3508,66 +3508,91 @@ app.post("/uploadProfileImage", function (request, result) {
 				  });
 				  return false;
 				}
+		  
 				if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
-					// Generate a unique filename for the image
-					const filename = `${request.files.coverPhoto.name}`;
-					const bucket = storage.bucket(bucketName);
-					//const blob = bucket.file(`covers/${filename}`);
-			  
-					// Stream the file to Google Cloud Storage
-					fs.createReadStream(request.files.coverPhoto.path)
-					  .pipe(blob.createWriteStream())
-					  .on('error', (err) => {
-						console.error('Error uploading cover photo to GCS:', err);
+  
+						if (user.coverPhoto != "") {
+						  // Delete the previous cover photo from Google Cloud Storage
+						  const fileName = user.coverPhoto.split('/').pop();
+						  const bucket = storage.bucket(bucketName);
+						  bucket.file(`covers/${fileName}`).delete().catch((err) => {
+							console.error('Error deleting previous cover photo from GCS:', err);
+						  });
+						}
+				
+						// Upload the new cover photo to Google Cloud Storage
+						const coverPhoto = `${request.files.coverPhoto.name}`;
+						console.log(coverPhoto);
+						const bucket = storage.bucket(bucketName);
+						const blob = bucket.file(coverPhoto);
+				
+						// Stream the file to Google Cloud Storage
+						fileSystem.createReadStream(request.files.coverPhoto.path)
+						  .pipe(blob.createWriteStream())
+						  .on('error', (err) => {
+							console.error('Error uploading cover photo to GCS:', err);
+							result.json({
+							  "status": "error",
+							  "message": "An error occurred while uploading the cover photo."
+							});
+						  })
+						  .on('finish', () => {
+							// Update the user's coverPhoto field in the database
+							
+							database.collection("groups").insertOne({
+								"name": name,
+								"additionalInfo": additionalInfo,
+								"coverPhoto": coverPhoto,
+								"area": area,
+								"members": [{
+								  "_id": user._id,
+								  "name": user.name,
+								  "profileImage": user.profileImage,
+								  "status": "Accepted"
+								}],
+								"user": {
+								  "_id": user._id,
+								  "name": user.name,
+								  "profileImage": user.profileImage
+								}
+							  }, function (error, data) {
+								database.collection("users").updateOne({
+								  "accessToken": accessToken
+								}, {
+								  $push: {
+									"groups": {
+									  "_id": data.insertedId,
+									  "name": name,
+									  "coverPhoto": coverPhoto,
+									  "status": "Accepted"
+									}
+								  }
+								}, function (error, data) {
+								  result.json({
+									"status": "success",
+									"message": "Comunidad ha sido creada"
+								  });
+								});
+							  });
+							});
+				//
+						// Delete the local file after uploading
+						fileSystem.unlink(request.files.coverPhoto.path, (err) => {
+						  if (err) {
+							console.error('Error deleting local cover photo:', err);
+						  } else {
+							console.log('Local cover photo deleted!');
+						  }
+						});
+					  } else {
 						result.json({
 						  "status": "error",
-						  "message": "An error occurred while uploading the cover photo."
+						  "message": "Please select a valid image."
 						});
-					  })
-					  .on('finish', () => {
-						// Update the user's coverPhoto field in the database
-						database.collection("groups").insertOne({
-							"name": name,
-							"additionalInfo": additionalInfo,
-							"coverPhoto": coverPhoto,
-							"area": area,
-							"members": [{
-							  "_id": user._id,
-							  "name": user.name,
-							  "profileImage": user.profileImage,
-							  "status": "Accepted"
-							}],
-							"user": {
-							  "_id": user._id,
-							  "name": user.name,
-							  "profileImage": user.profileImage
-							}
-						}, function (error, data) {
-						  // Rest of your database update code...
-						  result.json({
-							"status": "success",
-							"message": "Comunidad ha sido creada"
-						  });
-						});
-					  });
-			  
-					// Delete the local file after uploading
-					fs.unlink(request.files.coverPhoto.path, (err) => {
-					  if (err) {
-						console.error('Error deleting local cover photo:', err);
-					  } else {
-						console.log('Local cover photo deleted!');
 					  }
-					});
-				  } else {
-					result.json({
-					  "status": "error",
-					  "message": "Please select a valid image."
-					});
-				  }
 				}
-				});
-			  });
+			});
+		  });
 //		  
 
 		app.get("/groups", function (request, result) {
