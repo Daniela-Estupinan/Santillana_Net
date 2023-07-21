@@ -59,10 +59,11 @@ function getTimePassed(timestamp) {
 }
 
 function getProfileImage(user) {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	if (user.profileImage == "") {
 		return mainURL + "/public/img/default_profile.jpg";
 	}
-	return mainURL + "/" + user.profileImage;
+	return baseImageUrl + "/" + user.profileImage;
 }
 
 function showPostShares(self) {
@@ -494,7 +495,7 @@ function renderFeed(response) {
 }
 
 function renderSinglePost(data) {
-
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	if (data.isBanned) {
 		return "";
 	}
@@ -509,7 +510,7 @@ function renderSinglePost(data) {
 				}
 
 				html += '<figure>';
-					html += '<img src="' + mainURL + "/" + (data.type == "group_post" ? data.uploader.profileImage : data.user.profileImage) + '" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_profile.jpg\';" />';
+					html += '<img src="' + baseImageUrl + "/" + (data.type == "group_post" ? data.uploader.profileImage : data.user.profileImage) + '" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_profile.jpg\';" />';
 				html += '</figure>';
 
 				html += '<div class="friend-name">';
@@ -577,7 +578,7 @@ function renderSinglePost(data) {
 
 					html += '<div class="description">';
 						html += '<p>'
-							html += result
+							html += result.replace(/#(\w+)/g, '<span style="color: blue;">#$1</span>');
 							// html += caption
 						html += '</p>'
 					html += '</div>';
@@ -593,11 +594,11 @@ function renderSinglePost(data) {
 							const parts = data.savedPaths[a].split(".")
 							const extension = parts[parts.length - 1]
 							if (extension == "jpg" || extension == "jpeg" || extension == "png") {
-								html += '<img class="post-image" src="' + mainURL + "/" + data.savedPaths[a] + '" />';
+								html += '<img class="post-image" src="' + mainURL+ "/" + data.savedPaths[a] + '" />';
 							} else if (extension == "mp4" || extension == "mov" || extension == "mkv") {
-								html += '<video class="post-video" style="height: 359px; width: 100%;" controls src="' + mainURL + "/" + data.savedPaths[a] + '"></video>';
+								html += '<video class="post-video" style="height: 359px; width: 100%;" controls src="' + baseImageUrl + "/" + data.savedPaths[a] + '"></video>';
 							} else if (extension == "mp3" || extension == "m4a" || extension == "aac") {
-								html += '<audio class="post-audio" controls src="' + mainURL + "/" + data.savedPaths[a] + '" id="audio-post-' + data._id + '"></audio> <div id="waveform-post-' + data._id + '"></div>'
+								html += '<audio class="post-audio" controls src="' + baseImageUrl + "/" + data.savedPaths[a] + '" id="audio-post-' + data._id + '"></audio> <div id="waveform-post-' + data._id + '"></div>'
 							}
 
 							if (a == 3) {
@@ -655,7 +656,9 @@ function renderSinglePost(data) {
 	return html;
 }
 
+
 function showCommentsModal(postId) {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	$("#postCommentsModal input[name=_id]").val(postId)
 	$("#postCommentsModal").modal("show")
 
@@ -683,7 +686,7 @@ function showCommentsModal(postId) {
 						html += `<div class="row" style="border: 1px solid lightgray; padding: 15px; margin-bottom: 20px; border-radius: 10px;">
 							<div class="col-md-2">
 								<a href="` + mainURL + `/user/` + comment.user._id + `">
-									<img class="profile-image" style="width: 50px; height: 50px; object-fit: cover; display: block; border-radius: 50%;" src="` + mainURL + "/" + comment.user.profileImage +`" onerror="this.src = '/public/img/default_profile.jpg'" />
+									<img class="profile-image" style="width: 50px; height: 50px; object-fit: cover; display: block; border-radius: 50%;" src="` + baseImageUrl + "/" + comment.user.profileImage +`" onerror="this.src = '/public/img/default_profile.jpg'" />
 
 									` + comment.user.name + `
 								</a>
@@ -1176,10 +1179,11 @@ function createSingleReplySection(reply) {
 }
 
 function createSingleCommentSection(comment, data) {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	let html = ""
 	html += '<li style="list-style-type: none;">';
 		html += '<div class="comet-avatar">';
-			html += '<img src="' + mainURL + '/' + comment.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+			html += '<img src="' + baseImageUrl + '/' + comment.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 		html += '</div>';
 
 		html += '<div class="we-comment">';
@@ -1213,6 +1217,7 @@ function createSingleCommentSection(comment, data) {
 }
 
 function createCommentsSection(data) {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	var html = "";
 
 	html += '<div class="coment-area">';
@@ -1229,7 +1234,7 @@ function createCommentsSection(data) {
 		html += '<ul class="we-comet" style="margin-bottom: 0px;">';
 			html += '<li class="post-comment">';
 				html += '<div class="comet-avatar">';
-					html += '<img src="' + mainURL + '/' + window.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+					html += '<img src="' + baseImageUrl + '/' + window.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 				html += '</div>';
 				html += '<div class="post-comt-box">';
 					html += '<form method="post" onsubmit="return doPostComment(this);" style="margin-bottom: 0px;">';
@@ -1306,23 +1311,23 @@ function prepareToReply(self) {
 
 
 function showAddPost() {
+	const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 	if (localStorage.getItem("accessToken")) {
 		var html = "";
 
 		html += '<div class="central-meta">';
 			html += '<div class="new-postbox">';
 				html += '<figure>';
-					html += '<img src="' + mainURL + '/' + window.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+					html += '<img src="' + baseImageUrl + '/' + window.user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 				html += '</figure>';
 
 				html += '<div class="newpst-input">';
 					html += '<form method="post" id="form-add-post" onsubmit="return doPost(this);" novalidate enctype="multipart/form-data">';
 
 						html += '<input name="type" type="hidden" value="post" />';
-						html += '<textarea rows="2" name="caption" placeholder="comparte tus ideas"></textarea>';
+						html += '<textarea rows="2" name="caption" class="caption-input" placeholder="comparte tus ideas"></textarea>';
 						html += '<div class="attachments">';
 							html += '<ul>';
-
 
 								html += '<li>';
 									html += '<input type="file" multiple name="files" accept="image/*,audio/*,video/*" />';

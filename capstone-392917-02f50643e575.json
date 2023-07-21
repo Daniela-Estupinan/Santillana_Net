@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "capstone-392917",
+  "private_key_id": "02f50643e57553aa597212542d2e8a3083713529",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQClEsQMF22U7gG4\nrhZ2Qh3twyV2dYhj+4//Vsw8gZF+M7c2hOLLR093aeVaCeBkIZ8UT3KXdfdJTsTm\n72Ed2t9g2LRijkbTlaj+tqgYaTV9IVkKIIEJYT7aS34wGkk1Vug5M5a0ET7qC85m\nY0y/Q9lA+MwMox6tRZQIY+7WVp5ens8OiwwnYbA/U7oo2B/XqIYrLzfA0+TIFc5x\n7iuDriaYN/c8dxHItjG8r4s2BUouR+VJUnoy14cdBN/xplDAOCjMagxnrWS0xZsB\nkcMPEMmiHysZ1w7pQzJoVGqtFSGSdOgaUROTSkmVQUHab2ksSK24rk1xRWH5EmzN\nqgysieg1AgMBAAECggEAEzwTDQej1LFBERhz9JayrxRIprt+R4w2FL4z8S712ZtE\nE327gY1PJK55s5qoA3Lpeu/g/eYYiPm9Nt2Y1uY8lifaKQvEE/6B4SA+iQ2lVm3O\n1r+/2Wxz6vLWAtvlQOpeB+BLhLLnvlTe2Y5jkHvi8k+rUyOkvPL5E1s1ptMUBBlU\nIESclU7ETIksC/wsvUqakRDE8+ErFRhjTCW0cZRT1+il4156YFR1DV2nNzYHZHMn\nB4Gg+9C+lBEmCMiKVuIeSr76PkGI6lQwS9Qua0OSXoTTUOIBD1cJNfNh4D+znMNP\nVadEkcqKwuNl5GuQNBC5i8yUinOF5kJ6UT8k3netlwKBgQDeUHxKMVkVaxuqqZSo\nS2GStoDkHh1BCbA5/zl6cWwwuCPuhJlZeu8z/tK7dbPpuXhecuQ1s36iWyJMqLR7\nJ6nLyDBKOlRaxLOHyvcDbREg4xZxcRuD1FaP5gSBuYH2zUvl8Ej3POEzRI4MjIdZ\npNzspfoUurP2wmO4VXgvhKbJ4wKBgQC+Fen82OgvLQGVIdOxbUpKk7IHyMqwEkol\nDJxeF4L/gVvUsIu2xKf8dPnoLW1/0WZ3NeH9cmZOchNQjyxcnPuK5ccK3Uj5t5Sc\nONnud3D2kTwfMaW9BRCNn+BiUV7GYtbW/M4xHrU7vwlNnV/vfkWAHvxrTHK7uhSu\nE2iWLvWBBwKBgHWL4Ovpw8yLYYmPOMbzdJf6X5Q+SAGHeeJwjJetOSNZecY33k1t\nruSzLAFqbsJ6CqcF4Jx0V9TIkw4tdaBYjHLvWnkk9k04DCUUsB7joFbfO5Kn14CQ\n2WQknuVojMtOKX9e2XXAfuJ4sRL5iudfQGDwMZacUWN7zPY+WtnlLbs5AoGAHQ26\navQ4YOWPJV07PxZGUanLf1cYa9sPzCPmTpdnZWg/Qf4ODMx4JKU4gV1YLD40XCo3\nNYbjzj+vZhPMIwe3ht5iEu4Jtmlx5ILoBIPrFzTRrK7o90Ar7ImwQTbQtp/q2Idh\neK6J4uzrHhrcy/1P4CpcSIYxzzG88XJz/OiGi8cCgYAI7JId3iVnBg0aXygxRJWO\nXR8a7wY3sWcv4IuBmvC31/wxUcNV7Vd/8hHHyvGe3ARxLbhaVAUHJTYk18dPvctH\nAySrSfKn20Du26ZdUx8cNvs5fce0Y7tH0Y13xBAFAo1IJHiAXSMYx8gjnMT8vXkO\ngkNSv6NCer75mGTPEa+ARA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "al-dia-ecuador@capstone-392917.iam.gserviceaccount.com",
+  "client_id": "106850234232862550181",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/al-dia-ecuador%40capstone-392917.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

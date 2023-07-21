@@ -118,7 +118,8 @@
 			if (this.readyState == 4 && this.status == 200) {
 
 				var response = JSON.parse(this.responseText);
-
+				console.log(response);
+				const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 				document.getElementById("group-cover-photo").setAttribute("src", mainURL + "/" + response.group.coverPhoto);
 				document.getElementById("group-members").innerHTML = response.group.members.length + " members";
 				document.getElementById("group-name").innerHTML = response.group.name;
@@ -183,6 +184,8 @@
 				}
 
 				if (response.status == "success") {
+					
+	
 
 					document.getElementById("form-add-post").querySelector("textarea[name='caption']").value = "";
 

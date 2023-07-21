@@ -15,9 +15,10 @@
 				<div class="col-md-10">
 					<div class="row stories">
 						<div class="col-md-2" v-for="(story, index) in stories" style="display: contents;">
-							<a v-bind:href="mainURL + '/viewStory/' + story.user._id">
+							<a v-bind:href="baseImageUrl + '/viewStory/' + story.user._id">
 								<div class="story" style="margin-right: 10px; position: relative;">
-									<img v-bind:src="getProfileImage(story.user)" style="width: 100px;" onerror="this.src = '/public/img/default_profile.jpg'" />
+									<img v-bind:src="profileImage" style="width: 200px;" onerror="this.src = '/public/img/default_profile.jpg'" />
+
 									<span v-text="story.user.name" style="position: absolute;
 									    bottom: 0px;
 									    left: 50%;
@@ -32,13 +33,16 @@
 
 			<script>
 				function showStories() {
+					const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 					let storiesApp = new Vue({
 						el: "#storiesApp",
 						data: {
-							addURL: mainURL + "/addStory",
+							addURL: baseImageUrl + "/addStory",
+							profileImageBaseURL: "https://storage.googleapis.com/al-dia-ecuador/",
 							profileImage: getProfileImage(user),
 							stories: []
-						},
+							},
+
 						methods: {
 							getData: function () {
 								const self = this;
@@ -72,6 +76,8 @@
 						}
 					});
 				}
+
+
 			</script>
 
 			<div class="row" id="page-contents">
@@ -140,7 +146,7 @@
 						document.getElementById("post-img-preview").style.display = "none"
 						document.getElementById("post-video-preview").style.display = "none"
 						document.getElementById("post-audio-preview").style.display = "none"*/
-
+						
 						var html = renderSinglePost(response.postObj);
 						document.getElementById("newsfeed").innerHTML = html + document.getElementById("newsfeed").innerHTML;
 

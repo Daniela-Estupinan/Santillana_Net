@@ -52,6 +52,7 @@
 	var isSearchResults = true;
 
 	function showSearchResults() {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var ajax = new XMLHttpRequest();
 		ajax.open("POST", "/search", true);
 
@@ -83,7 +84,7 @@
 							html += '<div class="nearly-pepls">';
 								html += '<figure>';
 									html += '<a href="/">';
-										html += '<img src="' + mainURL + '/' + user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+										html += '<img src="' + baseImageUrl + '/' + user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 									html += '</a>';
 								html += '</figure>';
 
@@ -93,9 +94,9 @@
 									html += '</h4>';
 
 									if (isFriend) {
-										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="doUnfriend(this);" class="add-butn btn-unfriend">Unfriend</a>';
+										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="doUnfriend(this);" class="add-butn btn-unfriend">Eliminar</a>';
 									} else {
-										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="sendFriendRequest(this);" class="add-butn">Add friend</a>';
+										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="sendFriendRequest(this);" class="add-butn">Agregar</a>';
 									}
 
 								html += '</div>';

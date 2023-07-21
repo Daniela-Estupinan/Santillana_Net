@@ -326,6 +326,7 @@
 	}
 
 	function showFriends() {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var html = "";
 		// friends = window.user.friends;
         friends = [];
@@ -364,7 +365,7 @@
 			html += '<li data-id="' + data._id + '" onclick="friendSelected(this);">';
 
 				html += '<figure>';
-					html += '<img src="' + mainURL + '/' + data.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+					html += '<img src="' + baseImageUrl + '/' + data.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 				html += '</figure>';
 
 				html += '<div class="people-name">';
@@ -379,6 +380,7 @@
 	}
 
 	function friendSelected(self) {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var _id = self.getAttribute("data-id");
 
 		var index = friends.findIndex(function(friend) {
@@ -388,7 +390,7 @@
 
 		var html = "";
 		html += '<figure>';
-			html += '<img src="' + mainURL + '/' + selectedFriend.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+			html += '<img src="' + baseImageUrl + '/' + selectedFriend.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 		html += '</figure>';
 		html += '<span>' + selectedFriend.name + '</span>';
 		document.getElementById("conversation-head").innerHTML = html;

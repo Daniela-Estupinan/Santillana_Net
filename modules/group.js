@@ -32,7 +32,7 @@ module.exports = {
         if (user.isBanned) {
             result.json({
                 "status": "error",
-                "message": "You have been banned."
+                "message": "Ha sido bloqueado"
             });
             return false;
         }
@@ -64,7 +64,7 @@ module.exports = {
 
             if (request.files.coverPhoto.type.includes("image")) {
 
-                coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
+                coverPhoto = "uploads/" + new Date().getTime() + "-" +`${request.files.coverPhoto.name}`;
 
                 if (group.coverPhoto != "") {
                     this.fileSystem.unlink(group.coverPhoto, function (error) {
@@ -151,7 +151,7 @@ module.exports = {
         if (user.isBanned) {
             result.json({
                 "status": "error",
-                "message": "You have been banned."
+                "message": "Ha sido bloqueado"
             });
             return false;
         }

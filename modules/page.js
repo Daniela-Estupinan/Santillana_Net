@@ -32,7 +32,7 @@ module.exports = {
         if (user.isBanned) {
             result.json({
                 "status": "error",
-                "message": "You have been banned."
+                "message": "Ha sido bloqueado"
             });
             return false;
         }
@@ -151,7 +151,7 @@ module.exports = {
         if (user.isBanned) {
             result.json({
                 "status": "error",
-                "message": "You have been banned."
+                "message": "Ha sido bloqueado"
             });
             return false;
         }
