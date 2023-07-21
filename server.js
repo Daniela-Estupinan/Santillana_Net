@@ -3484,144 +3484,167 @@ app.post("/uploadProfileImage", function (request, result) {
 			result.render("createGroup");
 		});
 //
-		app.post("/createGroup", function (request, result) {
-			var accessToken = request.fields.accessToken;
-			var name = request.fields.name;
-			var additionalInfo = request.fields.additionalInfo;
-			var coverPhoto = "";
-			var area = request.fields.area; // nueva area
-			var type = request.fields.type;
-		  
-			database.collection("users").findOne({
-			  "accessToken": accessToken
-			}, function (error, user) {
-			  if (user == null) {
-				result.json({
-				  "status": "error",
-				  "message": "User has been logged out. Please login again."
-				});
-			  } else {
-				if (user.isBanned) {
-				  result.json({
-					"status": "error",
-					"message": "Ha sido bloqueado"
-				  });
-				  return false;
-				}
-		  
-				if (type == "ios") {
-				  coverPhoto = `${request.files.coverPhoto.name}`;
-		  
-				  var base64Data = request.fields.imageData.replace(/^data:image\/jpeg;base64,/, "");
-				  base64Data += base64Data.replace('+', ' ');
-				  var binaryData = new Buffer(base64Data, 'base64').toString('binary');
-				  fileSystem.writeFile(coverPhoto, function (err) {
-					if (err) throw err;
-		  
-					database.collection("groups").insertOne({
-					  "name": name,
-					  "additionalInfo": additionalInfo,
-					  "coverPhoto": coverPhoto,
-					  "area": area,
-					  "members": [{
-						"_id": user._id,
-						"name": user.name,
-						"profileImage": user.profileImage,
-						"status": "Accepted"
-					  }],
-					  "user": {
-						"_id": user._id,
-						"name": user.name,
-						"profileImage": user.profileImage
-					  }
-					}, function (error, data) {
-					  database.collection("users").updateOne({
-						"accessToken": accessToken
-					  }, {
-						$push: {
-						  "groups": {
-							"_id": data.insertedId,
-							"name": name,
-							"coverPhoto": coverPhoto,
-							"status": "Accepted"
-						  }
-						}
-					  }, function (error, data) {
-						result.json({
-						  "status": "success",
-						  "message": "Comunidad ha sido creada"
-						});
-					  });
-					});
-				  });
-				} else {
-				  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
-					  coverPhoto = `${request.files.coverPhoto.name}`;
-		
-					// Leer el archivo
-					fileSystem.readFile(request.files.coverPhoto.path, function (err, data) {
-					  if (err) throw err;
-					  console.log('File read!');
-		  
-					  // Escribir el archivo
-					  fileSystem.writeFile(coverPhoto, data, function (err) {
-						if (err) throw err;
-						console.log('File written!');
-		  
-						database.collection("groups").insertOne({
-						  "name": name,
-						  "additionalInfo": additionalInfo,
-						  "coverPhoto": coverPhoto,
-						  "area": area,
-						  "members": [{
-							"_id": user._id,
-							"name": user.name,
-							"profileImage": user.profileImage,
-							"status": "Accepted"
-						  }],
-						  "user": {
-							"_id": user._id,
-							"name": user.name,
-							"profileImage": user.profileImage
-						  }
-						}, function (error, data) {
-						  database.collection("users").updateOne({
-							"accessToken": accessToken
-						  }, {
-							$push: {
-							  "groups": {
-								"_id": data.insertedId,
-								"name": name,
-								"coverPhoto": coverPhoto,
-								"status": "Accepted"
-							  }
-							}
-						  }, function (error, data) {
-							result.json({
-							  "status": "success",
-							  "message": "Comunidad ha sido creada",
-							  "data": photoURL + "/" + coverPhoto
-							});
-						  });
-						});
-					  });
-		  
-					  // Eliminar el archivo temporal
-					  fileSystem.unlink(request.files.coverPhoto.path, function (err) {
-						if (err) throw err;
-						console.log('File deleted!');
-					  });
-					});
-				  } else {
-					result.json({
-					  "status": "error",
-					  "message": "Please select a cover photo."
-					});
+app.post("/createGroup", function (request, result) {
+	var accessToken = request.fields.accessToken;
+	var name = request.fields.name;
+	var additionalInfo = request.fields.additionalInfo;
+	var coverPhoto = "";
+	var area = request.fields.area; // nueva area
+	var type = request.fields.type;
+  
+	database.collection("users").findOne({
+	  "accessToken": accessToken
+	}, function (error, user) {
+	  if (user == null) {
+		result.json({
+		  "status": "error",
+		  "message": "User has been logged out. Please login again."
+		});
+	  } else {
+		if (user.isBanned) {
+		  result.json({
+			"status": "error",
+			"message": "Ha sido bloqueado"
+		  });
+		  return false;
+		}
+  
+		if (type == "ios") {
+		  coverPhoto = `${request.files.coverPhoto.name}`;
+  
+		  var base64Data = request.fields.imageData.replace(/^data:image\/jpeg;base64,/, "");
+		  base64Data += base64Data.replace('+', ' ');
+		  var binaryData = new Buffer(base64Data, 'base64').toString('binary');
+		  fs.writeFile(coverPhoto, function (err) {
+			if (err) throw err;
+  
+			// Resto del código para type == "ios"...
+  
+			database.collection("groups").insertOne({
+			  "name": name,
+			  "additionalInfo": additionalInfo,
+			  "coverPhoto": coverPhoto,
+			  "area": area,
+			  "members": [{
+				"_id": user._id,
+				"name": user.name,
+				"profileImage": user.profileImage,
+				"status": "Accepted"
+			  }],
+			  "user": {
+				"_id": user._id,
+				"name": user.name,
+				"profileImage": user.profileImage
+			  }
+			}, function (error, data) {
+			  database.collection("users").updateOne({
+				"accessToken": accessToken
+			  }, {
+				$push: {
+				  "groups": {
+					"_id": data.insertedId,
+					"name": name,
+					"coverPhoto": coverPhoto,
+					"status": "Accepted"
 				  }
 				}
-			  }
+			  }, function (error, data) {
+				result.json({
+				  "status": "success",
+				  "message": "Comunidad ha sido creada"
+				});
+			  });
 			});
+  
+			// Fin del código para type == "ios"
+  
 		  });
+  
+		} else {
+		  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
+			coverPhoto = `${request.files.coverPhoto.name}`;
+  
+			// Leer el archivo
+			fs.readFile(request.files.coverPhoto.path, function (err, data) {
+			  if (err) throw err;
+  
+			  // Subir la coverPhoto al bucket de Google Cloud Storage
+			  const file = storage.bucket(bucketName).file(coverPhoto);
+			  const stream = file.createWriteStream({
+				metadata: {
+				  contentType: request.files.coverPhoto.type,
+				},
+			  });
+  
+			  stream.on('error', (err) => {
+				console.error('Error al subir la coverPhoto:', err);
+				result.json({
+				  "status": "error",
+				  "message": "Error al subir la cover photo."
+				});
+			  });
+  
+			  stream.on('finish', () => {
+				console.log('Cover photo subida exitosamente.');
+  
+				// Eliminar el archivo temporal
+				fs.unlink(request.files.coverPhoto.path, function (err) {
+				  if (err) throw err;
+				  console.log('Archivo temporal eliminado.');
+				});
+  
+				// Continuar con el resto del código para guardar los datos en la base de datos
+				database.collection("groups").insertOne({
+				  "name": name,
+				  "additionalInfo": additionalInfo,
+				  "coverPhoto": coverPhoto,
+				  "area": area,
+				  "members": [{
+					"_id": user._id,
+					"name": user.name,
+					"profileImage": user.profileImage,
+					"status": "Accepted"
+				  }],
+				  "user": {
+					"_id": user._id,
+					"name": user.name,
+					"profileImage": user.profileImage
+				  }
+				}, function (error, data) {
+				  database.collection("users").updateOne({
+					"accessToken": accessToken
+				  }, {
+					$push: {
+					  "groups": {
+						"_id": data.insertedId,
+						"name": name,
+						"coverPhoto": coverPhoto,
+						"status": "Accepted"
+					  }
+					}
+				  }, function (error, data) {
+					result.json({
+					  "status": "success",
+					  "message": "Comunidad ha sido creada",
+					});
+				  });
+				});
+  
+			  });
+  
+			  stream.end(data);
+			});
+  
+		  } else {
+			result.json({
+			  "status": "error",
+			  "message": "Please select a cover photo."
+			});
+		  }
+		}
+	  }
+	});
+  });
 //		  
 
 		app.get("/groups", function (request, result) {
