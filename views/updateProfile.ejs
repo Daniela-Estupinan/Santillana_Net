@@ -4,13 +4,13 @@
 	<div class="feature-photo">
 
 		<figure>
-			<img class="cover-photo" id="cover-photo" style="width: 100%; height: 300px; object-fit: cover;" onerror="this.src = '/public/img/default_cover.jpg';" />
+			<img class="cover-photo" id="cover-photo" style="width: 100%; height: 250px; object-fit: cover;" onerror="this.src = '/public/img/Santillana.jpg';" />
 		</figure>
 
 		<form class="edit-phto" id="form-cover-photo" onsubmit="return false;">
 			<i class="fa fa-camera-retro"></i>
 			<label class="fileContainer">
-				Edit Cover Photo
+				Editar Foto de Portada
 				<input type="file" accept="image/*" name="coverPhoto" onchange="uploadCoverPhoto();" required />
 			</label>
 		</form>
@@ -26,7 +26,7 @@
 							<form class="edit-phto" id="form-upload-image" onsubmit="return false;">
 								<i class="fa fa-camera-retro"></i>
 								<label class="fileContainer">
-									Edit Display Photo
+									Editar Foto de Perfil
 									<input type="file" accept="image/*" name="profileImage" onchange="uploadImage();" required />
 								</label>
 							</form>
@@ -39,8 +39,6 @@
 							<li class="admin-name">
 								<h5 class="user-name" style="padding-top: 20px; padding-bottom: 20px;"></h5>
 							</li>
-
-                            <li><a href="<%= mainURL %>/profileViews">Profile views</a></li>
 						</ul>
 					</div>
 				</div>
@@ -53,8 +51,9 @@
 	var isUpdateProfile = true;
 
 	function showProfileData() {
-		document.querySelector(".cover-photo").setAttribute("src", mainURL + "/" + window.user.coverPhoto);
-		document.querySelector(".profile-image").setAttribute("src", mainURL + "/" + window.user.profileImage);
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
+		document.querySelector(".cover-photo").setAttribute("src", baseImageUrl + "/" + window.user.coverPhoto);
+		document.querySelector(".profile-image").setAttribute("src", baseImageUrl + "/" + window.user.profileImage);
 
 		document.querySelector(".user-name").innerHTML = window.user.name;
 		document.querySelector(".name").value = window.user.name;
@@ -70,13 +69,14 @@
 
 		var ajax = new XMLHttpRequest();
 		ajax.open("POST", "/uploadCoverPhoto", true);
+		// Establecer el URL base para las imágenes de portada
+	
 
 		ajax.onreadystatechange = function() {
 			if (this.readyState == 4 && this.status == 200) {
 
 				var response = JSON.parse(this.responseText);
-
-				document.getElementById("cover-photo").setAttribute("src", response.data);
+				document.querySelector(".cover-photo").setAttribute("src",response.data);
 			}
 		};
 
@@ -111,7 +111,7 @@
 
 	function doUpdateProfile(form) {
 		form.submit.setAttribute("disabled", "disabled");
-		form.submit.innerHTML = "<span>Loading...</span>";
+		form.submit.innerHTML = "<span>Cargando...</span>";
 
 		var ajax = new XMLHttpRequest();
 		ajax.open("POST", "/updateProfile", true);
@@ -120,13 +120,13 @@
 			if (this.readyState == 4 && this.status == 200) {
 
 				form.submit.removeAttribute("disabled");
-				form.submit.innerHTML = "<span>Save</span>";
+				form.submit.innerHTML = "<span>Guardar</span>";
 
 				var response = JSON.parse(this.responseText);
 				if (response.status == "error") {
 					swal("Error", response.message, "error");
 				} else {
-					swal("Success", response.message, "success");
+					swal("Listo", response.message, "success");
 				}
 			}
 		};
@@ -156,20 +156,20 @@
 
 									<h5 class="f-title">
 										<i class="ti-info-alt"></i>
-										Update Profile
+										Actualizar Perfil
 									</h5>
 
 									<form onsubmit="return doUpdateProfile(this);">
 										<div class="form-group">
-											<input type="text" required class="name" name="name" />
-											<label class="control-label">Full Name</label>
+											<input type="text" required class="name" name="name" placeholder="Nombre Completo" />
+											<label class="control-label">Nombre Completo</label>
 											<i class="mtrl-select"></i>
 										</div>
 
 										<br><br>
 
 										<div class="form-group">
-											<input class="email" readonly />
+											<input required class="email" name="email" readonly />
 											<label class="control-label">Email</label>
 											<i class="mtrl-select"></i>
 										</div>
@@ -178,57 +178,76 @@
 
 										<div class="form-group">
 											<input type="text" class="dob" name="dob" placeholder="DD/MM/YYYY" />
-											<label class="control-label">Date of birth</label>
+											<label class="control-label">Fecha de nacimiento</label>
 											<i class="mtrl-select"></i>
 										</div>
 
 										<br><br>
-
+<!--
 										<div class="form-group">	
 											<input type="text" class="city" name="city" />
-											<label class="control-label">City</label>
+											<label class="control-label">Ciudad</label>
 											<i class="mtrl-select"></i>
 										</div>
-
+									-->
+									<div class="form-group">
+																						
+										<div class="select-wrapper">
+										<select class="city" name="city" required>
+											<option value="default">--Ciudad--</option>
+											<option value="Quito">Quito</option>
+											<option value="Guayaquil">Guayaquil</option>
+											<option value="Cuenca">Cuenca</option>
+											<option value="Otro">Otro</option>
+										
+										</select>
+										<i class="mtrl-select"></i>
+										</div>
+									</div>
 										<br><br>
-
+<!--
 										<div class="form-group">
 											<input type="text" class="country" name="country" />
 											<label class="control-label">Área</label>
 											<i class="mtrl-select"></i>
 										</div>
-
+-->		
+											<div class="form-group">
+																						
+												<div class="select-wrapper">
+												<select class="country" name="country" required>
+													<option value="default">--Área--</option>
+													<option value="Ventas">Ventas</option>
+													<option value="Comunicaciones">Comunicaciones</option>
+													<option value="Contabilidad">Contabilidad</option>
+													<option value="Marketing">Marketing</option>
+													<option value="RRHH">RRHH</option>
+													
+												</select>
+												<i class="mtrl-select"></i>
+												</div>
+											</div>								
 										<br><br>
 
 										<div class="form-group">	
-											<textarea rows="4" class="aboutMe" name="aboutMe"></textarea>
-											<label class="control-label">About Me</label>
+											<textarea rows="4" class="aboutMe" name="aboutMe" placeholder="Escribe más sobre ti"></textarea>
+											<label class="control-label">Sobre Mí</label>
 											<i class="mtrl-select"></i>
 										</div>
 
 										<button type="submit" class="mtr-btn" name="submit">
-											<span>Save</span>
+											<span>Guardar</span>
 										</button>
 									</form>
 
 									<p>
-										<a href="/change-password">Change Password</a>
+							<!--		<a href="/change-password">Change Password</a> -->	
 									</p>
 
 								</div>
 							</div>
 						</div>
-
-						<div class="col-md-3">
-							<aside class="sidebar static">
-								<div class="widget">
-									
-								</div>
-							</aside>
-                            <%- include ("includes/right-sidebar") %>
-						</div>
-
-					</div>
+			</div>
 				</div>
 			</div>
 		</div>

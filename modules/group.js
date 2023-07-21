@@ -9,6 +9,7 @@ module.exports = {
         var name = request.fields.name;
         var additionalInfo = request.fields.additionalInfo;
         var coverPhoto = "";
+        var area = request.fields.area; //add area to a community
         var type = request.fields.type;
         var imageData = request.fields.imageData;
         var _id = request.fields._id;
@@ -31,7 +32,7 @@ module.exports = {
         if (user.isBanned) {
             result.json({
                 "status": "error",
-                "message": "You have been banned."
+                "message": "Ha sido bloqueado"
             });
             return false;
         }
@@ -63,7 +64,7 @@ module.exports = {
 
             if (request.files.coverPhoto.type.includes("image")) {
 
-                coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
+                coverPhoto = "uploads/" + new Date().getTime() + "-" +`${request.files.coverPhoto.name}`;
 
                 if (group.coverPhoto != "") {
                     this.fileSystem.unlink(group.coverPhoto, function (error) {
@@ -87,13 +88,14 @@ module.exports = {
                             $set: {
                                 "name": name,
                                 "additionalInfo": additionalInfo,
-                                "coverPhoto": coverPhoto
+                                "coverPhoto": coverPhoto,
+                                "area":area //area
                             }
                         });
 
                         result.json({
                             "status": "success",
-                            "message": "Group has been updated."
+                            "message": "Comunidad ha sido actualizada"
                         });
                     });
 
@@ -115,13 +117,14 @@ module.exports = {
             }, {
                 $set: {
                     "name": name,
-                    "additionalInfo": additionalInfo
+                    "additionalInfo": additionalInfo,
+                    "area":area //area
                 }
             });
 
             result.json({
                 "status": "success",
-                "message": "Group has been updated."
+                "message": "Comunidad ha sido actualizada"
             });
         }
     },
@@ -148,7 +151,7 @@ module.exports = {
         if (user.isBanned) {
             result.json({
                 "status": "error",
-                "message": "You have been banned."
+                "message": "Ha sido bloqueado"
             });
             return false;
         }
@@ -188,7 +191,7 @@ module.exports = {
 
         result.json({
             "status": "success",
-            "message": "Group has been deleted."
+            "message": "Comunidad ha sido eliminada"
         });
     }
 };

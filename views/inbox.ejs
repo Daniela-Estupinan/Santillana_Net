@@ -43,7 +43,7 @@
 											<ul class="chatting-area" id="chatting-area"></ul>
 
 											<div class="message-text-container">
-												<form method="post" onsubmit="sendMessage()" enctype="multipart/form-data" id="form-send-message">
+												<form method="post" onsubmit="sendMessage()" enctype="multipart/form-data" id="form-send-message" >
 													<textarea name="message"></textarea>
 
 													<div class="attachments" style="display: flex; padding-right: 0px; padding-left: 0px; border: none;">
@@ -73,7 +73,7 @@
 														</ul>
 													</div>
 
-													<button title="send" name="submit" type="submit" style="top: 80%;">
+													<button id="send" title="send" name="submit" type="submit" style="top: 80%;">
 														<i class="fa fa-paper-plane"></i>
 													</button>
 												</form>
@@ -95,7 +95,7 @@
 	<div class="modal-dialog" style="max-width: 1000px;">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title">Attachment</h5>
+				<h5 class="modal-title">Adjunto</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					<span aria-hidden="true">&times;</span>
 				</button>
@@ -123,50 +123,7 @@
 	var attachedImages = [];
 	var attachedVideos = [];
 
-	function fetchAds() {
-		var ajax = new XMLHttpRequest()
-		ajax.open("POST", "/getRandomAd", true);
 
-		ajax.onreadystatechange = function() {
-			if (this.readyState == 4) {
-				if (this.status == 200) {
-					// console.log(this.responseText);
-					var response = JSON.parse(this.responseText)
-					// console.log(response)
-
-					if (response.status == "success") {
-
-						let html = ""
-						for (let a = 0; a < response.posts.length; a++) {
-							const post = response.posts[a]
-
-							html += `<p>` + post.caption + `
-								<span class="pull-right">Sponsored</span>
-							</p>`
-
-							if (post.savedPaths.length > 0) {
-								html += `<img src="` + post.savedPaths[a] + `" /> <br /><br />`
-							}
-							html += "<hr />"
-						}
-
-						document.getElementById("sponsoredLayout").innerHTML = html
-					} else {
-						swal("Error", response.message, "error");
-					}
-				}
-
-				if (this.status == 500) {
-					console.log(this.responseText);
-				}
-			}
-		};
-
-		var formData = new FormData()
-		ajax.send(formData)
-	}
-
-	fetchAds()
 
 	function previewAttachedImages(self) {
 		document.getElementById("preview-attached-images").innerHTML = "";
@@ -327,11 +284,18 @@
 		html += '</li>';
 		return html;
 	}
-
+	var socket = io();
+	$(()=>{
+		$("#send").click(()=>{
+			sendMessage({message:$("#form-send-message").val})
+		})
+		renderMessage()
+	})
+	socket.on('message',doSendMessage)
 	function deleteMessage(self) {
 		swal({
-			title: "Delete message",
-			text: "Are you sure you want to delete this message ?",
+			title: "Eliminar mensaje",
+			text: "¿Está seguro que quiere eliminar este mensaje?",
 			icon: "warning",
 			buttons: true,
 			dangerMode: true,
@@ -362,6 +326,7 @@
 	}
 
 	function showFriends() {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var html = "";
 		// friends = window.user.friends;
         friends = [];
@@ -400,7 +365,7 @@
 			html += '<li data-id="' + data._id + '" onclick="friendSelected(this);">';
 
 				html += '<figure>';
-					html += '<img src="' + mainURL + '/' + data.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+					html += '<img src="' + baseImageUrl + '/' + data.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 				html += '</figure>';
 
 				html += '<div class="people-name">';
@@ -415,6 +380,7 @@
 	}
 
 	function friendSelected(self) {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var _id = self.getAttribute("data-id");
 
 		var index = friends.findIndex(function(friend) {
@@ -424,7 +390,7 @@
 
 		var html = "";
 		html += '<figure>';
-			html += '<img src="' + mainURL + '/' + selectedFriend.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+			html += '<img src="' + baseImageUrl + '/' + selectedFriend.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 		html += '</figure>';
 		html += '<span>' + selectedFriend.name + '</span>';
 		document.getElementById("conversation-head").innerHTML = html;
@@ -488,5 +454,5 @@
 		ajax.send(formData);
 	}
 </script>
-
+<script src="/socket.io/socket.io.js"></script>
 <%- include ("includes/footer") %>

@@ -47,7 +47,7 @@
                                                     date = date.padStart(2, "0") + " " + months[createdAt.getMonth()] + ", " + createdAt.getFullYear();
                                                 %>
 
-                                                <span>Published: <%= date %></span>
+                                                <span>Publicado: <%= date %></span>
 
                                                 <%
                                                     if (post.isBanned)
@@ -70,7 +70,7 @@
                                                 </div>
 
                                                 <% if (post.image != "") { %>
-                                                    <img src="<%= mainURL + '/' + post.image %>">
+                                                    <img src="<%= mainURL + '/' post.image %>">
                                                 <% } %>
 
                                                 <% if (post.video != "") { %>
@@ -89,7 +89,7 @@
 
                                                             if (extension == "jpg" || extension == "jpeg" || extension == "png") {
                                                         %>
-                                                                <img class="post-image" src="<%= mainURL + '/' + post.savedPaths[a] %>">
+                                                        <img class="post-image" src="<%= mainURL + '/' post.savedPaths[a] %>">
                                                             <% } else if (extension == "mp4" || extension == "mov" || extension == "mkv") { %>
                                                                 <video class="post-video" style="height: 359px; width: 100%;" controls src="<%= mainURL + '/' + post.savedPaths[a] %>"></video>
                                                             <% } else if (extension == "mp3" || extension == "m4a" || extension == "aac") { %>

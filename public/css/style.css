@@ -162,7 +162,7 @@ body {
 p {
     font-size: 14px;
     line-height: 26px;
-    color: #8c8b8b;
+    color: black;
 }
 
 a,
@@ -337,7 +337,7 @@ section {
 }
 
 .pattern:before {
-    background: #088dcd url("../img/dot-pattern.png") repeat scroll 0 0;
+    background: #4A4A30 url("../img/dot-pattern.png") repeat scroll 0 0;
     opacity: 0.45;
 }
 
@@ -346,7 +346,7 @@ section {
 }
 
 .bluesh:before {
-    background: #088dcd;
+    background: #4A4A30;
 }
 
 .exthigh-opacity:before {
@@ -939,7 +939,7 @@ header.sticky {
 }
 
 .timeline-info .admin-name > h5 {
-    color: #088dcd;
+    color: #4A4A30;
     display: inline-block;
     font-size: 24px;
     font-weight: 500;
@@ -1502,6 +1502,8 @@ form button {
 .description > p {
     margin-bottom: 20px;
 }
+
+
 
 .description > span {
     color: #2a2a2a;
@@ -2166,13 +2168,13 @@ span.status.f-off {
 footer {
     background: #fff;
     float: left;
-    padding: 75px 0;
+    padding: 25px 0;
     width: 100%;
     position: relative;
 }
 
 footer::before {
-    background: rgba(0, 0, 0, 0) linear-gradient(to right, #ffffff 0%, #2fa7cd 50%, #ffffff 100%) repeat scroll 0 0;
+    background: rgba(0, 0, 0, 0) linear-gradient(to right, #ffffff 0%, #E00076 50%, #ffffff 100%) repeat scroll 0 0;
     content: "";
     height: 5px;
     position: absolute;
@@ -2524,7 +2526,7 @@ footer .logo {
 }
 
 .setting-row input + label::before {
-    color: #b7b7b7;
+    color: black;
     content: attr(data-off-label);
     display: block;
     font-family: inherit;
@@ -2990,7 +2992,7 @@ li.google {
 }
 
 .g-map::before {
-    background: #088dcd none repeat scroll 0 0;
+    background: #4A4A30 none repeat scroll 0 0;
     content: "";
     height: 100%;
     left: 0;
@@ -3008,7 +3010,7 @@ li.google {
 }
 
 .map-meta {
-    background: #088dcd none repeat scroll 0 0;
+    background: #4A4A30 none repeat scroll 0 0;
     color: #fff;
     left: 10%;
     padding: 20px;
@@ -3913,7 +3915,7 @@ form .form-group.half:nth-child(2) {
     border-style: none none solid;
     border-width: 0 0 1px;
     box-shadow: none;
-    color: #b7b7b7 !important;
+    color: black !important;
     font-size: 16px;
     height: 35px;
     line-height: 35px;
@@ -4669,7 +4671,7 @@ canvas {
 }
 
 .mh-head {
-    background: #1891D5;
+    background: #00A1E4;
     color: #fff;
     height: auto;
 }
@@ -4821,11 +4823,12 @@ canvas {
 }
 
 .top-area > ul.main-menu > li a {
-    color: #575b5f;
+    color: #7EC352;
     font-size: 14px;
     font-weight: 700;
     text-transform: capitalize;
     letter-spacing: 0.3px;
+    align-items: center;
 }
 
 .top-area > ul.main-menu > li::after {
@@ -6810,7 +6813,7 @@ a.reply {
 }
 
 .menu-container {
-    background-color: #088dcd;
+    background-color: #4A4A30;
     -webkit-border-radius: 100%;
     -moz-border-radius: 100%;
     -ms-border-radius: 100%;

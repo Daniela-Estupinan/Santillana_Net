@@ -14,7 +14,74 @@ module.exports = {
     init: function (app, express) {
         var self = this
 
+//estadisticas
+// Ruta para obtener las estadísticas mensuales
+app.get("/admin/stats", async function (request, result) {
+    var accessToken = request.query.accessToken;
 
+    var admin = await self.database.collection("admins").findOne({
+        "accessToken": accessToken
+    });
+
+    if (admin == null) {
+        result.json({
+            "status": "error",
+            "message": self.logoutMessage
+        });
+
+        return false;
+    }
+
+    try {
+        var monthlyStats = await self.getMonthlyStatistics();
+        result.render("admin/stats", { stats: monthlyStats });
+    } catch (error) {
+        result.json({
+            "status": "error",
+            "message": "Failed to fetch monthly statistics."
+        });
+    }
+});
+
+// Función para obtener las estadísticas mensuales
+async function getMonthlyStatistics() {
+    var pipeline = [
+        {
+            $group: {
+                _id: {
+                    year: { $year: { $toDate: "$createdAt" } },
+                    month: { $month: { $toDate: "$createdAt" } }
+                },
+                totalPosts: { $sum: 1 },
+                uniqueUsers: { $addToSet: "$uploader.name" }
+            }
+        },
+        {
+            $project: {
+                month: {
+                    $dateToString: {
+                        format: "%Y-%m",
+                        date: {
+                            $dateFromParts: {
+                                year: "$_id.year",
+                                month: "$_id.month"
+                            }
+                        }
+                    }
+                },
+                totalPosts: 1,
+                uniqueUsers: { $size: "$uniqueUsers" }
+            }
+        },
+        {
+            $sort: { month: 1 }
+        }
+    ];
+
+    var stats = await self.database.collection("posts").aggregate(pipeline).toArray();
+    return stats;
+}
+//
         const ticketsRouter = express.Router();
         ticketsRouter.get("/", function (request, result) {
             result.render("admin/tickets/index");
@@ -238,7 +305,7 @@ module.exports = {
 
         var postsRouter = express.Router();
         postsRouter.get("/", function (request, result) {
-            result.render("admin/posts/index");
+            result.render("admin/posts");
         });
 
         postsRouter.post("/unban", async function (request, result) {
@@ -279,7 +346,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "Post has been unbanned."
+                "message": "Publicación ha sido desbloqueada"
             });
         });
 
@@ -338,7 +405,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "Post has been banned."
+                "message": "Publicación ha sido bloqueada"
             });
         });
 
@@ -411,16 +478,13 @@ module.exports = {
             }
 
             var posts = await self.database.collection("posts")
-                .find({
-                    "type": "post"
-                })
+            .find({})
                 .skip(skip)
                 .limit(limit)
                 .sort({
                     "_id": -1
                 })
                 .toArray();
-
             var totalPages = await self.database.collection("posts").count() / limit;
             totalPages = Math.ceil(totalPages);
 
@@ -433,7 +497,7 @@ module.exports = {
         });
 
         app.use("/admin/posts", postsRouter);
-
+//user
         var usersRouter = express.Router();
         usersRouter.get("/", function (request, result) {
             result.render("admin/users/index");
@@ -477,7 +541,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "User has been unbanned."
+                "message": "Usuario ha sido desbloqueado"
             });
         });
 
@@ -503,7 +567,7 @@ module.exports = {
             if (user == null) {
                 result.json({
                     "status": "error",
-                    "message": "User does not exists."
+                    "message": "Usuario no existe."
                 });
 
                 return false;
@@ -519,7 +583,7 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "User has been banned."
+                "message": "Usuario ha sido bloqueado"
             });
         });
 
@@ -569,11 +633,13 @@ module.exports = {
 
             result.json({
                 "status": "success",
-                "message": "User has been deleted."
+                "message": "Usuario ha sido eliminado."
             });
         });
 
         usersRouter.post("/fetch", async function (request, result) {
+
+  
 
             var accessToken = request.fields.accessToken;
             var skip = parseInt(request.fields.skip);
@@ -599,7 +665,7 @@ module.exports = {
                     "_id": -1
                 })
                 .toArray();
-
+                
             for (var a = 0; a < users.length; a++) {
                 delete users[a].password;
             }
@@ -634,36 +700,23 @@ module.exports = {
             }
 
             var users = await self.database.collection("users").count();
-            var posts = await self.database.collection("posts").count();
-            var pages = await self.database.collection("pages").count();
             var groups = await self.database.collection("groups").count();
+            var posts = await self.database.collection("posts").count();
             var supportRequests = 0;
 
             result.json({
                 "status": "success",
                 "message": "Data has been fetched.",
                 "users": users,
-                "posts": posts,
-                "pages": pages,
                 "groups": groups,
+                "posts": posts,
                 "supportRequests": supportRequests
             });
         });
 
         app.get("/admin", function (request, result) {
             self.database.collection("admins").findOne({}, function (error, admin) {
-                if (!admin) {
-
-                    self.bcrypt.genSalt(10, function(err, salt) {
-                        self.bcrypt.hash("admin", salt, async function(err, hash) {
-                            self.database.collection("admins").insertOne({
-                                "email": "admin@santillana.com",
-                                "password": "admin"
-                            })
-                        })
-                    })
-                }
-            });
+                     });
 
             result.render("admin/index");
         });
@@ -684,18 +737,33 @@ module.exports = {
             if (admin == null) {
                 result.json({
                     "status": "error",
-                    "message": "Email does not exist"
+                    "message": "Correo no existe"
                 });
+
+                return
 
                 //return false;
             }else{
+
+                var accessToken = self.jwt.sign({ email: email}, "myAdminAccessTokenSecret1234567890");
+                await self.database.collection("admins").findOneAndUpdate({
+                    "email": email
+                }, {
+                    $set: {
+                        accessToken: accessToken
+                    }
+                });
+
+                // wait please
+
                 result.json({
                     "status": "success",
-                    "message": "Login successfully"
+                    "message": "Login successfully",
+                    accessToken: accessToken
                 });
             }
 
-            self.bcrypt.compare(password, admin.password, async function (error, res) {
+            /*self.bcrypt.compare(password, admin.password, async function (error, res) {
                 if (res === true) {
 
                     var accessToken = self.jwt.sign({ email: email });
@@ -711,10 +779,10 @@ module.exports = {
                 } else {
                     result.json({
                         "status": "error",
-                        "message": "Password is not correct"
+                        "message": "Contraseña no es correcta"
                     });
                 }
-            });
+            });*/
         });
 
         app.post("/admin/getAdmin", async function (request, result) {
@@ -739,6 +807,12 @@ module.exports = {
                 "data": admin
             });
         });
+//estadisticas
+
 
     }
+
+
+
+
 };

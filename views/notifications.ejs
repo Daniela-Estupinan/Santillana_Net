@@ -24,7 +24,7 @@
 
 							<div class="central-meta">
 								<div class="editing-interest">
-									<h5 class="f-title"><i class="ti-bell"></i>All Notifications </h5>
+									<h5 class="f-title"><i class="ti-bell"></i>Todas las notificaciones </h5>
 									<div class="notification-box">
 										<ul id="all-notifications"></ul>
 									</div>
@@ -43,6 +43,7 @@
 	var isNotifications = true;
 
 	function showNotifications() {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var html = "";
 
 		var notifications = window.user.notifications.reverse();
@@ -53,13 +54,11 @@
 				if (data.type == "new_comment"
 					|| data.type == "photo_liked"
 					|| data.type == "post_liked"
-					|| data.type == "post_disliked"
-					|| data.type == "post_shared"
 					|| data.type == "new_post_in_group")
 				{
 					html += "<a href='/post/" + data.post._id + "'>";
 				}
-					html += '<figure><img src="' + mainURL + '/' + data.profileImage + '" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_profile.jpg\';"></figure>';
+					html += '<figure><img src="' + baseImageUrl + '/' + data.profileImage + '" style="width: 45px; height: 45px; object-fit: cover;" onerror="this.src = \'/public/img/default_profile.jpg\';"></figure>';
 					html += '<div class="notifi-meta">';
 						html += '<p>' + data.content + '</p>';
 
@@ -75,10 +74,11 @@
 							html += '<a href="javascript:void(0);" data-id="' + data._id + '" data-groupId="' + data.groupId + '" data-userId="' + data.userId + '" onclick="acceptRequestJoinGroup(this);" class="add-butn" style="position: relative;">Accept</a>';
 						}
 
-						// if (data.type == "new_post_in_group") {
-						// 	html += '<a href="' + mainURL + '/group/' + data.groupId + '" class="add-butn" style="position: relative; left: 5px;">View group</a>'
-						// }
+						/* if (data.type == "new_post_in_group") {
+							html += '<a href="' + mainURL + '/group/' + data.groupId + '" class="add-butn" style="position: relative; left: 5px;">Ver Comunidad</a>'
+						 }*/
 					html += '</div>';
+					
 
 				if (data.type == "new_comment" || data.type == "photo_liked")
 				{
@@ -163,6 +163,29 @@
 
 		ajax.send(formData);
 	}
+	
+		function deleteNotification() {
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/deleteNotification", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var response = JSON.parse(this.responseText);
+				// console.log(response);
+
+				if (response.status == "success") {
+					//
+				} else {
+					swal("Error", response.message, "error");
+				}
+			}
+		};
+
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		ajax.send(formData);
+	}
+	 
 </script>
 
 <%- include ("includes/footer") %>

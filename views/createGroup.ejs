@@ -23,25 +23,41 @@
 									<form onsubmit="return createGroup(this);">
 
 										<div class="form-group">
-											<label>Cover photo</label>
+											<label>Imagen de Portada</label>
 											<input type="file" name="coverPhoto" accept="image/*" required />
 											<i class="mtrl-select"></i>
 										</div>
 
 										<div class="form-group">
 											<input type="text" name="name" required />
-											<label class="control-label">Group Name</label>
+											<label class="control-label">Nombre de la Comunidad</label>
 											<i class="mtrl-select"></i>
 										</div>
 
 										<div class="form-group">
-											<textarea rows="4" name="additionalInfo" required></textarea>
-											<label class="control-label">Additional Info</label>
+											<textarea rows="2" name="additionalInfo" required></textarea>
+											<label class="control-label">Descripción de la comunidad</label>
 											<i class="mtrl-select"></i>
+										</div>
+										
+										<div class="form-group">
+											
+											<div class="select-wrapper">
+											<select name="area" required>
+												<option value="default">--Área--</option>
+												<option value="Ventas">Ventas</option>
+												<option value="Comunicaciones">Comunicaciones</option>
+												<option value="Contabilidad">Contabilidad</option>
+												<option value="Marketing">Marketing</option>
+												<option value="RRHH">RRHH</option>
+												
+											</select>
+											<i class="mtrl-select"></i>
+											</div>
 										</div>
 
 										<button type="submit" class="mtr-btn" name="submit">
-											<span>Save</span>
+											<span>Guardar</span>
 										</button>
 									</form>
 								</div>

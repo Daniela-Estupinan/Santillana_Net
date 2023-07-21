@@ -12,7 +12,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Admin Login | Santillana Net</title>
+    <title>Admin Login | Al día Ecuador</title>
     <link href="/public/admin/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/public/admin/assets/css/auth.css" rel="stylesheet">
 </head>
@@ -23,20 +23,22 @@
             <div class="card">
                 <div class="card-body text-center">
                     <div class="mb-4">
-                        <!-- <img class="brand" src="assets/img/bootstraper-logo.png" alt="bootstraper logo"> -->
-                        Admin Panel | Santillana Net
+                        Admin Panel | Al día Ecuador
                     </div>
-                    <h6 class="mb-4 text-muted">Login to your account</h6>
+                    <h6 class="mb-4 text-muted">Iniciar Sesión</h6>
                     <form action="/admin/login" onsubmit="return doLogin();" method="POST" id="form-login">
                         <div class="form-group text-left">
-                            <label for="email">Email adress</label>
-                            <input type="email" name="email" class="form-control" placeholder="Enter Email" required />
+                            <label for="email">Correo electrónico</label>
+                            <input type="email" name="email" class="form-control" placeholder="Ingrese su correo electrónico" required />
                         </div>
                         <div class="form-group text-left">
-                            <label for="password">Password</label>
-                            <input type="password" name="password" class="form-control" placeholder="Password" required />
+                            <label for="password">Contraseña</label>
+                            <input type="password" name="password" class="form-control" placeholder="Ingrese contraseña" required />
                         </div>
-                        <button type="submit" name="submit" class="btn btn-primary shadow-2 mb-4">Login</button>
+                        <button type="submit" name="submit" class="btn btn-primary shadow-2 mb-4">Iniciar sesión</button>
+                        <p>
+                            <a href="/login">Iniciar sesión cuenta normal</a>
+                        </p>
                     </form>
                 </div>
             </div>
@@ -53,7 +55,7 @@
             var form = document.getElementById("form-login");
 
             var originalHtml = form.submit.innerHTML;
-            form.submit.innerHTML = "Loading...";
+            form.submit.innerHTML = "Cargando...";
             form.submit.setAttribute("disabled", "disabled");
 
             var ajax = new XMLHttpRequest();

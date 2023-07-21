@@ -17,7 +17,7 @@
 
                                     <h5 class="f-title">
                                         <i class="ti-info-alt"></i>
-                                        Edit Group
+                                        Editar Comunidad
                                     </h5>
 
                                     <form onsubmit="return editGroup(this);">
@@ -43,9 +43,14 @@
                                             <label class="control-label">Additional Info</label>
                                             <i class="mtrl-select"></i>
                                         </div>
+                                        <div class="form-group">
+                                            <textarea rows="text" name="area" required><%= group.area %></textarea>
+                                            <label class="control-label">Área</label>
+                                            <i class="mtrl-select"></i>
+                                        </div>
 
                                         <button type="submit" class="mtr-btn" name="submit">
-                                            <span>Save</span>
+                                            <span>Guardar</span>
                                         </button>
                                     </form>
                                 </div>

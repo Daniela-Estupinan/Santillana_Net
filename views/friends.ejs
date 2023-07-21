@@ -37,6 +37,7 @@
 	var isFriends = true;
 
 	function showFriends() {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var html = "";
 		for (var a = 0; a < window.user.friends.length; a++) {
 			var data = window.user.friends[a];
@@ -45,7 +46,7 @@
 				html += '<div class="nearly-pepls">';
 					html += '<figure>';
 						html += '<a href="/user/' + data.username + '">';
-							html += '<img src="' + mainURL + '/' + data.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+							html += '<img src="' + baseImageUrl + '/' + data.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 						html += '</a>';
 					html += '</figure>';
 
@@ -55,9 +56,9 @@
 						html += '</h4>';
 
 						if (!data.sentByMe && data.status == "Pending") {
-							html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="doAccept(this);" class="add-butn more-action">Accept</a>';
+							html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="doAccept(this);" class="add-butn more-action">Aceptar</a>';
 						}
-						html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="doUnfriend(this);" class="add-butn btn-unfriend">Unfriend</a>';
+						html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="doUnfriend(this);" class="add-butn btn-unfriend">Eliminar</a>';
 
 					html += '</div>';
 				html += '</div>';

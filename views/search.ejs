@@ -52,6 +52,7 @@
 	var isSearchResults = true;
 
 	function showSearchResults() {
+		const baseImageUrl = "https://storage.googleapis.com/al-dia-ecuador";
 		var ajax = new XMLHttpRequest();
 		ajax.open("POST", "/search", true);
 
@@ -83,7 +84,7 @@
 							html += '<div class="nearly-pepls">';
 								html += '<figure>';
 									html += '<a href="/">';
-										html += '<img src="' + mainURL + '/' + user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
+										html += '<img src="' + baseImageUrl + '/' + user.profileImage + '" onerror="this.src = \'/public/img/default_profile.jpg\';">';
 									html += '</a>';
 								html += '</figure>';
 
@@ -93,9 +94,9 @@
 									html += '</h4>';
 
 									if (isFriend) {
-										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="doUnfriend(this);" class="add-butn btn-unfriend">Unfriend</a>';
+										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="doUnfriend(this);" class="add-butn btn-unfriend">Eliminar</a>';
 									} else {
-										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="sendFriendRequest(this);" class="add-butn">Add friend</a>';
+										html += '<a href="javascript:void(0);" data-id="' + user._id + '" onclick="sendFriendRequest(this);" class="add-butn">Agregar</a>';
 									}
 
 								html += '</div>';
@@ -131,14 +132,14 @@
 										html += '<a href="/group/' + data._id + '">' + data.name + '</a>';
 									html += '</h4>';
 
-									html += '<span>public group</span>';
+									html += '<span>Grupo Público</span>';
 									html += '<em>' + data.members.length + ' Members</em>';
 
 									if (localStorage.getItem("accessToken")) {
 										if (isMember) {
-											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn btn-unfriend">Leave</a>';
+											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn btn-unfriend">Salir</a>';
 										} else {
-											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn">Join</a>';
+											html += '<a href="javascript:void(0);" data-id="' + data._id + '" onclick="toggleJoinGroup(this);" class="add-butn">Unirse</a>';
 										}
 									}
 
@@ -209,12 +210,38 @@
 				self.remove();
 			}
 		};
+		var formData = new FormData();
+		formData.append("accessToken", localStorage.getItem("accessToken"));
+		formData.append("_id", _id);
+		ajax.send(formData);
+	}
+	//unfriend
+	function doUnfriend(self) {
+		var _id = self.getAttribute("data-id");
+
+		var ajax = new XMLHttpRequest();
+		ajax.open("POST", "/unfriend", true);
+
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+
+				var response = JSON.parse(this.responseText);
+				if (response.status == "error") {
+					swal("Error", response.message, "error");
+				} else if (response.status == "success") {
+					swal("Success", response.message, "success");
+				}
+
+				self.remove();
+			}
+		};
 
 		var formData = new FormData();
 		formData.append("accessToken", localStorage.getItem("accessToken"));
 		formData.append("_id", _id);
 		ajax.send(formData);
 	}
+//
 </script>
 
 <%- include ("includes/footer") %>

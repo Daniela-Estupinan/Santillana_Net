@@ -4,7 +4,7 @@
 	<div class="feature-photo">
 
 		<figure>
-			<img class="cover-photo" id="cover-photo" style="width: 100%; height: 300px; object-fit: cover;" src="<%= mainURL + "/" + user.coverPhoto %>" onerror="this.src = '/public/img/default_cover.jpg';">
+			<img class="cover-photo" id="cover-photo" style="width: 100%; height: 300px; object-fit: cover;" src="<%= mainURL + "/" + 			user.coverPhoto %>" onerror="this.src = '/public/img/Santillana.jpg';">
 		</figure>
 
 		<div class="container-fluid">
@@ -44,12 +44,12 @@
 						<div class="col-md-3">
 							<div class="central-meta">
 								<div class="editing-info">
-                                    <p><b>Full Name:</b> <%= user.name %></p>
+                                    <p><b>Nombre Completo:</b> <%= user.name %></p>
                                     <p><b>Email:</b> <%= user.email %></p>
-                                    <p><b>Date of Birth:</b> <%= user.dob == "" ? "N/A" : user.dob %></p>
-                                    <p><b>City:</b> <%= user.city == "" ? "N/A" : user.city %></p>
-                                    <p><b>Contry:</b> <%= user.country == "" ? "N/A" : user.country %></p>
-                                    <p><b>About:</b> <%= user.aboutMe == "" ? "N/A" : user.aboutMe %></p>
+                                    <p><b>Fecha de Nacimiento:</b> <%= user.dob == "" ? "N/A" : user.dob %></p>
+                                    <p><b>Ciudad:</b> <%= user.city == "" ? "N/A" : user.city %></p>
+                                    <p><b>Área:</b> <%= user.country == "" ? "N/A" : user.country %></p>
+                                    <p><b>Descripción:</b> <%= user.aboutMe == "" ? "N/A" : user.aboutMe %></p>
 								</div>
 							</div>
 						</div>
