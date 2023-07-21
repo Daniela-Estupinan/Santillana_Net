@@ -62,7 +62,7 @@
 
 						let imagesHtml = ``
 						for (b = 0; b < ad.savedPaths.length; b++) {
-							imagesHtml += `<img src="` + baseImageUrl + `/` + ad.savedPaths[b] + `" onerror="this.src = \'/public/img/default_cover.jpg\';">`
+							imagesHtml += `<img src="` + mainUrl + `/` + ad.savedPaths[b] + `" onerror="this.src = \'/public/img/default_cover.jpg\';">`
 						}
 
 						html += `<li>
