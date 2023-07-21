@@ -3508,56 +3508,9 @@ app.post("/uploadProfileImage", function (request, result) {
 				  });
 				  return false;
 				}
-		  
-				if (type == "ios") {
-				  coverPhoto = `${request.files.coverPhoto.name}`;;
-		  
-				  var base64Data = request.fields.imageData.replace(/^data:image\/jpeg;base64,/, "");
-				  base64Data += base64Data.replace('+', ' ');
-				  var binaryData = new Buffer(base64Data, 'base64').toString('binary');
-				  fileSystem.writeFile(coverPhoto, function (err) {
-					if (err) throw err;
-		  
-					database.collection("groups").insertOne({
-					  "name": name,
-					  "additionalInfo": additionalInfo,
-					  "coverPhoto": coverPhoto,
-					  "area": area,
-					  "members": [{
-						"_id": user._id,
-						"name": user.name,
-						"profileImage": user.profileImage,
-						"status": "Accepted"
-					  }],
-					  "user": {
-						"_id": user._id,
-						"name": user.name,
-						"profileImage": user.profileImage
-					  }
-					}, function (error, data) {
-					  database.collection("users").updateOne({
-						"accessToken": accessToken
-					  }, {
-						$push: {
-						  "groups": {
-							"_id": data.insertedId,
-							"name": name,
-							"coverPhoto": coverPhoto,
-							"status": "Accepted"
-						  }
-						}
-					  }, function (error, data) {
-						result.json({
-						  "status": "success",
-						  "message": "Comunidad ha sido creada"
-						});
-					  });
-					});
-				  });
-				} else {
-				  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
-					coverPhoto = `${request.files.coverPhoto.name}`;
-		  
+		 	  if (request.files.coverPhoto.size > 0 && request.files.coverPhoto.type.includes("image")) {
+				coverPhoto = "uploads/" + new Date().getTime() + "-" +`${request.files.coverPhoto.name}`;
+		
 					// Leer el archivo
 					fileSystem.readFile(request.files.coverPhoto.path, function (err, data) {
 					  if (err) throw err;
@@ -3599,7 +3552,7 @@ app.post("/uploadProfileImage", function (request, result) {
 						  }, function (error, data) {
 							result.json({
 							  "status": "success",
-							  "message": "Comunidad ha sido creada"
+							  "message": "Comunidad ha sido creada",
 							});
 						  });
 						});
@@ -3618,7 +3571,7 @@ app.post("/uploadProfileImage", function (request, result) {
 					});
 				  }
 				}
-			  }
+			  
 			});
 		  });
 //		  

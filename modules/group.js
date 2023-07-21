@@ -64,7 +64,7 @@ module.exports = {
 
             if (request.files.coverPhoto.type.includes("image")) {
 
-                coverPhoto = "public/images/" + new Date().getTime() + "-" + request.files.coverPhoto.name;
+                coverPhoto = "uploads/" + new Date().getTime() + "-" +`${request.files.coverPhoto.name}`;
 
                 if (group.coverPhoto != "") {
                     this.fileSystem.unlink(group.coverPhoto, function (error) {
