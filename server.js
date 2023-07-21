@@ -3553,7 +3553,6 @@ app.post("/uploadProfileImage", function (request, result) {
 							result.json({
 							  "status": "success",
 							  "message": "Comunidad ha sido creada",
-							  "data": photoURL + "/" + coverPhoto
 							});
 						  });
 						});
